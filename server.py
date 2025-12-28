@@ -13,7 +13,7 @@ import time
 import errno
 import pymongo
 import bcrypt
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # 如果有安裝 eventlet，這行能提升效能
 try:
@@ -25,7 +25,8 @@ except ImportError:
 app = Flask(__name__)
 # 設定 Session 金鑰
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'galaxy_secret_key_888')
-app.config['PERMANENT_SESSION_LIFETIME'] = 86400 * 7 # 7天免登入
+# 設定登入過期時間為 7 天
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode=None)
 
@@ -37,6 +38,7 @@ users_collection = None
 if MONGO_URI:
     try:
         client = pymongo.MongoClient(MONGO_URI)
+        # 測試連線
         client.admin.command('ping')
         db = client.get_database("galaxy_compiler_db")
         users_collection = db.users
@@ -44,9 +46,9 @@ if MONGO_URI:
     except Exception as e:
         print(f"[系統] ❌ MongoDB 連線失敗: {e}")
 else:
-    print("[系統] ⚠️ 警告: 未設定 MONGO_URI")
+    print("[系統] ⚠️ 警告: 未設定 MONGO_URI，資料庫功能將無法使用")
 
-# === 原有的全域變數 ===
+# === 全域變數 ===
 current_process = None
 master_fd_global = None
 
@@ -71,22 +73,27 @@ def kill_existing_process():
 
 @app.route('/')
 def home():
+    # 確保回傳你指定的 index.html
     return send_file('index.html')
 
-# === 使用者系統 API ===
+# === 使用者系統 API (配合 HTML Fetch) ===
 @app.route('/register', methods=['POST'])
 def register():
     if not users_collection: return jsonify({'success': False, 'message': '資料庫未連線'}), 500
     data = request.json
     username = data.get('username')
     password = data.get('password')
+    
     if not username or not password: return jsonify({'success': False, 'message': '請輸入帳號和密碼'}), 400
     if users_collection.find_one({'username': username}): return jsonify({'success': False, 'message': '此帳號已被註冊'}), 400
     
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     new_user = {
-        'username': username, 'password': hashed_password, 'created_at': datetime.utcnow(),
-        'projects_cpp': [], 'projects_python': []
+        'username': username, 
+        'password': hashed_password, 
+        'created_at': datetime.utcnow(),
+        'projects_cpp': [], 
+        'projects_python': []
     }
     users_collection.insert_one(new_user)
     return jsonify({'success': True, 'message': '註冊成功！'})
@@ -112,6 +119,7 @@ def get_user_data():
     username = session['user']
     if not users_collection: return jsonify({'success': False, 'message': 'DB Error'}), 500
     
+    # 這裡會回傳 data.projects_cpp 給前端使用
     user = users_collection.find_one({'username': username}, {'_id': 0, 'password': 0})
     if user: return jsonify({'success': True, 'is_logged_in': True, 'username': username, 'data': user})
     return jsonify({'success': False, 'is_logged_in': False})
@@ -134,7 +142,7 @@ def logout():
     session.pop('user', None)
     return jsonify({'success': True})
 
-# === WebSocket 執行邏輯 (不變) ===
+# === WebSocket 執行邏輯 (配合 HTML Socket.io) ===
 @socketio.on('run_code_v2')
 def handle_run_code(data):
     global current_process, master_fd_global
@@ -248,6 +256,6 @@ def handle_stop():
     emit('program_output', {'data': "\r\n[程式已停止]"})
 
 if __name__ == '__main__':
-    log("伺服器啟動中 (DB Version)...")
+    log("伺服器啟動中...")
     port = int(os.environ.get("PORT", 5000))
     socketio.run(app, host='0.0.0.0', port=port, debug=False, allow_unsafe_werkzeug=True)

@@ -3,3 +3,6 @@ flask-socketio
 flask-cors
 eventlet
 gunicorn
+pymongo
+dnspython
+bcrypt

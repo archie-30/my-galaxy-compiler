@@ -10,18 +10,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --editor-font-size: 14px;
             --problem-font-size: 14px;
             
-            /* Syntax Colors - Modern Style (Default) */
-            --syntax-keyword: #569cd6;      /* Blue */
+            --syntax-keyword: #569cd6;
             --syntax-operator: #d4d4d4;
             --syntax-variable: #9cdcfe;
             --syntax-def: #dcdcaa;
-            --syntax-type: #4ec9b0;         /* Teal/Greenish (Type color) */
+            --syntax-type: #4ec9b0;
             --syntax-builtin: #4ec9b0;
             --syntax-number: #b5cea8;
             --syntax-atom: #b5cea8;
@@ -32,7 +32,6 @@
             --bg-color: #1e1e1e;
             --text-color: #d4d4d4;
             --border-color: #333;
-            /* Slightly lighter selection bg for better visibility */
             --selection-bg: #264f78;
             --selection-border: rgba(255, 255, 255, 0.3);
             
@@ -41,13 +40,12 @@
         }
 
         [data-theme="classic"] {
-            /* Syntax Colors - Classic Style */
             --syntax-keyword: #f08d49;
             --syntax-operator: #f08d49;
             --syntax-variable: #d4d4d4;
             --syntax-def: #f8f8f2;
-            --syntax-type: #8be9fd;         /* Light Blue (Type color) */
-            --syntax-builtin: #f8f8f2;      /* White for cin/cout */
+            --syntax-type: #8be9fd;
+            --syntax-builtin: #f8f8f2;
             --syntax-number: #bd93f9;
             --syntax-atom: #bd93f9;
             --syntax-string: #f1fa8c;
@@ -58,7 +56,6 @@
             --selection-border: rgba(255, 255, 255, 0.4);
         }
 
-        /* 保留：強化 html 和 body 的鎖定，防止滾動 */
         html {
             height: 100%;
             width: 100%;
@@ -72,7 +69,7 @@
             color: var(--text-color); 
             height: 100%; 
             width: 100%; 
-            position: fixed; /* 強制定位 */
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -96,13 +93,14 @@
 
         .cm-matchhighlight { background-color: #3a3a3a; border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
         
-        /* Exclude types from gray highlight */
         .cm-matchhighlight.cm-keyword, 
         .cm-matchhighlight.cm-string, 
         .cm-matchhighlight.cm-comment,
         .cm-matchhighlight.cm-builtin,
         .cm-matchhighlight.cm-type,
-        .cm-matchhighlight.cm-string-type
+        .cm-matchhighlight.cm-string-type,
+        .cm-matchhighlight.cm-meta,
+        .cm-matchhighlight.cm-number
         { 
             background-color: transparent !important; 
             border-bottom: none !important; 
@@ -113,7 +111,9 @@
         [data-theme="classic"] .cm-matchhighlight.cm-comment,
         [data-theme="classic"] .cm-matchhighlight.cm-builtin,
         [data-theme="classic"] .cm-matchhighlight.cm-type,
-        [data-theme="classic"] .cm-matchhighlight.cm-string-type {
+        [data-theme="classic"] .cm-matchhighlight.cm-string-type,
+        [data-theme="classic"] .cm-matchhighlight.cm-meta,
+        [data-theme="classic"] .cm-matchhighlight.cm-number {
             background-color: transparent !important;
             border-bottom: none !important;
         }
@@ -127,7 +127,6 @@
         
         .CodeMirror-selected { outline: 1px solid var(--selection-border); }
         
-        /* Syntax Highlighting */
         .cm-s-cloudjudge .cm-keyword { color: var(--syntax-keyword) !important; font-weight: bold; transition: color 0.3s; }
         .cm-s-cloudjudge .cm-operator { color: var(--syntax-operator) !important; transition: color 0.3s; }
         .cm-s-cloudjudge .cm-variable { color: var(--syntax-variable) !important; transition: color 0.3s; }
@@ -191,13 +190,11 @@
         #terminal-container { font-family: Consolas, monospace !important; scroll-behavior: smooth; }
         #terminal-input { font-family: Consolas, monospace !important; transition: border-color 0.2s; }
 
-        /* Unified Toggle Style (Both for Theme and Side Panel) */
         .toggle-container-base { display: flex; background-color: #3c3c3c; border-radius: 6px; padding: 2px; position: relative; cursor: pointer; border: 1px solid #333; }
         .toggle-bg-base { position: absolute; top: 2px; left: 2px; height: 22px; background-color: #007acc; border-radius: 4px; transition: transform 0.4s var(--ease-bounce), background-color 0.3s; }
         .toggle-option-base { flex: 1; text-align: center; font-size: 11px; font-weight: bold; color: #ccc; z-index: 10; line-height: 24px; transition: color 0.3s; letter-spacing: 0.05em; }
         .toggle-option-base.active { color: white; }
 
-        /* Side Panel Toggle Specifics */
         .side-panel-toggle { width: 140px; height: 24px; margin-right: 0; } 
         .side-panel-toggle .side-toggle-bg { width: 68px; height: 20px; top: 2px; } 
         .side-panel-toggle.show-desc .side-toggle-bg { transform: translateX(68px); }
@@ -211,15 +208,13 @@
         .dropdown-item { padding: 6px 10px; cursor: pointer; border-radius: 4px; color: #ccc; font-weight: normal; display: flex; justify-content: space-between; align-items: center; }
         .dropdown-item:hover { background-color: #007acc; color: white; }
         .dropdown-item.selected { color: #fff; background-color: rgba(255, 255, 255, 0.1); font-weight: bold; }
-        /* Dropdown Disabled State */
         .dropdown-item.disabled { color: #666; cursor: not-allowed; background-color: transparent !important; }
         .dropdown-item.disabled svg { color: #555; }
         
         .dropdown-label { font-size: 10px; text-transform: uppercase; color: #666; padding: 4px 10px; pointer-events: none; margin-top: 4px; }
         
-        /* New Settings Btn Style with Absolute Icon & Centered Text */
         .settings-btn { 
-            padding: 6px 8px 6px 30px; /* Left padding space for icon */
+            padding: 6px 8px 6px 30px;
             background-color: #3c3c3c; 
             border: 1px solid #333; 
             border-radius: 4px; 
@@ -236,9 +231,7 @@
         .settings-btn:hover, .dropdown-container.open .settings-btn { background-color: #454545; color: white; border-color: #555; }
         .settings-btn svg { position: absolute; left: 8px; }
 
-        /* FIXED: Problem Settings Button Style */
         .problem-settings-btn {
-            /* Reset/Override dropdown-trigger defaults if present */
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
@@ -246,7 +239,7 @@
             
             height: 24px !important;
             min-width: 80px !important;
-            padding: 0 8px 0 24px !important; /* Space for icon */
+            padding: 0 8px 0 24px !important;
             
             background-color: transparent !important;
             border: 1px solid transparent !important;
@@ -283,14 +276,13 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.3s var(--ease-spring) forwards; }
         
-        /* New Animation for Project Switching */
         .animate-quick-fade { animation: quickFade 0.25s var(--ease-spring) forwards; }
         @keyframes quickFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
         .action-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
         .action-btn:active { transform: scale(0.96); }
 
-        #problem-container { transition: width 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); overflow: hidden; width: 25%; } /* Default open width */
+        #problem-container { transition: width 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); overflow: hidden; width: 25%; } 
         
         #problem-content { 
             font-size: var(--problem-font-size); 
@@ -300,25 +292,22 @@
             outline: none; 
             overflow-y: auto; 
             height: 100%; 
-            position: relative; /* For absolute placeholder */
+            position: relative; 
         }
         
-        /* FORCE INHERITANCE: Ensure pasted content respects container's font size settings */
         #problem-content * {
             background-color: transparent !important;
             color: inherit !important;
             box-shadow: none !important;
             font-family: inherit !important;
-            font-size: inherit !important;   /* Crucial for zoom feature */
+            font-size: inherit !important;
             line-height: inherit !important;
         }
         
-        /* Restore semantic styles with !important to override reset */
         #problem-content b, #problem-content strong { font-weight: bold !important; }
         #problem-content i, #problem-content em { font-style: italic !important; }
         #problem-content u { text-decoration: underline !important; }
         
-        /* Placeholder logic using CSS class .empty */
         #problem-content.empty::before {
             content: "Enter problem description here...";
             color: #666;
@@ -330,7 +319,6 @@
             left: 1rem;
         }
 
-        /* Problem List Styles */
         #problem-list { overflow-y: auto; height: 100%; }
         .problem-item { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s; }
         .problem-item:hover { background-color: #2d2d2d; }
@@ -339,14 +327,12 @@
         .problem-item.active .problem-item-title { color: #fff; }
         .problem-item-actions { display: none; gap: 4px; }
         .problem-item:hover .problem-item-actions { display: flex; }
-        /* Always show pin for main */
         .problem-item.is-main .problem-item-actions { display: flex; }
         .problem-action-btn { padding: 2px; border-radius: 3px; color: #858585; display: flex; align-items: center; justify-content: center; }
         .problem-action-btn:hover { background-color: #454545; color: #fff; }
         .problem-action-btn.pin { color: #eab308; cursor: default; }
         .problem-action-btn.pin:hover { background-color: transparent; }
 
-        /* View Transition Animation */
         .side-view-content { animation: fadeIn 0.3s var(--ease-spring); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
@@ -378,56 +364,47 @@
             border-color: #007acc;
         }
 
-        /* Unified Button Animation */
         #problem-toggle-btn {
             transition: all 0.2s var(--ease-spring);
         }
         #problem-toggle-btn:active {
             transform: scale(0.95);
         }
-        /* Active State Style */
         #problem-toggle-btn.text-blue-400 {
-            background-color: rgba(59, 130, 246, 0.1); /* Light blue bg */
+            background-color: rgba(59, 130, 246, 0.1); 
         }
 
-        /* Problem Button Container Styles */
-        .problem-btn-container {
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            align-items: center; 
-            justify-content: center;
-            background-color: #252526;
-            padding: 0 4px; /* Added padding */
-            height: 32px; /* Match tab height */
-        }
-
-        .problem-btn-container button {
-            height: 24px;
-            width: 24px;
-            padding: 4px;
-            border-radius: 4px;
+        .header-icon-btn {
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #9ca3af; 
-            transition: all 0.2s var(--ease-spring);
+            border-radius: 4px;
+            background-color: #3c3c3c;
+            border: 1px solid #333;
+            color: #9ca3af;
+            transition: all 0.2s;
+            cursor: pointer;
         }
-
-        .problem-btn-container button:hover {
-            background-color: #3e4451; 
+        .header-icon-btn:hover {
+            background-color: #505050;
             color: #fff;
-            transform: translateY(-1px);
         }
-        
-        .problem-btn-container button:active {
+        .header-icon-btn:active {
             transform: scale(0.95);
         }
-        .problem-btn-container button.text-blue-400 {
+        .header-icon-btn.active {
             color: #60a5fa; 
             background-color: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
         }
         
-
+        #output-container-wrapper {
+            transition: flex 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            overflow: hidden; 
+        }
+        
         @media (max-width: 1024px) {
             .action-btn span { display: none; }
             .action-btn svg { margin: 0; }
@@ -441,15 +418,139 @@
             .dropdown-trigger { padding: 4px 6px; min-width: auto; }
             #logo-icon { width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
         }
+        
+        .system-switch-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-color); 
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .system-switch-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(255,255,255,0.3);
+            perspective: 1000px;
+            position: relative;
+            z-index: 20;
+        }
+        
+        .switch-subtext {
+            margin-top: 3.5rem;
+            font-size: 14px;
+            color: #9ca3af;
+            font-family: 'Noto Sans TC', sans-serif;
+            letter-spacing: 1px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 20;
+        }
+        
+        .system-switch-overlay.active .switch-subtext {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ripple-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            z-index: 10;
+            pointer-events: none;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ripple-ring {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            border: 4px solid rgba(100, 200, 255, 0.05);
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.1), inset 0 0 20px rgba(100, 200, 255, 0.1);
+            opacity: 0;
+            transform: scale(0.8);
+            filter: blur(2px);
+        }
+
+        .ripple-ring.in {
+            animation: ripple-in 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .ripple-ring.out {
+            animation: ripple-out 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes ripple-in {
+            0% { transform: scale(3.5); opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { transform: scale(0.5); opacity: 0.6; }
+        }
+
+        @keyframes ripple-out {
+            0% { transform: scale(0.5); opacity: 0.6; }
+            100% { transform: scale(4.0); opacity: 0; }
+        }
+
+        @keyframes spin-in {
+            0% { transform: rotate(0deg) scale(1); filter: blur(0px); opacity: 1; }
+            100% { transform: rotate(720deg) scale(0.5); filter: blur(4px); opacity: 0.5; }
+        }
+
+        @keyframes spin-out {
+            0% { transform: rotate(720deg) scale(0.5); filter: blur(4px); opacity: 0.5; }
+            100% { transform: rotate(1080deg) scale(1); filter: blur(0px); opacity: 1; }
+        }
+
+        @keyframes bounce-char {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); text-shadow: 0 10px 10px rgba(0,0,0,0.5); }
+        }
+
+        .spinning-fast {
+            animation: spin-in 0.5s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards; 
+        }
+
+        .spinning-slow {
+            animation: spin-out 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) forwards; 
+        }
+
+        .char-bounce {
+            display: inline-block;
+            animation: bounce-char 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
     </style>
 </head>
 <body class="flex flex-col select-none overflow-hidden fixed inset-0 w-full h-full" data-theme="classic">
 
-    <!-- Hidden File Input -->
     <input type="file" id="file-input" style="display: none;">
 
     <header class="h-14 border-b border-[#333] flex items-center justify-between px-4 bg-[#252526] flex-none z-50 transition-colors duration-300">
-        <!-- Left Side -->
         <div class="flex items-center gap-3">
             <div class="w-7 h-7 rounded bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-md transition-all duration-300" id="logo-icon">C++</div>
             
@@ -464,17 +565,28 @@
                 </div>
             </div>
 
+            <div class="flex items-center gap-1 ml-2 border-l border-[#333] pl-2">
+                <button onclick="toggleProblemPanel()" id="problem-toggle-btn" class="header-icon-btn active" title="Toggle Problem Panel">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                    </svg>
+                </button>
+                <button onclick="toggleOutputPanel()" id="output-toggle-btn" class="header-icon-btn active" title="Toggle Output Panel">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s-8-1.79-8-4" />
+                    </svg>
+                </button>
+            </div>
+
             <div class="flex items-center gap-2 ml-2 bg-[#1e1e1e] px-2 py-1 rounded text-xs border border-[#333] transition-all duration-300" title="Server Status">
                 <div id="status-indicator" class="status-dot status-disconnected"></div>
                 <span id="status-text" class="text-gray-500 transition-colors duration-300">Disconnected</span>
             </div>
-            <span class="text-xs text-gray-600 ml-1 font-mono select-none">v5.6.4</span>
+            <span class="text-xs text-gray-600 ml-1 font-mono select-none">v5.7.1</span>
         </div>
         
-        <!-- Right Side -->
         <div class="flex items-center gap-3">
             
-            <!-- Settings Dropdown -->
             <div class="dropdown-container" id="settings-dropdown">
                 <div class="settings-btn dropdown-trigger" onclick="toggleDropdown('settings-dropdown')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -484,6 +596,15 @@
                     <span class="w-full text-center">Settings</span>
                 </div>
                 <div class="dropdown-menu" style="right: 0; left: auto; min-width: 160px; transform-origin: top right;">
+                    
+                    <div class="dropdown-label">System</div>
+                    <div class="dropdown-item" id="anim-toggle-opt" onclick="toggleAnimations()">
+                        <span>Animations: On</span>
+                        <svg class="h-4 w-4 text-blue-400 check-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    </div>
+
+                    <div class="my-1 border-t border-[#454545]"></div>
+
                     <div class="dropdown-label">View</div>
                     <div class="dropdown-item" id="layout-opt-right" onclick="selectLayout('right')">
                         <span>Output: Right</span>
@@ -494,6 +615,11 @@
                         <svg class="h-4 w-4 text-blue-400 opacity-0 check-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                     </div>
                     
+                      <div class="dropdown-item" onclick="resetLayout()">
+                        <span>Reset Layout</span>
+                        <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    </div>
+
                     <div class="my-1 border-t border-[#454545]"></div>
                     
                     <div class="dropdown-label">Theme</div>
@@ -527,11 +653,9 @@
 
     <main id="main-container" class="flex-1 flex flex-row overflow-hidden relative bg-[#1e1e1e] min-h-0">
         
-        <!-- 左側：題目面板 (獨立列 - 改造為側邊清單/內容區) -->
         <div id="problem-container" class="flex flex-col bg-[#1e1e1e] border-r border-[#333] min-w-0 ease-out problem-open">
-            <div class="flex items-center px-3 py-1 bg-[#252526] border-b border-[#333] flex-none h-8 gap-2">
+            <div class="flex items-center px-2 py-1 bg-[#252526] border-b border-[#333] flex-none h-8 gap-2">
                 <div class="flex items-center gap-1">
-                    <!-- 改進後的切換開關 (Sliding Toggle) - 使用統一風格, 點擊容器切換 -->
                     <div class="side-panel-toggle toggle-container-base" id="side-panel-toggle-container" onclick="toggleSidePanel()">
                         <div class="side-toggle-bg toggle-bg-base"></div>
                         <div class="side-toggle-btn active toggle-option-base" id="side-toggle-list">List</div>
@@ -539,14 +663,11 @@
                     </div>
                 </div>
                 
-                <!-- 題目面板工具列 - 列表模式 -->
                 <div id="list-toolbar" class="flex items-center gap-1 ml-auto">
-                    <button onclick="resetPanelWidth()" class="toolbar-btn text-gray-400" title="Reset Panel Width"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg></button>
                     <button onclick="requestNewProjectName()" class="toolbar-btn text-gray-400" title="New Project"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></button>
                 </div>
 
-                <!-- 題目面板工具列 - 說明模式 (預設隱藏) -->
-                <div id="desc-toolbar" class="hidden items-center gap-1 ml-auto">
+                <div id="desc-toolbar" class="hidden items-center gap-0.5 ml-auto">
                     <button onclick="changeProblemFontSize(-1)" class="toolbar-btn text-gray-400" title="Decrease Font"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" /></svg></button>
                     <button onclick="resetProblemFontSize()" class="toolbar-btn text-gray-400" title="Reset Font"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></button>
                     <button onclick="changeProblemFontSize(1)" class="toolbar-btn text-gray-400" title="Increase Font"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></button>
@@ -554,40 +675,24 @@
                     <button onclick="pasteToProblem()" class="toolbar-btn text-gray-400 hover:text-blue-400" title="Paste All"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg></button>
                 </div>
                 
-                <!-- 新增：關閉按鈕 (在移動端或任何模式下都可見) -->
                 <button onclick="toggleProblemPanel()" class="toolbar-btn text-gray-400 hover:text-red-400 ml-1" title="Close Panel"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
             </div>
 
-            <!-- 內容區域 1: 專案列表 (加入淡入動畫) -->
             <div id="problem-list" class="flex-1 bg-[#1e1e1e] w-full h-full side-view-content">
-                <!-- 由 JS 動態生成 -->
             </div>
 
-            <!-- 內容區域 2: 題目說明 (預設隱藏，加入淡入動畫) -->
             <div id="problem-content" contenteditable="true" class="hidden flex-1 bg-[#1e1e1e] text-gray-300 p-4 w-full h-full font-mono text-sm side-view-content"></div>
         </div>
 
-        <!-- 分隔線 1：控制題目欄寬度 -->
         <div id="problem-resizer" class="resizer-split resizer-col" title="Drag to resize"></div>
 
-        <!-- 中間區域 Wrapper (包含編輯器+終端機) -->
         <div id="center-area" class="flex-1 flex flex-row min-w-0 min-h-0">
             
-            <!-- 編輯器區域 -->
-            <div id="editor-container" class="flex-col relative min-h-0 min-w-0 flex" style="flex: 0 0 70%;">
+            <div id="editor-container" class="flex-col relative min-h-0 min-w-0 flex" style="flex: 1 1 0%;">
                 
-                <!-- 新的 Toolbar (無 Tab) -->
                 <div class="bg-[#252526] px-2 py-1 text-xs font-mono text-gray-500 flex justify-between items-center select-none flex-none border-b border-[#333] h-8 transition-colors duration-300">
                      <div class="flex items-center">
-                        <div class="problem-btn-container mr-2 border-r border-[#333]">
-                            <button onclick="toggleProblemPanel()" id="problem-toggle-btn" class="text-blue-400 bg-blue-500/10" title="Toggle Problem Panel">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
-                                </svg>
-                            </button>
-                        </div>
                         
-                        <!-- NEW: Problem Settings Dropdown Moved Here -->
                         <div class="dropdown-container mr-2" id="problem-settings-dropdown">
                             <div class="problem-settings-btn dropdown-trigger" onclick="toggleDropdown('problem-settings-dropdown')" title="Project Settings">
                                 <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -645,7 +750,7 @@ int main() {
             
             <div id="terminal-resizer" class="resizer-split resizer-col" title="Drag to resize"></div>
             
-            <div id="output-container-wrapper" class="flex-col bg-[#1e1e1e] min-h-0 min-w-0 transition-all duration-100 ease-out flex" style="flex: 0 0 30%;">
+            <div id="output-container-wrapper" class="flex-col bg-[#1e1e1e] min-h-0 min-w-0 flex" style="flex: 0 0 30%;">
                 <div class="bg-[#1e1e1e] px-4 py-1 text-xs font-bold text-gray-500 border-b border-[#333] flex justify-between flex-none h-8 items-center">
                     <span>Interactive Terminal</span>
                     <button onclick="clearOutput()" class="hover:text-white transition-colors duration-200">Clear</button>
@@ -654,7 +759,6 @@ int main() {
                 <div class="p-2 border-b border-[#333] bg-[#252526] flex-none flex flex-col gap-2">
                     <textarea id="terminal-input" class="w-full bg-[#3c3c3c] text-white px-3 py-2 rounded border border-[#555] focus:outline-none focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc] font-mono text-sm resize-none h-16" placeholder="Type input here (Enter for new line, Ctrl+Enter to send)..." disabled autocomplete="off"></textarea>
                     <div class="flex justify-end gap-2">
-                        <!-- New 'Last Input' Button -->
                         <button onclick="fillLastInput()" class="bg-[#4b5563] hover:bg-[#374151] text-white px-3 py-1.5 rounded text-xs font-medium transition-colors shadow-md flex items-center gap-1" title="Fill Last Input">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -672,7 +776,6 @@ int main() {
         </div>
     </main>
 
-    <!-- Custom Modal Overlay -->
     <div id="modal-overlay">
         <div class="modal-box">
             <div class="modal-header">
@@ -687,6 +790,16 @@ int main() {
                 <button class="modal-btn modal-btn-primary" onclick="closeModal()">OK</button>
             </div>
         </div>
+    </div>
+
+    <div id="transition-overlay" class="system-switch-overlay">
+        <div class="ripple-container">
+            <div class="ripple-ring" style="animation-delay: 0s;"></div>
+            <div class="ripple-ring" style="animation-delay: 0.1s;"></div>
+            <div class="ripple-ring" style="animation-delay: 0.2s;"></div>
+        </div>
+        <div id="switch-container" class="switch-container"></div>
+        <div id="switch-subtext" class="switch-subtext"></div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
@@ -715,14 +828,13 @@ int main() {
         var problemFontSize = 14; 
         var currentLang = 'cpp'; 
         
-        // --- Project System State ---
         var projects = [];
         var activeProjectIndex = 0;
-        var currentSideView = 'list'; // 'list' or 'desc'
-        var currentTheme = 'classic'; // Default theme
-        var lastInput = ""; // Store last input
+        var currentSideView = 'list'; 
+        var currentTheme = 'classic'; 
+        var lastInput = ""; 
+        var enableAnimations = true; 
 
-        // Modal System
         const modalOverlay = document.getElementById('modal-overlay');
         const modalTitle = document.getElementById('modal-title');
         const modalMessage = document.getElementById('modal-message');
@@ -784,7 +896,6 @@ int main() {
                     closeModal();
                     onConfirm(val);
                 } else {
-                    // Slight shake or visual cue could act here
                     modalInput.focus();
                 }
             };
@@ -795,7 +906,6 @@ int main() {
             setTimeout(() => modalInput.focus(), 100);
         }
         
-        // Allow Enter key in modal input
         modalInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const btn = modalFooter.querySelector('.modal-btn-primary');
@@ -807,7 +917,6 @@ int main() {
             modalOverlay.classList.remove('open');
         }
 
-        // --- File Open Logic ---
         function openFileConfirm() {
             showConfirm("Open File", "Opening a file will overwrite current code.\nAre you sure you want to continue?", triggerFileSelect);
         }
@@ -841,13 +950,12 @@ int main() {
             const reader = new FileReader();
             reader.onload = function(e) {
                 editor.setValue(e.target.result);
-                saveCurrentProject(); // Auto save after load
+                saveCurrentProject(); 
             };
             reader.readAsText(file);
             this.value = '';
         });
 
-        // CodeMirror Setup
         var cppKeywords = ["#include","iostream","cstdlib","iomanip","using","namespace","std","int","main","return","cout","endl","cin","vector","string","void","char","bool","float","double","if","else","for","while","do","switch","case","break","continue","struct","class","public","private","protected","true","false","const","auto","size_t","push_back","pop_back","length","size","begin","end","algorithm","cmath"];
         var pythonKeywords = ["print","import","from","def","return","if","elif","else","for","while","break","continue","pass","class","try","except","finally","with","as","lambda","True","False","None","and","or","not","is","in","global","range","len","input","int","str","list","dict"];
 
@@ -906,6 +1014,17 @@ int main() {
                 }
             }
         });
+
+        editor.on("mousedown", function() {
+            closeAllDropdowns();
+        });
+        
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown-container').forEach(el => { 
+                el.classList.remove('open'); 
+                el.querySelector('.dropdown-trigger')?.classList.remove('active'); 
+            });
+        }
         
         function formatCode() {
             var totalLines = editor.lineCount();
@@ -926,7 +1045,6 @@ int main() {
             }
         });
 
-        // --- Layout & Sidebar Logic ---
         const problemContainer = document.getElementById('problem-container');
         const problemResizer = document.getElementById('problem-resizer');
         const centerArea = document.getElementById('center-area');
@@ -939,39 +1057,94 @@ int main() {
         const toggleListBtn = document.getElementById('side-toggle-list');
         const toggleDescBtn = document.getElementById('side-toggle-desc');
         const toggleContainer = document.getElementById('side-panel-toggle-container');
+        const outputToggleBtn = document.getElementById('output-toggle-btn');
+        const outputWrapper = document.getElementById('output-container-wrapper');
+        const terminalResizer = document.getElementById('terminal-resizer');
         
         function toggleProblemPanel() {
             if (problemContainer.classList.contains('problem-open')) {
-                // Close it
                 problemContainer.classList.remove('problem-open');
                 problemContainer.style.width = '0px';
                 if(window.innerWidth > 1024) problemResizer.classList.add('hidden');
-                problemToggleBtn.classList.remove('text-blue-400', 'bg-blue-500/10');
+                problemToggleBtn.classList.remove('active');
                 editor.focus();
             } else {
-                // Open it
                 problemContainer.classList.add('problem-open');
                 if(window.innerWidth > 1024) {
                     problemContainer.style.width = '25%';
                     problemResizer.classList.remove('hidden');
                 }
-                problemToggleBtn.classList.add('text-blue-400', 'bg-blue-500/10');
+                problemToggleBtn.classList.add('active');
             }
+            setTimeout(() => editor.refresh(), 350);
+        }
+        
+        function toggleOutputPanel(forceState = null) {
+            const outputWrapper = document.getElementById('output-container-wrapper');
+            const resizer = document.getElementById('terminal-resizer');
+            const editorDiv = document.getElementById('editor-container');
+            const btn = document.getElementById('output-toggle-btn');
+
+            const currentFlex = outputWrapper.style.flex;
+            const isOpen = currentFlex && !currentFlex.startsWith('0 0 0');
+            
+            let targetState = (forceState !== null) ? forceState : !isOpen;
+
+            if (targetState) {
+                resizer.style.display = 'flex'; 
+                
+                const savedFlex = outputWrapper.dataset.lastFlex || '0 0 30%';
+                
+                outputWrapper.style.flex = savedFlex;
+                editorDiv.style.flex = '1 1 0%'; 
+                
+                outputWrapper.style.minWidth = ""; 
+                outputWrapper.style.minHeight = "";
+                outputWrapper.style.padding = ""; 
+                outputWrapper.style.border = "";
+                
+                btn.classList.add('active');
+            } else {
+                outputWrapper.dataset.lastFlex = outputWrapper.style.flex;
+
+                outputWrapper.style.flex = '0 0 0%';
+                editorDiv.style.flex = '1 1 0%'; 
+                
+                outputWrapper.style.minWidth = "0";
+                outputWrapper.style.minHeight = "0";
+                
+                resizer.style.display = 'none';
+                btn.classList.remove('active');
+            }
+            setTimeout(() => editor.refresh(), 50);
             setTimeout(() => editor.refresh(), 350);
         }
 
         function resetPanelWidth() {
+            resetLayout();
+        }
+        
+        function resetLayout() {
             if(window.innerWidth > 1024) {
-                problemContainer.style.width = '25%';
-                // Ensure it's open
                 if (!problemContainer.classList.contains('problem-open')) {
                     toggleProblemPanel();
                 }
-                editor.refresh();
+                problemContainer.style.width = '25%';
+                
+                changeLayout('right');
+                
+                toggleOutputPanel(true);
+                
+                setTimeout(() => {
+                    editorContainer.style.flex = '1 1 0%';
+                    outputWrapper.style.flex = '0 0 30%';
+                    editor.refresh();
+                }, 10);
+            } else {
+                changeLayout('right');
             }
         }
 
-        // --- Side Panel View Switching ---
         function toggleSidePanel() {
             const newView = currentSideView === 'list' ? 'desc' : 'list';
             toggleSideView(newView);
@@ -980,10 +1153,9 @@ int main() {
         function toggleSideView(view) {
             currentSideView = view;
             
-            // Re-trigger animation for content fade
             problemListEl.classList.remove('side-view-content');
             problemContentEl.classList.remove('side-view-content');
-            void problemListEl.offsetWidth; // Trigger reflow
+            void problemListEl.offsetWidth; 
             void problemContentEl.offsetWidth;
             
             if (view === 'list') {
@@ -996,7 +1168,7 @@ int main() {
                 
                 toggleListBtn.classList.add('active');
                 toggleDescBtn.classList.remove('active');
-                toggleContainer.classList.remove('show-desc'); // Sliding animation handled by CSS
+                toggleContainer.classList.remove('show-desc'); 
             } else {
                 problemListEl.classList.add('hidden');
                 problemContentEl.classList.remove('hidden');
@@ -1007,30 +1179,23 @@ int main() {
                 
                 toggleListBtn.classList.remove('active');
                 toggleDescBtn.classList.add('active');
-                toggleContainer.classList.add('show-desc'); // Sliding animation handled by CSS
+                toggleContainer.classList.add('show-desc'); 
             }
-            
-            // Update placeholder logic on view switch
             updateProblemContentPlaceholder();
         }
 
-        // --- Project / Problem Data Management ---
         function getHelloWorld(lang) {
             if (lang === 'cpp') return '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}';
             else return 'print("Hello Galaxy Python!")\n\n# Try typing something\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")';
         }
 
-        // Initialize projects from localStorage or default
         function initProjects() {
             try {
                 const savedProjects = localStorage.getItem(`galaxy_projects_${currentLang}`);
                 
                 if (savedProjects) {
                     projects = JSON.parse(savedProjects);
-                    
-                    // Reset Logic: If useDefaultCode is true, reset code to defaultCode
                     projects.forEach(p => {
-                        // FIX: Only reset if testMode is TRUE (Safe Mode)
                         if (p.testMode && p.useDefaultCode && p.defaultCode) {
                             p.code = p.defaultCode;
                         }
@@ -1070,25 +1235,28 @@ int main() {
             if (projects[activeProjectIndex]) {
                 projects[activeProjectIndex].code = editor.getValue();
                 projects[activeProjectIndex].desc = problemContentEl.innerHTML;
+                
+                const cur = editor.getCursor();
+                const scroll = editor.getScrollInfo();
+                projects[activeProjectIndex].cursorPos = cur;
+                projects[activeProjectIndex].scrollPos = { left: scroll.left, top: scroll.top };
+                
                 saveProjectsToStorage();
             }
         }
 
         function requestNewProjectName() {
-            if (projects.length >= 21) { // 20 custom + 1 main
+            if (projects.length >= 21) { 
                 showModal("Notice", "Project limit reached (20).");
                 return;
             }
-            
             let counter = 1;
-            // Find the first available number
             while (projects.some(p => p.title.toLowerCase() === `program ${counter}`)) {
                 counter++;
             }
             const defaultName = `program ${counter}`;
 
             showInputModal("New Project", "Please enter project name:", "e.g., program 1", defaultName, (name) => {
-                // Prevent empty name, fallback to default if user cleared it
                 addProject(name || defaultName);
             });
         }
@@ -1100,7 +1268,7 @@ int main() {
                 title: title,
                 code: getHelloWorld(currentLang),
                 desc: "",
-                testMode: false // Default to Unsafe (Red)
+                testMode: false
             };
             projects.push(newProject);
             saveProjectsToStorage();
@@ -1110,15 +1278,12 @@ int main() {
         
         function renameProject(index, event) {
             if (event) event.stopPropagation();
-            
-            const project = projects[index];
-            if (project.id === 'main') {
+            if (projects[index].id === 'main') {
                 showModal("Notice", "The 'main' project cannot be renamed.");
                 return;
             }
-            
-            showInputModal("Rename", `Enter new name:`, "", project.title, (newName) => {
-                project.title = newName;
+            showInputModal("Rename", `Enter new name:`, "", projects[index].title, (newName) => {
+                projects[index].title = newName;
                 saveProjectsToStorage();
                 renderProjectList();
                 if (index === activeProjectIndex) {
@@ -1129,21 +1294,17 @@ int main() {
 
         function deleteProject(index, event) {
             if (event) event.stopPropagation();
-            
             if (projects[index].id === 'main') {
                 showModal("Notice", "The 'main' project cannot be deleted.");
                 return;
             }
-
             showConfirm("Delete Project", `Are you sure you want to delete "${projects[index].title}"? This action cannot be undone.`, () => {
                 projects.splice(index, 1);
-                
                 if (index === activeProjectIndex) {
                     activeProjectIndex = Math.max(0, index - 1);
                 } else if (index < activeProjectIndex) {
                     activeProjectIndex--;
                 }
-                
                 saveProjectsToStorage();
                 renderProjectList();
                 loadProject(activeProjectIndex);
@@ -1161,7 +1322,6 @@ int main() {
             activeProjectIndex = index;
             localStorage.setItem(`galaxy_active_project_${currentLang}`, activeProjectIndex);
             
-            // Trigger animation on editor & content before loading new data
             triggerProjectSwitchAnimation();
             
             loadProject(index);
@@ -1171,15 +1331,9 @@ int main() {
         function triggerProjectSwitchAnimation() {
             const codeWrapper = document.getElementById('code-wrapper');
             const problemContent = document.getElementById('problem-content');
-            
-            // Reset Animation
             codeWrapper.classList.remove('animate-quick-fade');
             problemContent.classList.remove('animate-quick-fade');
-            
-            // Trigger Reflow
             void codeWrapper.offsetWidth;
-            
-            // Re-apply Animation
             codeWrapper.classList.add('animate-quick-fade');
             problemContent.classList.add('animate-quick-fade');
         }
@@ -1194,10 +1348,18 @@ int main() {
             problemContentEl.innerHTML = project.desc || ""; 
             document.getElementById('current-project-title').innerText = project.title;
             
-            // Update Problem Settings Dropdown UI based on current project state
-            updateProblemSettingsUI();
+            if (project.cursorPos) {
+                editor.setCursor(project.cursorPos);
+                if (project.scrollPos) {
+                    editor.scrollTo(project.scrollPos.left, project.scrollPos.top);
+                }
+                editor.focus();
+            } else {
+                editor.setCursor({line: 0, ch: 0});
+                editor.scrollTo(0, 0);
+            }
             
-            // Update placeholder state
+            updateProblemSettingsUI();
             updateProblemContentPlaceholder();
             
             isChangingProject = false;
@@ -1256,10 +1418,7 @@ int main() {
             }
         });
         
-        // Placeholder Logic Helper
         function updateProblemContentPlaceholder() {
-            // Check if text content is empty (ignoring HTML tags like <br> or empty <p>)
-            // Using innerText check
             if (problemContentEl.innerText.trim() === "") {
                 problemContentEl.classList.add('empty');
             } else {
@@ -1268,41 +1427,31 @@ int main() {
         }
         
         problemContentEl.addEventListener('input', function() {
-            // Toggle placeholder class immediately
             updateProblemContentPlaceholder();
             
             if (!isChangingProject) {
-                // If content is visually empty, save empty string
                 if(this.innerText.trim() === "") {
-                     projects[activeProjectIndex].desc = "";
+                      projects[activeProjectIndex].desc = "";
                 } else {
-                     projects[activeProjectIndex].desc = this.innerHTML;
+                      projects[activeProjectIndex].desc = this.innerHTML;
                 }
                 saveProjectsToStorage();
             }
         });
 
-        // --- HTML Sanitization for Paste (Smart Paste) ---
         function cleanHTML(html) {
             const div = document.createElement('div');
             div.innerHTML = html;
             div.querySelectorAll('*').forEach(el => {
                 const s = el.style;
-                // Detect styles before stripping
                 const isBold = (s.fontWeight === 'bold' || parseInt(s.fontWeight) >= 700) || ['B', 'STRONG'].includes(el.tagName);
                 const isItalic = (s.fontStyle === 'italic') || ['I', 'EM'].includes(el.tagName);
                 const isUnderline = (s.textDecoration.includes('underline')) || el.tagName === 'U';
-                
-                // Strip all styles and classes
                 el.removeAttribute('style');
                 el.removeAttribute('class');
-                
-                // Legacy font tags
                 if (el.tagName === 'FONT') {
                     el.removeAttribute('color'); el.removeAttribute('face'); el.removeAttribute('size');
                 }
-                
-                // Re-apply desired formatting
                 if (isBold) el.style.fontWeight = 'bold';
                 if (isItalic) el.style.fontStyle = 'italic';
                 if (isUnderline) el.style.textDecoration = 'underline';
@@ -1312,25 +1461,19 @@ int main() {
 
         async function pasteToProblem() {
             try {
-                // Force focus on problem content to ensure execCommand works
                 problemContentEl.focus();
-                
                 const clipboardItems = await navigator.clipboard.read();
                 let pasted = false;
-                
                 for (const item of clipboardItems) {
                     if (item.types.includes('text/html')) {
                         const blob = await item.getType('text/html');
                         const htmlText = await blob.text();
-                        
-                        // Select all and replace with cleaned HTML
                         document.execCommand('selectAll', false, null);
                         document.execCommand('insertHTML', false, cleanHTML(htmlText));
                         pasted = true;
                         break;
                     }
                 }
-                
                 if (!pasted) {
                     const text = await navigator.clipboard.readText();
                     if (text) {
@@ -1338,13 +1481,9 @@ int main() {
                         document.execCommand('insertText', false, text);
                     }
                 }
-                
-                // Trigger input to save & update placeholder
                 problemContentEl.dispatchEvent(new Event('input'));
-                
             } catch (err) { 
                 try {
-                    // Fallback using simple text API
                     const text = await navigator.clipboard.readText();
                     problemContentEl.focus();
                     document.execCommand('selectAll', false, null);
@@ -1356,7 +1495,6 @@ int main() {
             }
         }
 
-        // Font Size Logic for Description
         function changeProblemFontSize(delta) {
             problemFontSize = Math.min(32, Math.max(10, problemFontSize + delta));
             applyProblemFontSize();
@@ -1367,7 +1505,6 @@ int main() {
             localStorage.setItem("galaxy_problem_font_size", problemFontSize);
         }
         
-        // --- Document & Settings ---
         function applyFontSize() {
             document.documentElement.style.setProperty('--editor-font-size', fontSize + 'px');
             editor.getWrapperElement().style.fontSize = fontSize + "px";
@@ -1380,33 +1517,31 @@ int main() {
             try {
                 const savedFontSize = localStorage.getItem("galaxy_font_size");
                 if (savedFontSize) { fontSize = parseInt(savedFontSize); applyFontSize(); }
-                
                 const savedProblemFontSize = localStorage.getItem("galaxy_problem_font_size");
                 if (savedProblemFontSize) { problemFontSize = parseInt(savedProblemFontSize); applyProblemFontSize(); }
-
                 const savedTheme = localStorage.getItem("galaxy_theme");
                 if (savedTheme) { 
                     currentTheme = savedTheme; 
-                    setTheme(savedTheme, false); // Use setter instead of toggleUI
+                    setTheme(savedTheme, false);
                 } else { 
                     currentTheme = 'classic'; 
                     setTheme('classic', false);
                 }
-                
                 const savedLang = localStorage.getItem("galaxy_lang");
                 if(savedLang) { currentLang = savedLang; }
+                
                 updateLangUI(currentLang);
                 
-                // Initialize Projects (This replaces old tab logic)
                 initProjects();
-                
-                // Load saved layout (new)
                 const savedLayout = localStorage.getItem("galaxy_layout") || 'right';
                 changeLayout(savedLayout);
-                
-                // Load Last Input
                 lastInput = localStorage.getItem('galaxy_last_input') || "";
                 
+                const savedAnim = localStorage.getItem('galaxy_animations');
+                if(savedAnim !== null) {
+                    enableAnimations = savedAnim === 'true';
+                }
+                updateAnimationToggleUI();
             } catch (err) { console.error("Load settings failed:", err); } 
             finally { isChangingLang = false; }
         }
@@ -1414,7 +1549,6 @@ int main() {
         function changeFontSize(delta) { fontSize = Math.min(32, Math.max(10, fontSize + delta)); applyFontSize(); }
         function resetFontSize() { fontSize = 14; applyFontSize(); }
         
-        // New Theme Setter Logic (Replaces Toggle)
         function setTheme(mode, refresh = true) {
             currentTheme = mode;
             if (mode === 'classic') {
@@ -1423,15 +1557,12 @@ int main() {
                 document.body.removeAttribute('data-theme');
             }
             localStorage.setItem("galaxy_theme", mode);
-            updateSettingsDropdownState(); // Update checks
-            
-            // Auto close dropdown
+            updateSettingsDropdownState(); 
             const dropdown = document.getElementById('settings-dropdown');
             if(dropdown) {
                 dropdown.classList.remove('open');
                 dropdown.querySelector('.dropdown-trigger')?.classList.remove('active');
             }
-            
             if(refresh) editor.refresh();
         }
 
@@ -1440,86 +1571,196 @@ int main() {
             const trigger = container.querySelector('.dropdown-trigger');
             document.querySelectorAll('.dropdown-container').forEach(el => { if (el.id !== id) { el.classList.remove('open'); el.querySelector('.dropdown-trigger')?.classList.remove('active'); } });
             container.classList.toggle('open'); if(trigger) trigger.classList.toggle('active');
-            
-            // If opening settings, ensure checkmarks are correct
             if(id === 'settings-dropdown' && container.classList.contains('open')) {
                 updateSettingsDropdownState();
             }
         }
+        
+        function toggleAnimations() {
+            enableAnimations = !enableAnimations;
+            localStorage.setItem('galaxy_animations', enableAnimations);
+            updateAnimationToggleUI();
+            const dropdown = document.getElementById('settings-dropdown');
+            if(dropdown) {
+                dropdown.classList.remove('open');
+                dropdown.querySelector('.dropdown-trigger')?.classList.remove('active');
+            }
+        }
+        
+        function updateAnimationToggleUI() {
+            const opt = document.getElementById('anim-toggle-opt');
+            if(opt) {
+                const textSpan = opt.querySelector('span');
+                const icon = opt.querySelector('svg');
+                if(enableAnimations) {
+                    textSpan.innerText = 'Animations: On';
+                    icon.classList.remove('opacity-0');
+                    opt.classList.add('selected');
+                } else {
+                    textSpan.innerText = 'Animations: Off';
+                    icon.classList.add('opacity-0');
+                    opt.classList.remove('selected');
+                }
+            }
+        }
 
-        function selectLanguage(lang) { changeLanguage(lang); toggleDropdown('lang-dropdown'); }
-        function selectLayout(layout) { changeLayout(layout); toggleDropdown('layout-dropdown'); } // Generic close
+        function selectLanguage(lang) { 
+            if (lang === currentLang) return;
+            
+            toggleDropdown('lang-dropdown'); 
+            
+            if(!enableAnimations) {
+                const overlay = document.getElementById('transition-overlay');
+                const container = document.getElementById('switch-container');
+                const subtext = document.getElementById('switch-subtext');
+                const rippleContainer = document.querySelector('.ripple-container');
+                
+                overlay.style.transition = 'opacity 0.25s ease';
+                container.style.display = 'none';
+                subtext.style.display = 'none';
+                rippleContainer.style.display = 'none';
+                
+                overlay.classList.add('active');
+                
+                setTimeout(() => {
+                    changeLanguage(lang);
+                    setTimeout(() => {
+                        overlay.classList.remove('active');
+                        setTimeout(() => {
+                            container.style.display = '';
+                            subtext.style.display = '';
+                            rippleContainer.style.display = '';
+                            overlay.style.transition = '';
+                        }, 250);
+                    }, 250);
+                }, 250);
+                return;
+            }
+            
+            const overlay = document.getElementById('transition-overlay');
+            const container = document.getElementById('switch-container');
+            const subtext = document.getElementById('switch-subtext');
+            const ripples = document.querySelectorAll('.ripple-ring');
+            
+            const fromLabel = currentLang === 'cpp' ? 'C++ Galaxy' : 'Python 3';
+            const toLabel = lang === 'cpp' ? 'C++ Galaxy' : 'Python 3';
+
+            overlay.classList.add('active');
+            
+            container.innerHTML = fromLabel; 
+            container.className = 'switch-container'; 
+            
+            ripples.forEach(r => r.className = 'ripple-ring in');
+            
+            if(subtext) {
+                subtext.innerText = `${fromLabel} → ${toLabel}`;
+            }
+            
+            setTimeout(() => {
+                requestAnimationFrame(() => {
+                    container.classList.add('spinning-fast');
+                });
+            }, 600);
+
+            setTimeout(() => {
+                
+                container.innerHTML = toLabel;
+                
+                container.classList.remove('spinning-fast');
+                container.classList.add('spinning-slow');
+                
+                ripples.forEach(r => r.className = 'ripple-ring out');
+                
+                changeLanguage(lang); 
+
+            }, 1100); 
+
+            setTimeout(() => {
+                container.classList.remove('spinning-slow');
+                container.style.transform = 'rotate(0deg)'; 
+                
+                const chars = toLabel.split('');
+                container.innerHTML = '';
+                chars.forEach((char, index) => {
+                    const span = document.createElement('span');
+                    span.innerText = char === ' ' ? '\u00A0' : char; 
+                    span.className = 'char-bounce';
+                    span.style.animationDelay = `${index * 0.05}s`;
+                    container.appendChild(span);
+                });
+
+            }, 1600);
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                setTimeout(() => { 
+                    ripples.forEach(r => r.className = 'ripple-ring');
+                }, 300);
+            }, 2400);
+        }
+        
+        function selectLayout(layout) { changeLayout(layout); toggleDropdown('layout-dropdown'); } 
 
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.dropdown-container')) {
-                document.querySelectorAll('.dropdown-container').forEach(el => { el.classList.remove('open'); el.querySelector('.dropdown-trigger')?.classList.remove('active'); });
+                closeAllDropdowns();
             }
         });
 
         function updateDropdownUI(id, value) {
             const container = document.getElementById(id); if(!container) return;
-            // Logic for regular dropdowns
             const items = container.querySelectorAll('.dropdown-item');
+            let matchedText = null;
+            
             items.forEach(item => {
-                if(item.dataset && item.dataset.value) { // Only if data-value exists
+                if(item.dataset && item.dataset.value) { 
                     if (item.dataset.value === value) { 
                         item.classList.add('selected'); 
-                        const triggerSpan = container.querySelector('.dropdown-trigger span');
-                        if(triggerSpan && id === 'lang-dropdown') triggerSpan.innerText = item.innerText; 
+                        matchedText = item.innerText;
                     } else { item.classList.remove('selected'); }
                 }
             });
+            
+            if(matchedText && id === 'lang-dropdown') {
+                const triggerSpan = document.getElementById('lang-display');
+                if(triggerSpan) triggerSpan.innerText = matchedText;
+            }
         }
-        
-        // --- Problem Settings Logic ---
         
         function saveDefaultCode() {
             const project = projects[activeProjectIndex];
             if(!project) return;
-            
-            // If Safe Mode (Test Mode) is active
             if(project.testMode) {
                 project.defaultCode = editor.getValue();
-                project.useDefaultCode = true; // Auto-enable
+                project.useDefaultCode = true; 
                 saveProjectsToStorage();
-                
                 updateProblemSettingsUI();
-                
-                // Close dropdown
                 const dropdown = document.getElementById('problem-settings-dropdown');
                 if(dropdown) {
                     dropdown.classList.remove('open');
                     dropdown.querySelector('.dropdown-trigger')?.classList.remove('active');
                 }
-                
                 showModal("Saved", "Template saved and Test Mode enabled.");
             } else {
-                 // Auto-enable test mode if saving
                 project.defaultCode = editor.getValue();
-                project.useDefaultCode = true; // Auto-enable reset
-                project.testMode = true;       // Auto-enable test mode
+                project.useDefaultCode = true; 
+                project.testMode = true;       
                 saveProjectsToStorage();
-                
                 updateProblemSettingsUI();
-                
                 const dropdown = document.getElementById('problem-settings-dropdown');
                 if(dropdown) {
                     dropdown.classList.remove('open');
                     dropdown.querySelector('.dropdown-trigger')?.classList.remove('active');
                 }
-                
                 showModal("Saved", "Template saved and Test Mode enabled.");
             }
         }
         
         function resetToTemplate() {
             const project = projects[activeProjectIndex];
-            // Only allow if Safe Mode (Test Mode) AND template exists
             if(!project || !project.testMode || !project.defaultCode) return;
-            
             showConfirm("Reset to Template", "This will overwrite your current code with the saved template. Continue?", () => {
                 editor.setValue(project.defaultCode);
-                // Also ensure UI reflects it
                 const dropdown = document.getElementById('problem-settings-dropdown');
                 if(dropdown) {
                     dropdown.classList.remove('open');
@@ -1530,32 +1771,24 @@ int main() {
         
         function toggleUseDefaultCode() {
             const project = projects[activeProjectIndex];
-            // Only allow if Safe Mode (Test Mode) AND template exists
             if(!project || !project.testMode || !project.defaultCode) return;
-            
             project.useDefaultCode = !project.useDefaultCode;
             saveProjectsToStorage();
-            
             updateProblemSettingsUI();
         }
         
         function toggleTestMode() {
             const project = projects[activeProjectIndex];
             if(!project) return;
-            
-            // Toggle
             project.testMode = !project.testMode;
-            
             saveProjectsToStorage();
             updateProblemSettingsUI();
         }
         
         function updateProblemSettingsUI() {
             const project = projects[activeProjectIndex];
-            
             const btn = document.querySelector('#problem-settings-dropdown .problem-settings-btn');
             const iconSvg = btn ? btn.querySelector('svg') : null;
-            
             const testModeOpt = document.getElementById('enable-test-mode-opt');
             const useOpt = document.getElementById('use-default-code-opt');
             const resetOpt = document.getElementById('reset-template-opt');
@@ -1569,20 +1802,17 @@ int main() {
             }
             
             if(project) {
-                // 1. Update Gear Icon Color
                 if(iconSvg) {
                     if(project.testMode) {
                         iconSvg.classList.remove('text-red-500');
-                        iconSvg.classList.add('text-green-400'); // Light Green
+                        iconSvg.classList.add('text-green-400'); 
                         iconSvg.classList.remove('text-gray-400');
                     } else {
                         iconSvg.classList.remove('text-green-400');
-                        iconSvg.classList.add('text-red-500'); // Red
+                        iconSvg.classList.add('text-red-500'); 
                         iconSvg.classList.remove('text-gray-400');
                     }
                 }
-                
-                // 2. Update "Enable Test Mode" Checkmark
                 if(testModeOpt) {
                     if(project.testMode) {
                         testModeOpt.classList.add('selected');
@@ -1592,22 +1822,15 @@ int main() {
                         testModeOpt.querySelector('.check-icon').classList.add('opacity-0');
                     }
                 }
-                
-                // 3. Logic for Sub-features based on Test Mode
                 const isSafe = project.testMode;
                 const hasTemplate = !!project.defaultCode;
-
-                // Reset Template Button
                 if(isSafe && hasTemplate) {
-                     if(resetOpt) resetOpt.classList.remove('disabled');
+                      if(resetOpt) resetOpt.classList.remove('disabled');
                 } else {
-                     if(resetOpt) resetOpt.classList.add('disabled');
+                      if(resetOpt) resetOpt.classList.add('disabled');
                 }
-
-                // Reset on Reload Option
                 if(isSafe && hasTemplate) {
                     if(useOpt) useOpt.classList.remove('disabled');
-                    
                     if(project.useDefaultCode) {
                         useOpt.classList.add('selected');
                         useOpt.querySelector('.check-icon').classList.remove('opacity-0');
@@ -1625,9 +1848,7 @@ int main() {
             }
         }
         
-        // Centralized State Update for Settings Dropdown
         function updateSettingsDropdownState() {
-            // Layout Checks
             const rightOpt = document.getElementById('layout-opt-right');
             const bottomOpt = document.getElementById('layout-opt-bottom');
             if(rightOpt && bottomOpt) {
@@ -1635,7 +1856,6 @@ int main() {
                 rightOpt.querySelector('.check-icon').classList.add('opacity-0');
                 bottomOpt.classList.remove('selected');
                 bottomOpt.querySelector('.check-icon').classList.add('opacity-0');
-                
                 if(currentLayout === 'right') {
                     rightOpt.classList.add('selected');
                     rightOpt.querySelector('.check-icon').classList.remove('opacity-0');
@@ -1644,8 +1864,6 @@ int main() {
                     bottomOpt.querySelector('.check-icon').classList.remove('opacity-0');
                 }
             }
-            
-            // Theme Checks
             const modernOpt = document.getElementById('theme-opt-modern');
             const classicOpt = document.getElementById('theme-opt-classic');
             if(modernOpt && classicOpt) {
@@ -1653,7 +1871,6 @@ int main() {
                 modernOpt.querySelector('.check-icon').classList.add('opacity-0');
                 classicOpt.classList.remove('selected');
                 classicOpt.querySelector('.check-icon').classList.add('opacity-0');
-                
                 if(currentTheme === 'classic') {
                     classicOpt.classList.add('selected');
                     classicOpt.querySelector('.check-icon').classList.remove('opacity-0');
@@ -1680,17 +1897,11 @@ int main() {
         function changeLanguage(newLang) {
             if (newLang === currentLang) return;
             isChangingLang = true;
-            
-            // Save current state for old lang
             saveCurrentProject();
-            
             currentLang = newLang; 
             localStorage.setItem("galaxy_lang", newLang);
             updateLangUI(newLang);
-            
-            // Re-init projects for new lang
             initProjects();
-            
             isChangingLang = false;
         }
         
@@ -1740,8 +1951,6 @@ int main() {
         const runBtn = document.getElementById('run-btn');
         const stopBtn = document.getElementById('stop-btn');
         const terminalContainer = document.getElementById('terminal-container');
-        const outputWrapper = document.getElementById('output-container-wrapper');
-        const terminalResizer = document.getElementById('terminal-resizer');
 
         if (socket) {
             socket.on('connect', () => { console.log("Connected"); if(statusDot) statusDot.className = "status-dot status-connected"; if(statusText) { statusText.innerText = "Connected"; statusText.className = "text-green-500 text-xs"; }});
@@ -1749,7 +1958,7 @@ int main() {
             socket.on('program_output', (msg) => {
                 const loader = document.getElementById('compile-loader'); if (loader) loader.remove();
                 const span = document.createElement('span'); 
-                span.className = 'terminal-output'; // Removed animate-fade-in-up and inline-block
+                span.className = 'terminal-output';
                 span.innerHTML = formatCompilerOutput(msg.data);
                 outputPre.appendChild(span); 
                 requestAnimationFrame(() => {
@@ -1788,7 +1997,22 @@ int main() {
             }
         }
 
-        function runCode() { if(socket) { setRunningState(true); socket.emit('run_code_v2', { code: editor.getValue(), lang: currentLang }); } else { showModal("Error", "Cannot connect to server"); } }
+        function runCode() { 
+            const currentFlex = outputWrapper.style.flex;
+            const isOpen = currentFlex && !currentFlex.startsWith('0 0 0');
+            
+            if (!isOpen) {
+                toggleOutputPanel(true);
+            }
+            
+            if(socket) { 
+                setRunningState(true); 
+                socket.emit('run_code_v2', { code: editor.getValue(), lang: currentLang }); 
+            } else { 
+                showModal("Error", "Cannot connect to server"); 
+            } 
+        }
+        
         function stopCode() { if(socket) socket.emit('stop_code'); const loader = document.getElementById('compile-loader'); if (loader) loader.remove(); setRunningState(false); }
         function clearOutput() { outputPre.innerHTML = ""; }
         function focusInput() { if (isRunning) inputField.focus(); }
@@ -1830,7 +2054,6 @@ int main() {
             if (!isRunning || !socket) return; 
             const text = inputField.value; 
             
-            // Store Last Input Logic
             lastInput = text;
             localStorage.setItem('galaxy_last_input', text);
             
@@ -1853,9 +2076,12 @@ int main() {
         
         inputField.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.ctrlKey) { e.preventDefault(); sendInput(); } });
         
-        // --- Smart Resizing Logic ---
         let activeResizer = null;
         let isResizingProcess = false; 
+        
+        const MIN_PROBLEM_WIDTH_PX = 300; 
+        const MIN_EDITOR_WIDTH_PX = 450;  
+        const MIN_EDITOR_HEIGHT_PX = 150; 
         
         problemResizer.addEventListener('mousedown', (e) => startResize(e, 'problem'));
         terminalResizer.addEventListener('mousedown', (e) => startResize(e, 'terminal'));
@@ -1903,21 +2129,49 @@ int main() {
             
             if (activeResizer === 'problem') {
                 let newWidthPx = clientX - containerRect.left;
+                
+                if (newWidthPx < MIN_PROBLEM_WIDTH_PX) {
+                    newWidthPx = MIN_PROBLEM_WIDTH_PX;
+                }
+                
+                if (containerRect.width - newWidthPx < MIN_EDITOR_WIDTH_PX) {
+                    newWidthPx = containerRect.width - MIN_EDITOR_WIDTH_PX;
+                }
+
                 let newWidthPercent = (newWidthPx / containerRect.width) * 100;
-                newWidthPercent = Math.max(10, Math.min(50, newWidthPercent)); 
                 problemContainer.style.width = `${newWidthPercent}%`;
                 
             } else if (activeResizer === 'terminal') {
                 if (currentLayout === 'bottom') {
-                    let newHeightPercent = ((clientY - centerAreaRect.top) / centerAreaRect.height) * 100;
-                    newHeightPercent = Math.max(10, Math.min(90, newHeightPercent));
-                    editorContainer.style.flex = `0 0 ${newHeightPercent}%`; 
+                    let newEditorHeightPx = clientY - centerAreaRect.top;
+                    
+                    if (newEditorHeightPx < MIN_EDITOR_HEIGHT_PX) {
+                        newEditorHeightPx = MIN_EDITOR_HEIGHT_PX;
+                    }
+                    
+                    if (centerAreaRect.height - newEditorHeightPx < 50) {
+                        newEditorHeightPx = centerAreaRect.height - 50;
+                    }
+
+                    let newHeightPercent = (newEditorHeightPx / centerAreaRect.height) * 100;
+                    editorContainer.style.flex = '1 1 0%';
                     outputWrapper.style.flex = `0 0 ${100 - newHeightPercent}%`;
+                    
                 } else {
                     let newEditorWidthPx = clientX - centerAreaRect.left;
+                    
+                    if (newEditorWidthPx < MIN_EDITOR_WIDTH_PX) {
+                         newEditorWidthPx = MIN_EDITOR_WIDTH_PX;
+                    }
+                    
+                    if (centerAreaRect.width - newEditorWidthPx < 100) {
+                        newEditorWidthPx = centerAreaRect.width - 100;
+                    }
+                    
                     let newWidthPercent = (newEditorWidthPx / centerAreaRect.width) * 100;
-                    newWidthPercent = Math.max(10, Math.min(90, newWidthPercent));
-                    editorContainer.style.flex = `0 0 ${newWidthPercent}%`; 
+                    if (newWidthPercent > 90) newWidthPercent = 90;
+                    
+                    editorContainer.style.flex = '1 1 0%';
                     outputWrapper.style.flex = `0 0 ${100 - newWidthPercent}%`;
                 }
             }
@@ -1946,26 +2200,23 @@ int main() {
                 centerArea.classList.remove('flex-row'); centerArea.classList.add('flex-col');
                 terminalResizer.className = 'resizer-split resizer-row'; 
                 terminalResizer.title = "Drag to resize height";
-                editorContainer.style.flex = '0 0 70%'; outputWrapper.style.flex = '0 0 30%';
+                editorContainer.style.flex = '1 1 0%'; outputWrapper.style.flex = '0 0 30%';
             } else {
                 centerArea.classList.remove('flex-col'); centerArea.classList.add('flex-row');
                 terminalResizer.className = 'resizer-split resizer-col';
                 terminalResizer.title = "Drag to resize width";
-                editorContainer.style.flex = '0 0 70%'; outputWrapper.style.flex = '0 0 30%';
+                editorContainer.style.flex = '1 1 0%'; outputWrapper.style.flex = '0 0 30%';
             }
-            // Close dropdown manually since we are using generic close
             const dropdown = document.getElementById('settings-dropdown');
             if(dropdown) {
                 dropdown.classList.remove('open');
                 dropdown.querySelector('.dropdown-trigger')?.classList.remove('active');
             }
-            // Update UI state
-            updateSettingsDropdownState(); // Fixed name to match the check-icon update function
+            updateSettingsDropdownState();
             localStorage.setItem("galaxy_layout", mode);
             editor.refresh();
         }
 
-        // --- Viewport Logic for Mobile Keyboard Fix ---
         if (window.visualViewport) {
             const handleViewportResize = () => {
                 document.body.style.height = window.visualViewport.height + 'px';
@@ -1976,7 +2227,6 @@ int main() {
             handleViewportResize();
         }
 
-        // Initial Load
         loadSettings();
 
     </script>

@@ -364,6 +364,45 @@
             border-color: #007acc;
         }
 
+        #auth-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        #auth-modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .auth-box {
+            background: #252526;
+            border: 1px solid #454545;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+            width: 90%;
+            max-width: 320px;
+            padding: 24px;
+            transform: scale(0.95);
+            transition: transform 0.2s var(--ease-spring);
+        }
+        #auth-modal-overlay.open .auth-box { transform: scale(1); }
+        .auth-title { font-size: 20px; font-weight: bold; color: white; margin-bottom: 20px; text-align: center; }
+        .auth-input-group { margin-bottom: 12px; }
+        .auth-label { display: block; color: #9ca3af; font-size: 12px; margin-bottom: 4px; }
+        .auth-input { width: 100%; background: #333; border: 1px solid #454545; color: white; padding: 8px 12px; border-radius: 4px; outline: none; transition: border-color 0.2s; font-size: 14px; }
+        .auth-input:focus { border-color: #007acc; }
+        .auth-btn { width: 100%; padding: 8px; background: #007acc; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 8px; transition: background 0.2s; }
+        .auth-btn:hover { background: #0062a3; }
+        .auth-switch-btn { margin-top: 16px; width: 100%; background: transparent; color: #60a5fa; border: none; font-size: 12px; cursor: pointer; text-decoration: underline; }
+        .auth-error { color: #ef4444; font-size: 12px; margin-top: 4px; min-height: 16px; text-align: center; }
+
         #problem-toggle-btn {
             transition: all 0.2s var(--ease-spring);
         }
@@ -582,7 +621,7 @@
                 <div id="status-indicator" class="status-dot status-disconnected"></div>
                 <span id="status-text" class="text-gray-500 transition-colors duration-300">Disconnected</span>
             </div>
-            <span class="text-xs text-gray-600 ml-1 font-mono select-none">v5.7.1</span>
+            <span class="text-xs text-gray-600 ml-1 font-mono select-none">v5.7.2</span>
         </div>
         
         <div class="flex items-center gap-3">
@@ -648,6 +687,15 @@
 
             <button onclick="stopCode()" class="action-btn flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-sm transition-colors hidden" id="stop-btn" title="Stop Code"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg><span>Stop</span></button>
             <button onclick="runCode()" class="action-btn flex items-center gap-2 bg-[#2ea043] hover:bg-[#238636] text-white px-4 py-1.5 rounded text-sm font-medium transition-colors shadow-lg active:scale-95" id="run-btn" title="Run Code"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg><span>Run</span></button>
+            
+            <button onclick="showLoginModal()" class="action-btn flex items-center gap-2 bg-[#007acc] hover:bg-[#0062a3] text-white px-4 py-1.5 rounded text-sm font-medium transition-colors shadow-lg active:scale-95" id="auth-btn" title="Login / Register">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                <span>Login / Sign up</span>
+            </button>
+            <button onclick="handleLogout()" class="action-btn flex items-center gap-2 bg-[#4b5563] hover:bg-[#374151] text-white px-4 py-1.5 rounded text-sm font-medium transition-colors shadow-lg active:scale-95 hidden" id="logout-btn" title="Logout">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                <span>Logout</span>
+            </button>
         </div>
     </header>
 
@@ -792,6 +840,48 @@ int main() {
         </div>
     </div>
 
+    <div id="auth-modal-overlay">
+        <div class="auth-box">
+            <div class="flex justify-end mb-2">
+                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            
+            <div id="login-view">
+                <div class="auth-title">Login</div>
+                <div class="auth-input-group">
+                    <label class="auth-label">Account</label>
+                    <input type="text" id="login-username" class="auth-input" placeholder="Enter account">
+                </div>
+                <div class="auth-input-group">
+                    <label class="auth-label">Password</label>
+                    <input type="password" id="login-password" class="auth-input" placeholder="Enter password">
+                </div>
+                <div id="login-error" class="auth-error"></div>
+                <button onclick="handleLogin()" class="auth-btn">Login</button>
+                <button onclick="switchToRegister()" class="auth-switch-btn">Create an account</button>
+            </div>
+
+            <div id="register-view" class="hidden">
+                <div class="auth-title">Register</div>
+                <div class="auth-input-group">
+                    <label class="auth-label">Account Name</label>
+                    <input type="text" id="reg-username" class="auth-input" placeholder="Choose a username">
+                </div>
+                <div class="auth-input-group">
+                    <label class="auth-label">Password</label>
+                    <input type="password" id="reg-password" class="auth-input" placeholder="Create password">
+                </div>
+                <div class="auth-input-group">
+                    <label class="auth-label">Confirm Password</label>
+                    <input type="password" id="reg-confirm-password" class="auth-input" placeholder="Confirm password">
+                </div>
+                <div id="reg-error" class="auth-error"></div>
+                <button onclick="handleRegister()" class="auth-btn">Register</button>
+                <button onclick="switchToLogin()" class="auth-switch-btn">Already have an account? Login</button>
+            </div>
+        </div>
+    </div>
+
     <div id="transition-overlay" class="system-switch-overlay">
         <div class="ripple-container">
             <div class="ripple-ring" style="animation-delay: 0s;"></div>
@@ -834,6 +924,8 @@ int main() {
         var currentTheme = 'classic'; 
         var lastInput = ""; 
         var enableAnimations = true; 
+        
+        var currentUser = null; 
 
         const modalOverlay = document.getElementById('modal-overlay');
         const modalTitle = document.getElementById('modal-title');
@@ -841,6 +933,10 @@ int main() {
         const modalInput = document.getElementById('modal-input');
         const modalFooter = document.getElementById('modal-footer');
         
+        const authModalOverlay = document.getElementById('auth-modal-overlay');
+        const loginView = document.getElementById('login-view');
+        const registerView = document.getElementById('register-view');
+
         function showModal(title, message) {
             modalTitle.innerText = title;
             modalMessage.innerHTML = message.replace(/\n/g, '<br>');
@@ -915,6 +1011,118 @@ int main() {
         
         function closeModal() {
             modalOverlay.classList.remove('open');
+        }
+
+        function showLoginModal() {
+            switchToLogin();
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('login-error').innerText = '';
+            authModalOverlay.classList.add('open');
+        }
+        
+        function closeAuthModal() {
+            authModalOverlay.classList.remove('open');
+        }
+        
+        function switchToRegister() {
+            loginView.classList.add('hidden');
+            registerView.classList.remove('hidden');
+            document.getElementById('reg-username').value = '';
+            document.getElementById('reg-password').value = '';
+            document.getElementById('reg-confirm-password').value = '';
+            document.getElementById('reg-error').innerText = '';
+        }
+        
+        function switchToLogin() {
+            registerView.classList.add('hidden');
+            loginView.classList.remove('hidden');
+            document.getElementById('login-error').innerText = '';
+        }
+        
+        function getUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('galaxy_users') || '{}');
+            } catch(e) { return {}; }
+        }
+        
+        function saveUsers(users) {
+            localStorage.setItem('galaxy_users', JSON.stringify(users));
+        }
+        
+        function handleLogin() {
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value;
+            const errorEl = document.getElementById('login-error');
+            
+            if(!user || !pass) {
+                errorEl.innerText = "Please fill in all fields.";
+                return;
+            }
+            
+            const users = getUsers();
+            if(users[user] && users[user] === pass) {
+                currentUser = user;
+                localStorage.setItem('galaxy_current_user', user);
+                closeAuthModal();
+                updateAuthUI();
+                initProjects(); 
+                showModal("Success", `Welcome back, ${user}!`);
+            } else {
+                errorEl.innerText = "Invalid account or password.";
+            }
+        }
+        
+        function handleRegister() {
+            const user = document.getElementById('reg-username').value.trim();
+            const pass = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm-password').value;
+            const errorEl = document.getElementById('reg-error');
+            
+            if(!user || !pass || !confirm) {
+                errorEl.innerText = "Please fill in all fields.";
+                return;
+            }
+            
+            if(pass !== confirm) {
+                errorEl.innerText = "Passwords do not match.";
+                return;
+            }
+            
+            const users = getUsers();
+            if(users[user]) {
+                errorEl.innerText = "Account name already exists.";
+                return;
+            }
+            
+            users[user] = pass;
+            saveUsers(users);
+            
+            showModal("Success", "Registration successful! Please login.");
+            switchToLogin();
+        }
+        
+        function handleLogout() {
+            showConfirm("Logout", "Are you sure you want to logout?", () => {
+                currentUser = null;
+                localStorage.removeItem('galaxy_current_user');
+                updateAuthUI();
+                initProjects(); 
+            });
+        }
+        
+        function updateAuthUI() {
+            const authBtn = document.getElementById('auth-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            
+            if(currentUser) {
+                authBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+                logoutBtn.querySelector('span').innerText = `Logout (${currentUser})`;
+            } else {
+                authBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+            }
         }
 
         function openFileConfirm() {
@@ -1189,9 +1397,29 @@ int main() {
             else return 'print("Hello Galaxy Python!")\n\n# Try typing something\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")';
         }
 
+        function getStorageKey() {
+            if (currentUser) {
+                return `galaxy_projects_${currentUser}_${currentLang}`;
+            }
+            return `galaxy_projects_guest_${currentLang}`;
+        }
+        
+        function getLastProjectKey() {
+             if (currentUser) {
+                return `galaxy_active_project_${currentUser}_${currentLang}`;
+            }
+            return `galaxy_active_project_guest_${currentLang}`;
+        }
+
         function initProjects() {
             try {
-                const savedProjects = localStorage.getItem(`galaxy_projects_${currentLang}`);
+                const storageKey = getStorageKey();
+                let savedProjects = localStorage.getItem(storageKey);
+                
+                if (!savedProjects && !currentUser) {
+                    const legacyKey = `galaxy_projects_${currentLang}`;
+                    savedProjects = localStorage.getItem(legacyKey);
+                }
                 
                 if (savedProjects) {
                     projects = JSON.parse(savedProjects);
@@ -1214,7 +1442,12 @@ int main() {
                     projects = [{ id: 'main', title: 'main', code: getHelloWorld(currentLang), desc: '' }];
                 }
                 
-                const savedIndex = parseInt(localStorage.getItem(`galaxy_active_project_${currentLang}`) || "0");
+                if(!currentUser && projects.length > 2) {
+                    projects = projects.slice(0, 2);
+                }
+                
+                const activeKey = getLastProjectKey();
+                const savedIndex = parseInt(localStorage.getItem(activeKey) || "0");
                 activeProjectIndex = (savedIndex >= 0 && savedIndex < projects.length) ? savedIndex : 0;
 
             } catch (e) {
@@ -1228,7 +1461,7 @@ int main() {
         }
 
         function saveProjectsToStorage() {
-            localStorage.setItem(`galaxy_projects_${currentLang}`, JSON.stringify(projects));
+            localStorage.setItem(getStorageKey(), JSON.stringify(projects));
         }
 
         function saveCurrentProject() {
@@ -1246,8 +1479,14 @@ int main() {
         }
 
         function requestNewProjectName() {
-            if (projects.length >= 21) { 
-                showModal("Notice", "Project limit reached (20).");
+            const maxProjects = currentUser ? 20 : 2;
+            
+            if (projects.length >= maxProjects) { 
+                if(!currentUser) {
+                     showModal("Limit Reached", "Guest users can only create 1 extra file.\nPlease login to create more projects.");
+                } else {
+                     showModal("Notice", "Project limit reached (20).");
+                }
                 return;
             }
             let counter = 1;
@@ -1320,7 +1559,7 @@ int main() {
             saveCurrentProject();
             
             activeProjectIndex = index;
-            localStorage.setItem(`galaxy_active_project_${currentLang}`, activeProjectIndex);
+            localStorage.setItem(getLastProjectKey(), activeProjectIndex);
             
             triggerProjectSwitchAnimation();
             
@@ -1530,7 +1769,11 @@ int main() {
                 const savedLang = localStorage.getItem("galaxy_lang");
                 if(savedLang) { currentLang = savedLang; }
                 
+                const savedUser = localStorage.getItem('galaxy_current_user');
+                if(savedUser) { currentUser = savedUser; }
+                
                 updateLangUI(currentLang);
+                updateAuthUI();
                 
                 initProjects();
                 const savedLayout = localStorage.getItem("galaxy_layout") || 'right';

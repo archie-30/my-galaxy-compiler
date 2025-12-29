@@ -13,6 +13,7 @@ import os
 import pty
 import select
 import signal
+import uuid
 import sys
 import shutil
 import codecs
@@ -90,9 +91,17 @@ def login():
     username = data.get('username')
     password = data.get('password')
     user = users_collection.find_one({'username': username})
+    
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
+        # --- 新增單一登入邏輯 ---
+        session_token = str(uuid.uuid4()) # 產生新的亂碼
+        users_collection.update_one({'username': username}, {'$set': {'session_token': session_token}})
+        
         session.permanent = True
         session['user'] = username
+        session['token'] = session_token # 存入 cookie
+        # ---------------------
+        
         return jsonify({'success': True, 'username': username})
     else:
         return jsonify({'success': False, 'message': '帳號或密碼錯誤'}), 401
@@ -100,9 +109,19 @@ def login():
 @app.route('/get_user_data', methods=['GET'])
 def get_user_data():
     if 'user' not in session: return jsonify({'success': False, 'is_logged_in': False})
+    
     username = session['user']
     if users_collection is None: return jsonify({'success': False, 'message': 'DB Error'}), 500
+    
     user = users_collection.find_one({'username': username}, {'_id': 0, 'password': 0})
+    
+    # --- 新增檢查邏輯：如果資料庫的 Token 和我手上的不一樣，代表被踢了 ---
+    current_token = session.get('token')
+    if user and user.get('session_token') != current_token:
+        session.clear() # 清除舊的 session
+        return jsonify({'success': False, 'is_logged_in': False, 'message': 'Logged in on another device'})
+    # -------------------------------------------------------------
+
     if user: return jsonify({'success': True, 'is_logged_in': True, 'username': username, 'data': user})
     return jsonify({'success': False, 'is_logged_in': False})
 

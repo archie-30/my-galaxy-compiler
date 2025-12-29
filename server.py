@@ -1,6 +1,7 @@
 try:
     import eventlet
-    eventlet.monkey_patch()
+    # 修正點 A：加入 subprocess=False
+    eventlet.monkey_patch(subprocess=False)
 except ImportError:
     pass
 
@@ -71,7 +72,7 @@ def home():
 
 @app.route('/register', methods=['POST'])
 def register():
-    if not users_collection: return jsonify({'success': False, 'message': '資料庫未連線'}), 500
+    if users_collection is None: return jsonify({'success': False, 'message': '資料庫未連線'}), 500
     data = request.json
     username = data.get('username')
     password = data.get('password')
@@ -84,7 +85,7 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    if not users_collection: return jsonify({'success': False, 'message': '資料庫未連線'}), 500
+    if users_collection is None: return jsonify({'success': False, 'message': '資料庫未連線'}), 500
     data = request.json
     username = data.get('username')
     password = data.get('password')
@@ -100,7 +101,7 @@ def login():
 def get_user_data():
     if 'user' not in session: return jsonify({'success': False, 'is_logged_in': False})
     username = session['user']
-    if not users_collection: return jsonify({'success': False, 'message': 'DB Error'}), 500
+    if users_collection is None: return jsonify({'success': False, 'message': 'DB Error'}), 500
     user = users_collection.find_one({'username': username}, {'_id': 0, 'password': 0})
     if user: return jsonify({'success': True, 'is_logged_in': True, 'username': username, 'data': user})
     return jsonify({'success': False, 'is_logged_in': False})
@@ -108,7 +109,7 @@ def get_user_data():
 @app.route('/save_projects', methods=['POST'])
 def save_projects():
     if 'user' not in session: return jsonify({'success': False, 'message': '未登入'}), 401
-    if not users_collection: return jsonify({'success': False, 'message': 'DB Error'}), 500
+    if users_collection is None: return jsonify({'success': False, 'message': 'DB Error'}), 500
     data = request.json
     lang = data.get('lang')
     projects = data.get('projects')

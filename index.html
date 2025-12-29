@@ -583,6 +583,24 @@
             display: inline-block;
             animation: bounce-char 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        /* 新增：按鈕載入動畫 */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .auth-btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+            pointer-events: none; /* 禁止重複點擊 */
+        }
     </style>
 </head>
 <body class="flex flex-col select-none overflow-hidden fixed inset-0 w-full h-full" data-theme="classic">
@@ -1055,12 +1073,17 @@ int main() {
             const user = document.getElementById('login-username').value.trim();
             const pass = document.getElementById('login-password').value;
             const errorEl = document.getElementById('login-error');
+            const btn = document.querySelector('#login-view .auth-btn'); // 抓取按鈕
             
             if(!user || !pass) {
                 errorEl.innerText = "Please fill in all fields.";
                 return;
             }
-            
+            // --- 修改開始：顯示轉圈 ---
+            const originalText = btn.innerText;
+            btn.innerHTML = '<span class="spinner"></span>Logging in...';
+            btn.classList.add('loading');
+            // -----------------------
             try {
                 const response = await fetch('/login', {
                     method: 'POST',
@@ -1085,6 +1108,11 @@ int main() {
             } catch (e) {
                 console.error(e);
                 errorEl.innerText = "Server connection error.";
+            } finally {
+                // --- 修改結束：恢復按鈕 ---
+                btn.innerHTML = originalText;
+                btn.classList.remove('loading');
+                // -----------------------
             }
         }
 
@@ -1117,6 +1145,8 @@ int main() {
             const pass = document.getElementById('reg-password').value;
             const confirm = document.getElementById('reg-confirm-password').value;
             const errorEl = document.getElementById('reg-error');
+            // 1. 新增：抓取註冊按鈕
+            const btn = document.querySelector('#register-view .auth-btn'); 
             
             if(!user || !pass || !confirm) {
                 errorEl.innerText = "Please fill in all fields.";
@@ -1127,6 +1157,11 @@ int main() {
                 errorEl.innerText = "Passwords do not match.";
                 return;
             }
+
+            // 2. 新增：顯示轉圈動畫並鎖定按鈕
+            const originalText = btn.innerText;
+            btn.innerHTML = '<span class="spinner"></span>Registering...';
+            btn.classList.add('loading');
 
             try {
                 const response = await fetch('/register', {
@@ -1145,6 +1180,10 @@ int main() {
             } catch (e) {
                 console.error(e);
                 errorEl.innerText = "Server connection error.";
+            } finally {
+                // 3. 新增：無論成功或失敗，都恢復按鈕原狀
+                btn.innerHTML = originalText;
+                btn.classList.remove('loading');
             }
         }
         

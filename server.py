@@ -1,3 +1,9 @@
+try:
+    import eventlet
+    eventlet.monkey_patch()
+except ImportError:
+    pass
+
 from flask import Flask, send_file, request, jsonify, session
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
@@ -14,12 +20,6 @@ import errno
 import pymongo
 import bcrypt
 from datetime import datetime, timedelta
-
-try:
-    import eventlet
-    eventlet.monkey_patch()
-except ImportError:
-    pass
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'galaxy_secret_key_888')

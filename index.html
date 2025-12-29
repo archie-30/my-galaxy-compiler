@@ -1050,7 +1050,8 @@ int main() {
             localStorage.setItem('galaxy_users', JSON.stringify(users));
         }
         
-        function handleLogin() {
+        // 🔹 修改後的登入功能：驗證成功後載入雲端存檔
+        async function handleLogin() {
             const user = document.getElementById('login-username').value.trim();
             const pass = document.getElementById('login-password').value;
             const errorEl = document.getElementById('login-error');
@@ -1060,20 +1061,58 @@ int main() {
                 return;
             }
             
-            const users = getUsers();
-            if(users[user] && users[user] === pass) {
-                currentUser = user;
-                localStorage.setItem('galaxy_current_user', user);
-                closeAuthModal();
-                updateAuthUI();
-                initProjects(); 
-                showModal("Success", `Welcome back, ${user}!`);
-            } else {
-                errorEl.innerText = "Invalid account or password.";
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentUser = data.username;
+                    localStorage.setItem('galaxy_current_user', currentUser);
+                    closeAuthModal();
+                    updateAuthUI();
+                    
+                    // 登入成功後，立刻從伺服器載入該用戶的雲端專案
+                    await loadCloudProjects(); 
+                    
+                    showModal("Success", `Welcome back, ${currentUser}!`);
+                } else {
+                    errorEl.innerText = data.message || "Invalid account or password.";
+                }
+            } catch (e) {
+                console.error(e);
+                errorEl.innerText = "Server connection error.";
+            }
+        }
+
+        // 🔹 新增一個 helper 函式：用來從後端抓取資料
+        async function loadCloudProjects() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch('/get_user_data');
+                const data = await res.json();
+                if (data.success && data.data) {
+                    // 根據當前語言載入對應的雲端存檔
+                    // 注意：server 回傳欄位是 projects_cpp 和 projects_python
+                    let cloudProjs = currentLang === 'cpp' ? data.data.projects_cpp : data.data.projects_python;
+                    
+                    if (cloudProjs && cloudProjs.length > 0) {
+                        projects = cloudProjs;
+                        activeProjectIndex = 0;
+                        renderProjectList();
+                        loadProject(0);
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load cloud data", e);
             }
         }
         
-        function handleRegister() {
+        // 🔹 修改後的註冊功能：發送請求給 Server
+        async function handleRegister() {
             const user = document.getElementById('reg-username').value.trim();
             const pass = document.getElementById('reg-password').value;
             const confirm = document.getElementById('reg-confirm-password').value;
@@ -1088,25 +1127,39 @@ int main() {
                 errorEl.innerText = "Passwords do not match.";
                 return;
             }
-            
-            const users = getUsers();
-            if(users[user]) {
-                errorEl.innerText = "Account name already exists.";
-                return;
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showModal("Success", "Registration successful! Please login.");
+                    switchToLogin();
+                } else {
+                    errorEl.innerText = data.message || "Registration failed.";
+                }
+            } catch (e) {
+                console.error(e);
+                errorEl.innerText = "Server connection error.";
             }
-            
-            users[user] = pass;
-            saveUsers(users);
-            
-            showModal("Success", "Registration successful! Please login.");
-            switchToLogin();
         }
         
+        // 🔹 修改後的登出功能：通知 Server 清除 session
         function handleLogout() {
-            showConfirm("Logout", "Are you sure you want to logout?", () => {
+            showConfirm("Logout", "Are you sure you want to logout?", async () => {
+                try {
+                    await fetch('/logout', { method: 'POST' });
+                } catch(e) { console.error(e); }
+
                 currentUser = null;
                 localStorage.removeItem('galaxy_current_user');
                 updateAuthUI();
+                
+                // 登出後，重新初始化為預設專案 (或是載入本地暫存)
                 initProjects(); 
             });
         }
@@ -1460,8 +1513,22 @@ int main() {
             loadProject(activeProjectIndex);
         }
 
+        // 🔹 修改後的存檔功能：雙重備份 (本地 + 雲端)
         function saveProjectsToStorage() {
+            // 1. 先存本地 (保持原本功能，以免斷網時資料遺失)
             localStorage.setItem(getStorageKey(), JSON.stringify(projects));
+            
+            // 2. 如果已登入，則背景發送資料給 Server
+            if (currentUser) {
+                fetch('/save_projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lang: currentLang,
+                        projects: projects
+                    })
+                }).catch(err => console.error("Cloud save failed:", err));
+            }
         }
 
         function saveCurrentProject() {
@@ -1751,9 +1818,11 @@ int main() {
             localStorage.setItem("galaxy_font_size", fontSize);
         }
 
-        function loadSettings() {
+        // 🔹 修改後的設定載入：啟動時檢查 Session
+        async function loadSettings() {
             isChangingLang = true;
             try {
+                // ... (保留原本的外觀設定讀取) ...
                 const savedFontSize = localStorage.getItem("galaxy_font_size");
                 if (savedFontSize) { fontSize = parseInt(savedFontSize); applyFontSize(); }
                 const savedProblemFontSize = localStorage.getItem("galaxy_problem_font_size");
@@ -1766,16 +1835,39 @@ int main() {
                     currentTheme = 'classic'; 
                     setTheme('classic', false);
                 }
+                
+                // ... (保留原本的語言設定讀取) ...
                 const savedLang = localStorage.getItem("galaxy_lang");
                 if(savedLang) { currentLang = savedLang; }
                 
-                const savedUser = localStorage.getItem('galaxy_current_user');
-                if(savedUser) { currentUser = savedUser; }
-                
                 updateLangUI(currentLang);
+
+                // --- 關鍵修改開始 ---
+                // 先嘗試從 Server 確認登入狀態
+                try {
+                    const res = await fetch('/get_user_data');
+                    const data = await res.json();
+                    if (data.is_logged_in) {
+                        currentUser = data.username;
+                        localStorage.setItem('galaxy_current_user', currentUser);
+                        
+                        // 如果已登入，直接載入雲端專案，取代本地專案
+                        // 注意：這裡要處理一下非同步，我們直接呼叫 loadCloudProjects
+                        // 但為了不卡住介面，我們先 initProjects (本地)，然後 loadCloudProjects (雲端覆蓋)
+                        initProjects(); 
+                        await loadCloudProjects(); 
+                    } else {
+                        currentUser = null;
+                        initProjects(); // 沒登入就讀本地
+                    }
+                } catch(e) {
+                    console.log("Offline or server error, loading local data.");
+                    initProjects();
+                }
+                // --- 關鍵修改結束 ---
+
                 updateAuthUI();
                 
-                initProjects();
                 const savedLayout = localStorage.getItem("galaxy_layout") || 'right';
                 changeLayout(savedLayout);
                 lastInput = localStorage.getItem('galaxy_last_input') || "";

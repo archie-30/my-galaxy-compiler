@@ -201,7 +201,11 @@ def read_output(fd, proc):
     except: pass
     finally:
         socketio.emit('program_status', {'status': 'finished'})
-        if fd: try: os.close(fd); except: pass
+        if fd:
+            try:
+                os.close(fd)
+            except:
+                pass
 
 @socketio.on('send_input')
 def handle_input(data):

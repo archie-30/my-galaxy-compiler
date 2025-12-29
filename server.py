@@ -75,22 +75,19 @@ def kill_existing_process():
 
 @app.route('/')
 def home():
-    # 這裡對應 GitHub 上的檔案名稱，請確保它是 index.html
+    # ⚠️ 重要：請確保你在 GitHub 上的 HTML 檔案名稱為 index.html
     return send_file('index.html')
 
 # === 使用者系統 API (完全配合 index.html 的 fetch 請求) ===
 
 @app.route('/register', methods=['POST'])
 def register():
-    if not users_collection: 
-        return jsonify({'success': False, 'message': '資料庫未連線'}), 500
-    
+    if not users_collection: return jsonify({'success': False, 'message': '資料庫未連線'}), 500
     data = request.json
     username = data.get('username')
     password = data.get('password')
     
-    if not username or not password:
-        return jsonify({'success': False, 'message': '請輸入帳號和密碼'}), 400
+    if not username or not password: return jsonify({'success': False, 'message': '請輸入帳號和密碼'}), 400
     
     # 檢查帳號是否重複
     if users_collection.find_one({'username': username}):
@@ -112,8 +109,7 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    if not users_collection: 
-        return jsonify({'success': False, 'message': '資料庫未連線'}), 500
+    if not users_collection: return jsonify({'success': False, 'message': '資料庫未連線'}), 500
     
     data = request.json
     username = data.get('username')

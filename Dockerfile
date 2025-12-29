@@ -2,7 +2,7 @@
 FROM python:3.9-slim
 
 # 1. 更新系統並安裝編譯 C++ 所需的工具 (g++, clang)
-# coreutils 包含了 stdbuf 等實用工具
+# coreutils 包含了 stdbuf 等實用工具，這對你的編譯器很重要
 RUN apt-get update && apt-get install -y \
     g++ \
     clang \

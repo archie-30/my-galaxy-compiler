@@ -8,14 +8,13 @@ import select
 import signal
 import sys
 import shutil
-import codecs 
+import codecs
 import time
 import errno
 import pymongo
 import bcrypt
 from datetime import datetime, timedelta
 
-# 如果有安裝 eventlet，這行能提升效能
 try:
     import eventlet
     eventlet.monkey_patch()
@@ -23,15 +22,11 @@ except ImportError:
     pass
 
 app = Flask(__name__)
-# 設定 Session 金鑰 (從環境變數讀取，若無則使用預設值)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'galaxy_secret_key_888')
-# 設定登入過期時間為 7 天 (配合 HTML 的體驗)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode=None)
 
-# === 資料庫連線設定 ===
-# 從環境變數讀取 MongoDB 連線字串
 MONGO_URI = os.environ.get("MONGO_URI", "")
 db = None
 users_collection = None
@@ -39,17 +34,15 @@ users_collection = None
 if MONGO_URI:
     try:
         client = pymongo.MongoClient(MONGO_URI)
-        # 測試連線
         client.admin.command('ping')
         db = client.get_database("galaxy_compiler_db")
         users_collection = db.users
         print("[系統] MongoDB 連線成功！")
     except Exception as e:
-        print(f"[系統] ❌ MongoDB 連線失敗: {e}")
+        print(f"[系統]  MongoDB 連線失敗: {e}")
 else:
-    print("[系統] ⚠️ 警告: 未設定 MONGO_URI，資料庫功能將無法使用")
+    print("[系統]  警告: 未設定 MONGO_URI")
 
-# === 全域變數 ===
 current_process = None
 master_fd_global = None
 
@@ -58,7 +51,6 @@ def log(msg):
     sys.stdout.flush()
 
 def kill_existing_process():
-    """強制結束目前正在執行的進程"""
     global current_process, master_fd_global
     if current_process:
         try:
@@ -67,7 +59,7 @@ def kill_existing_process():
         except:
             pass
         current_process = None
-    
+   
     if master_fd_global:
         try: os.close(master_fd_global)
         except: pass
@@ -75,10 +67,7 @@ def kill_existing_process():
 
 @app.route('/')
 def home():
-    # ⚠️ 重要：請確保你在 GitHub 上的 HTML 檔案名稱為 index.html
     return send_file('index.html')
-
-# === 使用者系統 API (完全配合 index.html 的 fetch 請求) ===
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -86,37 +75,20 @@ def register():
     data = request.json
     username = data.get('username')
     password = data.get('password')
-    
     if not username or not password: return jsonify({'success': False, 'message': '請輸入帳號和密碼'}), 400
-    
-    # 檢查帳號是否重複
-    if users_collection.find_one({'username': username}):
-        return jsonify({'success': False, 'message': '此帳號已被註冊'}), 400
-    
-    # 密碼加密
+    if users_collection.find_one({'username': username}): return jsonify({'success': False, 'message': '此帳號已被註冊'}), 400
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    
-    new_user = {
-        'username': username, 
-        'password': hashed_password, 
-        'created_at': datetime.utcnow(),
-        'projects_cpp': [], 
-        'projects_python': []
-    }
-    
+    new_user = {'username': username, 'password': hashed_password, 'created_at': datetime.utcnow(), 'projects_cpp': [], 'projects_python': []}
     users_collection.insert_one(new_user)
     return jsonify({'success': True, 'message': '註冊成功！'})
 
 @app.route('/login', methods=['POST'])
 def login():
     if not users_collection: return jsonify({'success': False, 'message': '資料庫未連線'}), 500
-    
     data = request.json
     username = data.get('username')
     password = data.get('password')
-    
     user = users_collection.find_one({'username': username})
-    
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
         session.permanent = True
         session['user'] = username
@@ -126,39 +98,22 @@ def login():
 
 @app.route('/get_user_data', methods=['GET'])
 def get_user_data():
-    if 'user' not in session:
-        return jsonify({'success': False, 'is_logged_in': False})
-    
+    if 'user' not in session: return jsonify({'success': False, 'is_logged_in': False})
     username = session['user']
-    if not users_collection:
-        return jsonify({'success': False, 'message': 'DB Error'}), 500
-    
-    # 這裡只取回必要的專案資料，不回傳密碼
+    if not users_collection: return jsonify({'success': False, 'message': 'DB Error'}), 500
     user = users_collection.find_one({'username': username}, {'_id': 0, 'password': 0})
-    
-    if user:
-        return jsonify({'success': True, 'is_logged_in': True, 'username': username, 'data': user})
+    if user: return jsonify({'success': True, 'is_logged_in': True, 'username': username, 'data': user})
     return jsonify({'success': False, 'is_logged_in': False})
 
 @app.route('/save_projects', methods=['POST'])
 def save_projects():
-    if 'user' not in session:
-        return jsonify({'success': False, 'message': '未登入'}), 401
-    
-    if not users_collection:
-        return jsonify({'success': False, 'message': 'DB Error'}), 500
-    
+    if 'user' not in session: return jsonify({'success': False, 'message': '未登入'}), 401
+    if not users_collection: return jsonify({'success': False, 'message': 'DB Error'}), 500
     data = request.json
     lang = data.get('lang')
     projects = data.get('projects')
-    
-    # 根據語言存入對應欄位
     field_name = 'projects_cpp' if lang == 'cpp' else 'projects_python'
-    
-    users_collection.update_one(
-        {'username': session['user']},
-        {'$set': {field_name: projects}}
-    )
+    users_collection.update_one({'username': session['user']}, {'$set': {field_name: projects}})
     return jsonify({'success': True})
 
 @app.route('/logout', methods=['POST'])
@@ -166,98 +121,55 @@ def logout():
     session.pop('user', None)
     return jsonify({'success': True})
 
-# === WebSocket 執行邏輯 (C++ / Python 編譯與執行) ===
-
 @socketio.on('run_code_v2')
 def handle_run_code(data):
     global current_process, master_fd_global
     kill_existing_process()
-    
     code = data.get('code')
     lang = data.get('lang', 'cpp')
-    
-    log(f"收到執行請求 ({lang})...")
-    
     home_dir = os.environ.get('HOME', '/app')
-    if not os.path.exists(home_dir):
-        home_dir = os.getcwd()
-
+    if not os.path.exists(home_dir): home_dir = os.getcwd()
     my_env = os.environ.copy()
     my_env["PYTHONIOENCODING"] = "utf-8"
     my_env["LANG"] = "C.UTF-8"
-
     stdbuf_exe = shutil.which("stdbuf")
     use_stdbuf = stdbuf_exe is not None
 
     if lang == 'python':
         source_file = os.path.join(home_dir, "galaxy_runner.py")
-        python_exe = shutil.which("python3") or shutil.which("python")
-        if not python_exe:
-            emit('program_output', {'data': "❌ 錯誤: 找不到 'python' 指令。\r\n"})
-            emit('program_status', {'status': 'error'})
-            return
-        run_cmd = [python_exe, '-u', source_file]
-    else: # C++
+        run_cmd = ['python', '-u', source_file]
+    else:
         source_file = os.path.join(home_dir, "galaxy_runner.cpp")
         exe_file = os.path.join(home_dir, "galaxy_runner")
         compiler = shutil.which("clang++") or shutil.which("g++")
         if not compiler:
-            emit('program_output', {'data': "❌ 錯誤: 找不到 C++ 編譯器 (clang++/g++)。\r\n"})
+            emit('program_output', {'data': " Error: C++ Compiler not found.\r\n"})
             emit('program_status', {'status': 'error'})
             return
-        
         run_cmd = [exe_file]
-        if use_stdbuf:
-            run_cmd = [stdbuf_exe, '-o0', '-e0'] + run_cmd
+        if use_stdbuf: run_cmd = [stdbuf_exe, '-o0', '-e0'] + run_cmd
 
     try:
-        with open(source_file, "w", encoding='utf-8') as f:
-            f.write(code)
+        with open(source_file, "w", encoding='utf-8') as f: f.write(code)
     except Exception as e:
-        emit('program_output', {'data': f"❌ 寫入失敗: {e}\r\n"})
-        emit('program_status', {'status': 'error'})
-        return
+        emit('program_output', {'data': f" Write Error: {e}\r\n"}); return
 
     if lang == 'cpp':
-        log(f"正在編譯: {compiler} {source_file}")
-        compile_res = subprocess.run(
-            [compiler, source_file, '-o', exe_file], 
-            capture_output=True, 
-            text=True, 
-            env=my_env
-        )
+        compile_res = subprocess.run([compiler, source_file, '-o', exe_file], capture_output=True, text=True, env=my_env)
         if compile_res.returncode != 0:
             err_msg = compile_res.stderr.replace('\r\n', '\n').replace('\n', '\r\n')
-            emit('program_output', {'data': f"❌ 編譯錯誤:\r\n{err_msg}"})
+            emit('program_output', {'data': f" Compilation Error:\r\n{err_msg}"})
             emit('program_status', {'status': 'error'})
             return
 
     try:
         master_fd_global, slave_fd = pty.openpty()
-        try:
-            import termios
-            attrs = termios.tcgetattr(slave_fd)
-            attrs[3] = attrs[3] & ~termios.ECHO
-            termios.tcsetattr(slave_fd, termios.TCSANOW, attrs)
-        except:
-            pass 
-
-        current_process = subprocess.Popen(
-            run_cmd, 
-            stdin=slave_fd, 
-            stdout=slave_fd, 
-            stderr=slave_fd,
-            preexec_fn=os.setsid, 
-            close_fds=True,
-            env=my_env 
-        )
+        current_process = subprocess.Popen(run_cmd, stdin=slave_fd, stdout=slave_fd, stderr=slave_fd, preexec_fn=os.setsid, close_fds=True, env=my_env)
         os.close(slave_fd)
-        
         emit('program_output', {'data': ""})
         socketio.start_background_task(target=read_output, fd=master_fd_global, proc=current_process)
-        
     except Exception as e:
-        emit('program_output', {'data': f"❌ 啟動失敗: {str(e)}\r\n"})
+        emit('program_output', {'data': f" Execution Error: {str(e)}\r\n"})
         emit('program_status', {'status': 'error'})
         kill_existing_process()
 
@@ -269,51 +181,40 @@ def read_output(fd, proc):
             if fd in r:
                 try:
                     data = os.read(fd, 4096)
-                    if data: 
+                    if data:
                         text = decoder.decode(data, final=False)
-                        # 修正換行問題，確保網頁終端機顯示正確
                         socketio.emit('program_output', {'data': text.replace('\n', '\r\n')})
-                    else: 
-                        break
-                except OSError:
-                    break
-            
+                    else: break
+                except OSError: break
             if proc.poll() is not None:
                 time.sleep(0.2)
                 while True:
                     try:
                         r, _, _ = select.select([fd], [], [], 0.1)
-                        if fd not in r: break 
+                        if fd not in r: break
                         data = os.read(fd, 4096)
                         if not data: break
                         socketio.emit('program_output', {'data': decoder.decode(data, final=True).replace('\n', '\r\n')})
-                    except OSError:
-                        break
-                break 
+                    except OSError: break
+                break
             socketio.sleep(0.01)
     except: pass
     finally:
         socketio.emit('program_status', {'status': 'finished'})
-        if fd:
-            try: os.close(fd); except: pass
+        if fd: try: os.close(fd); except: pass
 
 @socketio.on('send_input')
 def handle_input(data):
     global master_fd_global
     if master_fd_global:
-        try: 
-            # 確保輸入有換行符號，模擬按下 Enter
-            input_text = data.get('input') + '\n'
-            os.write(master_fd_global, input_text.encode('utf-8'))
+        try: os.write(master_fd_global, (data.get('input')+'\n').encode('utf-8'))
         except: pass
 
 @socketio.on('stop_code')
 def handle_stop():
     kill_existing_process()
-    emit('program_output', {'data': "\r\n[程式已停止]"})
+    emit('program_output', {'data': "\r\n[Stopped]"})
 
 if __name__ == '__main__':
-    log("伺服器啟動中...")
-    # Render 會自動分配 PORT，若無則預設 5000
     port = int(os.environ.get("PORT", 5000))
     socketio.run(app, host='0.0.0.0', port=port, debug=False, allow_unsafe_werkzeug=True)

@@ -1,6 +1,5 @@
 try:
     import eventlet
-    # 修正點 A：加入 subprocess=False
     eventlet.monkey_patch(subprocess=False)
 except ImportError:
     pass
@@ -61,7 +60,7 @@ def kill_existing_process():
         except:
             pass
         current_process = None
-   
+    
     if master_fd_global:
         try: os.close(master_fd_global)
         except: pass
@@ -93,14 +92,12 @@ def login():
     user = users_collection.find_one({'username': username})
     
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
-        # --- 新增單一登入邏輯 ---
-        session_token = str(uuid.uuid4()) # 產生新的亂碼
+        session_token = str(uuid.uuid4())
         users_collection.update_one({'username': username}, {'$set': {'session_token': session_token}})
         
         session.permanent = True
         session['user'] = username
-        session['token'] = session_token # 存入 cookie
-        # ---------------------
+        session['token'] = session_token
         
         return jsonify({'success': True, 'username': username})
     else:
@@ -115,12 +112,10 @@ def get_user_data():
     
     user = users_collection.find_one({'username': username}, {'_id': 0, 'password': 0})
     
-    # --- 新增檢查邏輯：如果資料庫的 Token 和我手上的不一樣，代表被踢了 ---
     current_token = session.get('token')
     if user and user.get('session_token') != current_token:
-        session.clear() # 清除舊的 session
+        session.clear()
         return jsonify({'success': False, 'is_logged_in': False, 'message': 'Logged in on another device'})
-    # -------------------------------------------------------------
 
     if user: return jsonify({'success': True, 'is_logged_in': True, 'username': username, 'data': user})
     return jsonify({'success': False, 'is_logged_in': False})
@@ -144,52 +139,141 @@ def logout():
 @socketio.on('run_code_v2')
 def handle_run_code(data):
     global current_process, master_fd_global
+    
     kill_existing_process()
-    code = data.get('code')
+    
     lang = data.get('lang', 'cpp')
+    files = data.get('files', [])
+    single_code = data.get('code')
+    
+    log(f"收到執行請求 ({lang})...")
+    
     home_dir = os.environ.get('HOME', '/app')
-    if not os.path.exists(home_dir): home_dir = os.getcwd()
+    if not os.path.exists(home_dir):
+        home_dir = os.getcwd()
+
+    workspace = os.path.join(home_dir, "galaxy_workspace")
+    os.makedirs(workspace, exist_ok=True)
+
+    if not files and single_code:
+        ext = '.cpp' if lang == 'cpp' else '.py'
+        files = [{'name': f'main{ext}', 'code': single_code}]
+
+    if not files:
+        emit('program_output', {'data': "❌ 錯誤: 沒有收到任何程式碼。\r\n"})
+        emit('program_status', {'status': 'error'})
+        return
+
+    cpp_sources = []
+    main_python_file = None
+
+    try:
+        for f in files:
+            fname = f.get('name', '')
+            fcode = f.get('code', '')
+            if not fname:
+                continue
+            
+            fname = os.path.basename(fname)
+            file_path = os.path.join(workspace, fname)
+            
+            with open(file_path, "w", encoding='utf-8') as fw:
+                fw.write(fcode)
+                
+            if lang == 'cpp' and fname.endswith('.cpp'):
+                cpp_sources.append(file_path)
+            elif lang == 'python':
+                if fname.lower() == 'main.py' or main_python_file is None:
+                    main_python_file = file_path
+    except Exception as e:
+        emit('program_output', {'data': f"❌ 寫入失敗: {e}\r\n"})
+        emit('program_status', {'status': 'error'})
+        return
+
     my_env = os.environ.copy()
     my_env["PYTHONIOENCODING"] = "utf-8"
     my_env["LANG"] = "C.UTF-8"
+    my_env["LC_ALL"] = "C.UTF-8"
+
     stdbuf_exe = shutil.which("stdbuf")
     use_stdbuf = stdbuf_exe is not None
 
     if lang == 'python':
-        source_file = os.path.join(home_dir, "galaxy_runner.py")
-        run_cmd = ['python', '-u', source_file]
+        if not main_python_file:
+            emit('program_output', {'data': "❌ 錯誤: 找不到 Python 執行檔 (.py)。\r\n"})
+            emit('program_status', {'status': 'error'})
+            return
+
+        python_exe = shutil.which("python3") or shutil.which("python")
+        if not python_exe:
+            emit('program_output', {'data': "❌ 錯誤: 找不到 'python' 指令。\r\n"})
+            emit('program_status', {'status': 'error'})
+            return
+        run_cmd = [python_exe, '-u', main_python_file]
+        cwd = workspace
+        
     else:
-        source_file = os.path.join(home_dir, "galaxy_runner.cpp")
-        exe_file = os.path.join(home_dir, "galaxy_runner")
+        if not cpp_sources:
+            emit('program_output', {'data': "❌ 錯誤: 找不到 C++ 原始碼 (.cpp)。\r\n"})
+            emit('program_status', {'status': 'error'})
+            return
+
+        exe_file = os.path.join(workspace, "galaxy_runner")
         compiler = shutil.which("clang++") or shutil.which("g++")
         if not compiler:
-            emit('program_output', {'data': " Error: C++ Compiler not found.\r\n"})
+            emit('program_output', {'data': "❌ 錯誤: 找不到 'clang++' 或 'g++'。\r\n"})
             emit('program_status', {'status': 'error'})
             return
-        run_cmd = [exe_file]
-        if use_stdbuf: run_cmd = [stdbuf_exe, '-o0', '-e0'] + run_cmd
-
-    try:
-        with open(source_file, "w", encoding='utf-8') as f: f.write(code)
-    except Exception as e:
-        emit('program_output', {'data': f" Write Error: {e}\r\n"}); return
-
-    if lang == 'cpp':
-        compile_res = subprocess.run([compiler, source_file, '-o', exe_file], capture_output=True, text=True, env=my_env)
+        
+        log(f"正在編譯: {compiler} {' '.join(cpp_sources)}")
+        compile_cmd = [compiler] + cpp_sources + ['-o', exe_file]
+        compile_res = subprocess.run(
+            compile_cmd, 
+            capture_output=True, 
+            text=True, 
+            env=my_env,
+            cwd=workspace
+        )
         if compile_res.returncode != 0:
             err_msg = compile_res.stderr.replace('\r\n', '\n').replace('\n', '\r\n')
-            emit('program_output', {'data': f" Compilation Error:\r\n{err_msg}"})
+            emit('program_output', {'data': f"❌ 編譯錯誤:\r\n{err_msg}"})
             emit('program_status', {'status': 'error'})
             return
+
+        run_cmd = [exe_file]
+        if use_stdbuf:
+            run_cmd = [stdbuf_exe, '-o0', '-e0'] + run_cmd
+        cwd = workspace
 
     try:
         master_fd_global, slave_fd = pty.openpty()
-        current_process = subprocess.Popen(run_cmd, stdin=slave_fd, stdout=slave_fd, stderr=slave_fd, preexec_fn=os.setsid, close_fds=True, env=my_env)
+        
+        try:
+            import termios
+            attrs = termios.tcgetattr(slave_fd)
+            attrs[3] = attrs[3] & ~termios.ECHO
+            termios.tcsetattr(slave_fd, termios.TCSANOW, attrs)
+        except:
+            pass 
+
+        log(f"啟動進程: {run_cmd}")
+        current_process = subprocess.Popen(
+            run_cmd, 
+            stdin=slave_fd, 
+            stdout=slave_fd, 
+            stderr=slave_fd,
+            preexec_fn=os.setsid, 
+            close_fds=True,
+            env=my_env,
+            cwd=cwd
+        )
         os.close(slave_fd)
+        
         emit('program_output', {'data': ""})
         socketio.start_background_task(target=read_output, fd=master_fd_global, proc=current_process)
+        
     except Exception as e:
-        emit('program_output', {'data': f" Execution Error: {str(e)}\r\n"})
+        emit('program_output', {'data': f"❌ 啟動失敗: {str(e)}\r\n"})
         emit('program_status', {'status': 'error'})
         kill_existing_process()
 
@@ -198,47 +282,71 @@ def read_output(fd, proc):
     try:
         while True:
             r, _, _ = select.select([fd], [], [], 0.1)
+            
             if fd in r:
                 try:
                     data = os.read(fd, 4096)
-                    if data:
+                    if data: 
                         text = decoder.decode(data, final=False)
-                        socketio.emit('program_output', {'data': text.replace('\n', '\r\n')})
-                    else: break
-                except OSError: break
+                        text = text.replace('\r\n', '\n').replace('\n', '\r\n')
+                        socketio.emit('program_output', {'data': text})
+                    else: 
+                        break
+                except OSError as e:
+                    if e.errno == errno.EIO:
+                        break
+                    break
+            
             if proc.poll() is not None:
-                time.sleep(0.2)
+                time.sleep(0.2) 
+                
                 while True:
                     try:
                         r, _, _ = select.select([fd], [], [], 0.1)
-                        if fd not in r: break
+                        if fd not in r: 
+                            break 
+                        
                         data = os.read(fd, 4096)
-                        if not data: break
-                        socketio.emit('program_output', {'data': decoder.decode(data, final=True).replace('\n', '\r\n')})
-                    except OSError: break
-                break
-            socketio.sleep(0.01)
-    except: pass
+                        if not data: 
+                            break
+                        
+                        text = decoder.decode(data, final=True)
+                        text = text.replace('\r\n', '\n').replace('\n', '\r\n')
+                        socketio.emit('program_output', {'data': text})
+                        
+                    except OSError:
+                        break
+                break 
+                
+            socketio.sleep(0.01) 
+            
+    except Exception as e: 
+        log(f"讀取異常: {e}")
     finally:
         socketio.emit('program_status', {'status': 'finished'})
         if fd:
-            try:
-                os.close(fd)
-            except:
-                pass
+            try: os.close(fd) 
+            except: pass
 
 @socketio.on('send_input')
 def handle_input(data):
     global master_fd_global
     if master_fd_global:
-        try: os.write(master_fd_global, (data.get('input')+'\n').encode('utf-8'))
-        except: pass
+        try: 
+            input_text = data.get('input')
+            if not input_text.endswith('\n'):
+                input_text += '\n'
+            
+            msg = input_text.encode('utf-8')
+            os.write(master_fd_global, msg)
+        except Exception as e: log(f"寫入失敗: {e}")
 
 @socketio.on('stop_code')
 def handle_stop():
     kill_existing_process()
-    emit('program_output', {'data': "\r\n[Stopped]"})
+    emit('program_output', {'data': "\r\n[程式已停止]"})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
+    log(f"伺服器啟動中 (雲端部署版本) - Port: {port}...")
     socketio.run(app, host='0.0.0.0', port=port, debug=False, allow_unsafe_werkzeug=True)

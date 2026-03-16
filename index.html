@@ -311,11 +311,18 @@
         }
 
         #problem-list { overflow-y: auto; height: 100%; }
-        .problem-item { height: 38px; padding: 0 12px; cursor: pointer; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.35s var(--ease-spring), transform 0.35s var(--ease-spring); }
+        .problem-item { height: 38px; padding: 0 12px; cursor: grab; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.35s var(--ease-spring), transform 0.35s var(--ease-spring), box-shadow 0.2s var(--ease-spring); }
+        .problem-item.is-main { cursor: pointer; }
         .problem-item:hover { background-color: #2d2d2d; }
-        .problem-item:active { transform: scale(0.98); }
+        .problem-item:active { transform: scale(0.98); cursor: grabbing; }
+        .problem-item.is-main:active { transform: scale(0.98); cursor: pointer; }
         .problem-item.active { background-color: #37373d; border-left: 3px solid #007acc; }
-        .problem-item-title { font-size: 13px; color: #ccc; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; padding-right: 8px; }
+        
+        .problem-item.dragging { opacity: 0.4; transform: scale(0.96); background-color: #37373d; z-index: 10; }
+        .problem-item.drag-over-top { box-shadow: inset 0 2px 0 #3b82f6; }
+        .problem-item.drag-over-bottom { box-shadow: inset 0 -2px 0 #3b82f6; }
+
+        .problem-item-title { font-size: 13px; color: #ccc; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; padding-right: 8px; pointer-events: none; }
         .problem-item.active .problem-item-title { color: #fff; }
         .problem-item-actions { display: none; gap: 4px; flex-shrink: 0; }
         .problem-item:hover .problem-item-actions { display: flex; }
@@ -631,7 +638,7 @@
         #logo-icon:active { transform: scale(0.92); }
     </style>
 </head>
-<body class="flex flex-col select-none overflow-hidden fixed inset-0 w-full h-full" data-theme="modern">
+<body class="flex flex-col select-none overflow-hidden fixed inset-0 w-full h-full" data-theme="modern" data-layout="right">
 
     <div id="output-backdrop" onclick="toggleOutputPanel(false)"></div>
 
@@ -675,7 +682,7 @@
                     <div id="status-indicator" class="status-dot status-disconnected" style="width: 6px; height: 6px;"></div>
                     <span id="status-text" class="text-gray-500 transition-colors duration-300 text-[10px] leading-none font-bold">Disconnected</span>
                 </div>
-                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.1.5</span>
+                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.1.7</span>
             </div>
 
             <div class="dropdown-container" id="settings-dropdown">
@@ -1226,6 +1233,13 @@
         const terminalResizer = document.getElementById('terminal-resizer');
         const outputBackdrop = document.getElementById('output-backdrop');
         
+        // 加入 ESC 鍵可以關閉 Popup 的功能
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && currentOutputMode === 'popup' && outputWrapper.classList.contains('popup-active')) {
+                toggleOutputPanel(false);
+            }
+        });
+
         function toggleProblemPanel() {
             if (problemContainer.classList.contains('problem-open')) {
                 problemContainer.classList.remove('problem-open');
@@ -1759,6 +1773,22 @@
                 const isMain = proj.id === 'main';
                 item.className = `problem-item ${idx === activeProjectIndex ? 'active' : ''} ${isMain ? 'is-main' : ''}`;
                 item.onclick = () => selectProject(idx);
+                item.dataset.index = idx;
+                
+                if (!isMain) {
+                    item.draggable = true;
+                    item.addEventListener('dragstart', handleDragStart);
+                    item.addEventListener('dragenter', handleDragEnter);
+                    item.addEventListener('dragover', handleDragOver);
+                    item.addEventListener('dragleave', handleDragLeave);
+                    item.addEventListener('drop', handleDrop);
+                    item.addEventListener('dragend', handleDragEnd);
+                } else {
+                    item.addEventListener('dragenter', handleDragEnter);
+                    item.addEventListener('dragover', handleDragOver);
+                    item.addEventListener('dragleave', handleDragLeave);
+                    item.addEventListener('drop', handleDrop);
+                }
                 
                 const title = document.createElement('div');
                 title.className = 'problem-item-title';
@@ -1793,6 +1823,104 @@
                 item.appendChild(title);
                 item.appendChild(actions);
                 problemListEl.appendChild(item);
+            });
+        }
+        
+        let draggedProjectIndex = -1;
+
+        function handleDragStart(e) {
+            draggedProjectIndex = parseInt(this.dataset.index);
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', draggedProjectIndex);
+            
+            if(enableAnimations) {
+                requestAnimationFrame(() => {
+                    this.style.opacity = '0.4';
+                });
+            } else {
+                this.style.opacity = '0.4';
+            }
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const targetIndex = parseInt(this.dataset.index);
+            if (draggedProjectIndex === targetIndex || draggedProjectIndex === -1) return;
+
+            const rect = this.getBoundingClientRect();
+            const midY = rect.top + rect.height / 2;
+            
+            this.classList.remove('drag-over-top', 'drag-over-bottom');
+            
+            if (targetIndex === 0) {
+                this.classList.add('drag-over-bottom');
+            } else if (e.clientY < midY) {
+                this.classList.add('drag-over-top');
+            } else {
+                this.classList.add('drag-over-bottom');
+            }
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over-top', 'drag-over-bottom');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.remove('drag-over-top', 'drag-over-bottom');
+            
+            let draggedIdxStr = e.dataTransfer.getData('text/plain');
+            let draggedIdx = draggedIdxStr ? parseInt(draggedIdxStr) : draggedProjectIndex;
+            
+            if (isNaN(draggedIdx) || draggedIdx === -1) return;
+            const targetIndex = parseInt(this.dataset.index);
+            if (draggedIdx === targetIndex) return;
+
+            const rect = this.getBoundingClientRect();
+            const midY = rect.top + rect.height / 2;
+            
+            let newIndex = targetIndex;
+            if (targetIndex === 0) {
+                newIndex = 1;
+            } else if (e.clientY >= midY) {
+                newIndex = targetIndex + 1;
+            }
+            
+            if (draggedIdx < newIndex) {
+                newIndex--;
+            }
+
+            if (newIndex !== draggedIdx) {
+                const activeId = projects[activeProjectIndex].id;
+                
+                const [movedProject] = projects.splice(draggedIdx, 1);
+                projects.splice(newIndex, 0, movedProject);
+                
+                activeProjectIndex = projects.findIndex(p => p.id === activeId);
+                
+                saveProjectsToStorage();
+                renderProjectList();
+            }
+            draggedProjectIndex = -1;
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            this.style.opacity = '';
+            draggedProjectIndex = -1;
+            
+            document.querySelectorAll('.problem-item').forEach(item => {
+                item.classList.remove('drag-over-top', 'drag-over-bottom');
             });
         }
         

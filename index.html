@@ -34,7 +34,6 @@
             --selection-bg: #264f78;
             --selection-border: rgba(255, 255, 255, 0.3);
             
-            /* iOS 經典的 Spring Physics 流暢貝茲曲線 */
             --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
             --ease-bounce: cubic-bezier(0.32, 0.72, 0, 1);
         }
@@ -682,7 +681,7 @@
                     <div id="status-indicator" class="status-dot status-disconnected" style="width: 6px; height: 6px;"></div>
                     <span id="status-text" class="text-gray-500 transition-colors duration-300 text-[10px] leading-none font-bold">Disconnected</span>
                 </div>
-                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.1.7</span>
+                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.2.2</span>
             </div>
 
             <div class="dropdown-container" id="settings-dropdown">
@@ -806,15 +805,12 @@
                 
                 <div class="bg-[#252526] pr-2 text-xs font-mono text-gray-500 flex justify-between items-end select-none flex-none border-b border-[#333] h-8 transition-colors duration-300">
                     
-                    <div class="flex items-end h-full flex-1 overflow-hidden" id="editor-tabs-container">
-                        <div id="editor-tabs" class="flex items-end h-full gap-1 pl-2 pt-1 overflow-x-auto no-scrollbar">
+                    <div class="flex items-end h-full flex-1 overflow-hidden relative" id="editor-tabs-container">
+                        <div id="editor-tabs" class="flex items-end h-full gap-1 pl-2 pt-1 overflow-x-auto no-scrollbar flex-1 min-w-0 pr-4">
                         </div>
-                        <button id="add-file-btn" onclick="requestNewFile()" class="mb-0.5 ml-1 w-5 h-5 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-gray-400 hover:text-white transition-colors flex-shrink-0" title="Add New File (Max 6)">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                        </button>
                     </div>
                     
-                    <div class="flex items-center gap-1 mb-1 flex-shrink-0 ml-2">
+                    <div class="flex items-center gap-1 mb-1 flex-shrink-0 ml-2 relative z-20 bg-[#252526] shadow-[-10px_0_10px_-5px_#252526]">
                         
                         <div class="dropdown-container hover-dropdown" id="tools-dropdown">
                             <div class="dropdown-trigger !h-6 !py-0.5 px-2 border border-transparent hover:border-[#666] transition-colors bg-transparent hover:bg-[#454545] flex items-center" style="min-width: auto;" onclick="toggleDropdown('tools-dropdown')">
@@ -1233,7 +1229,6 @@
         const terminalResizer = document.getElementById('terminal-resizer');
         const outputBackdrop = document.getElementById('output-backdrop');
         
-        // 加入 ESC 鍵可以關閉 Popup 的功能
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && currentOutputMode === 'popup' && outputWrapper.classList.contains('popup-active')) {
                 toggleOutputPanel(false);
@@ -1427,13 +1422,12 @@
 
         function getHelloWorld(lang) {
             if (lang === 'cpp') return '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}';
-            else return 'print("Hello Galaxy Python!")\n\n# Try typing something\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")';
+            else return 'print("Hello Galaxy Python!")\n\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")';
         }
 
         function renderEditorTabs() {
             const project = projects[activeProjectIndex];
             const tabsContainer = document.getElementById('editor-tabs');
-            const addBtn = document.getElementById('add-file-btn');
             
             tabsContainer.innerHTML = '';
             
@@ -1473,10 +1467,15 @@
                 tabsContainer.appendChild(tab);
             });
             
-            if (project.files.length >= 6) {
-                addBtn.style.display = 'none';
-            } else {
-                addBtn.style.display = 'flex';
+            if (project.files.length < 9) {
+                const addBtn = document.createElement('button');
+                addBtn.id = 'add-file-btn';
+                addBtn.onclick = requestNewFile;
+                addBtn.style.marginBottom = '1.5px';
+                addBtn.className = 'w-6 h-6 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-gray-400 hover:text-white transition-colors flex-shrink-0 relative z-10 ml-1 mr-2';
+                addBtn.title = 'Add New File (Max 9)';
+                addBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>';
+                tabsContainer.appendChild(addBtn);
             }
         }
 
@@ -1518,7 +1517,7 @@
 
         function requestNewFile() {
             const project = projects[activeProjectIndex];
-            if (project.files.length >= 6) return;
+            if (project.files.length >= 9) return;
             
             let ext = currentLang === 'cpp' ? '.cpp' : '.py';
             let defaultName = 'file' + project.files.length + ext;
@@ -2587,11 +2586,11 @@
             }
             if (!auto) {
                 showConfirm("Insert Template", "Clear current code and insert Hello World?", () => {
-                    if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\n# Try typing something\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")'); }
+                    if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")'); }
                 });
                 return;
             }
-             if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\n# Try typing something\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")'); }
+             if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")'); }
         }
         async function clearAndPaste() { 
             const dropdown = document.getElementById('tools-dropdown');
@@ -2824,6 +2823,13 @@
             localStorage.setItem("galaxy_layout", mode);
             editor.refresh();
         }
+
+        document.getElementById('editor-tabs').addEventListener('wheel', function(e) {
+            if (e.deltaY !== 0) {
+                e.preventDefault();
+                this.scrollLeft += e.deltaY;
+            }
+        }, { passive: false });
 
         if (window.visualViewport) {
             const handleViewportResize = () => {

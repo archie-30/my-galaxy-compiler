@@ -681,7 +681,7 @@
                     <div id="status-indicator" class="status-dot status-disconnected" style="width: 6px; height: 6px;"></div>
                     <span id="status-text" class="text-gray-500 transition-colors duration-300 text-[10px] leading-none font-bold">Disconnected</span>
                 </div>
-                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.2.2</span>
+                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.2.3</span>
             </div>
 
             <div class="dropdown-container" id="settings-dropdown">
@@ -1486,6 +1486,8 @@
             if(project.files[project.activeFileIndex]) {
                 const cur = editor.getCursor();
                 const scroll = editor.getScrollInfo();
+                project.files[project.activeFileIndex].code = editor.getValue();
+                project.files[project.activeFileIndex].history = editor.getHistory();
                 project.files[project.activeFileIndex].cursorPos = cur;
                 project.files[project.activeFileIndex].scrollPos = { left: scroll.left, top: scroll.top };
             }
@@ -1499,6 +1501,12 @@
             codeWrapper.classList.add('animate-tab-switch');
             
             editor.setValue(project.files[index].code || "");
+            
+            if (project.files[index].history) {
+                editor.setHistory(project.files[index].history);
+            } else {
+                editor.clearHistory();
+            }
             
             const newFile = project.files[index];
             if (newFile.cursorPos) {
@@ -1619,6 +1627,7 @@
                 const project = projects[activeProjectIndex];
                 if(project.files && project.files[project.activeFileIndex]) {
                     project.files[project.activeFileIndex].code = editor.getValue();
+                    project.files[project.activeFileIndex].history = editor.getHistory();
                     const cur = editor.getCursor();
                     const scroll = editor.getScrollInfo();
                     project.files[project.activeFileIndex].cursorPos = cur;
@@ -1744,6 +1753,13 @@
             }
             
             editor.setValue(activeFile.code || "");
+            
+            if (activeFile.history) {
+                editor.setHistory(activeFile.history);
+            } else {
+                editor.clearHistory();
+            }
+            
             problemContentEl.innerHTML = project.desc || ""; 
             document.getElementById('current-project-title').innerText = project.title;
             
@@ -2618,16 +2634,29 @@
             const activeFile = project.files[project.activeFileIndex];
             const code = editor.getValue(); 
             
-            let defaultFilename = project.title + " (" + activeFile.name + ")";
+            let defaultFilename = project.title.replace(/\s+/g, '_') + "_" + activeFile.name;
             
             showInputModal("Download File", "Enter file name:", defaultFilename, defaultFilename, (filename) => {
                 if (filename.trim() === "") filename = defaultFilename;
                 
                 let ext = currentLang === 'cpp' ? '.cpp' : '.py'; 
-                if (!filename.endsWith(ext) && !filename.includes('.')) filename += ext;
+                if (!filename.endsWith(ext)) {
+                    if (filename.includes('.')) {
+                        filename = filename.substring(0, filename.lastIndexOf('.')) + ext;
+                    } else {
+                        filename += ext;
+                    }
+                }
                 
-                const blob = new Blob([code], { type: "text/plain" }); const url = URL.createObjectURL(blob);
-                const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                const blob = new Blob([code], { type: "application/octet-stream" }); 
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a"); 
+                a.href = url; 
+                a.download = filename; 
+                document.body.appendChild(a); 
+                a.click(); 
+                document.body.removeChild(a); 
+                URL.revokeObjectURL(url);
             });
         }
         function sendInput() { 

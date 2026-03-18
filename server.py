@@ -15,7 +15,7 @@ import signal
 import uuid
 import sys
 import shutil
-import codecs
+import codecs 
 import time
 import errno
 import pymongo
@@ -40,9 +40,9 @@ if MONGO_URI:
         users_collection = db.users
         print("[系統] MongoDB 連線成功！")
     except Exception as e:
-        print(f"[系統]  MongoDB 連線失敗: {e}")
+        print(f"[系統] MongoDB 連線失敗: {e}")
 else:
-    print("[系統]  警告: 未設定 MONGO_URI")
+    print("[系統] 警告: 未設定 MONGO_URI")
 
 current_process = None
 master_fd_global = None
@@ -279,9 +279,11 @@ def handle_run_code(data):
 
 def read_output(fd, proc):
     decoder = codecs.getincrementaldecoder("utf-8")(errors='replace')
+    log("開始讀取輸出迴圈...")
+    
     try:
         while True:
-            r, _, _ = select.select([fd], [], [], 0.1)
+            r, _, _ = select.select([fd], [], [], 0.02)
             
             if fd in r:
                 try:
@@ -298,11 +300,12 @@ def read_output(fd, proc):
                     break
             
             if proc.poll() is not None:
-                time.sleep(0.2) 
+                log("進程已結束，嘗試讀取殘留輸出...")
+                time.sleep(0.1) 
                 
                 while True:
                     try:
-                        r, _, _ = select.select([fd], [], [], 0.1)
+                        r, _, _ = select.select([fd], [], [], 0.05)
                         if fd not in r: 
                             break 
                         

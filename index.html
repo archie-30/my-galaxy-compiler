@@ -176,7 +176,7 @@
         .toolbar-btn:active { transform: scale(0.92); }
         .toolbar-separator { width: 1px; height: 16px; background-color: #454545; margin: 0 4px; }
 
-        .terminal-cursor { display: inline-block; width: 8px; height: 16px; background-color: #d4d4d4; animation: blink 1s step-end infinite; vertical-align: middle; }
+        .terminal-cursor { display: inline-block; width: 8px; height: 16px; background-color: #4ade80; animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 2px; }
         @keyframes blink { 50% { opacity: 0; } }
         
         .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; transition: all 0.4s var(--ease-spring); }
@@ -189,8 +189,9 @@
         .terminal-note { color: #60a5fa; }
         .terminal-path { color: #a3a3a3; text-decoration: underline; }
         
-        #terminal-container { font-family: Consolas, monospace !important; scroll-behavior: smooth; }
-        #terminal-input { font-family: Consolas, monospace !important; transition: border-color 0.35s var(--ease-spring), box-shadow 0.35s var(--ease-spring); }
+        #terminal-container { font-family: Consolas, monospace !important; scroll-behavior: smooth; cursor: text; }
+        
+        #terminal-input-hidden { position: absolute; opacity: 0; pointer-events: none; left: -9999px; }
 
         .toggle-container-base { display: flex; background-color: #3c3c3c; border-radius: 6px; padding: 2px; position: relative; cursor: pointer; border: 1px solid #333; flex-shrink: 0; transition: all 0.35s var(--ease-spring); }
         .toggle-container-base:active { transform: scale(0.96); }
@@ -642,6 +643,8 @@
     <div id="output-backdrop" onclick="toggleOutputPanel(false)"></div>
 
     <input type="file" id="file-input" style="display: none;">
+    
+    <input type="text" id="terminal-input-hidden" autocomplete="off" class="absolute opacity-0 pointer-events-none" style="left: -9999px;" tabindex="-1">
 
     <header class="h-14 border-b border-[#333] flex items-center justify-between px-4 bg-[#252526] flex-none z-50 transition-colors duration-300">
         <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -681,7 +684,7 @@
                     <div id="status-indicator" class="status-dot status-disconnected" style="width: 6px; height: 6px;"></div>
                     <span id="status-text" class="text-gray-500 transition-colors duration-300 text-[10px] leading-none font-bold">Disconnected</span>
                 </div>
-                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.2.3</span>
+                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.3.0</span>
             </div>
 
             <div class="dropdown-container" id="settings-dropdown">
@@ -787,6 +790,8 @@
                     <button onclick="resetProblemFontSize()" class="toolbar-btn text-gray-400" title="Reset Font"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></button>
                     <button onclick="changeProblemFontSize(1)" class="toolbar-btn text-gray-400" title="Increase Font"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></button>
                     <div class="toolbar-separator"></div>
+                    <button onclick="toggleProblemBold()" class="toolbar-btn text-gray-400 hover:text-white" title="Bold Text"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg></button>
+                    <button onclick="downloadProblem()" class="toolbar-btn text-gray-400 hover:text-green-400" title="Download Problem"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg></button>
                     <button onclick="pasteToProblem()" class="toolbar-btn text-gray-400 hover:text-blue-400" title="Paste All"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg></button>
                 </div>
             </div>
@@ -890,28 +895,18 @@
             
             <div id="output-container-wrapper" class="flex-col bg-[#1e1e1e] min-h-0 min-w-0 flex" style="flex: 0 0 0%; min-width: 0; min-height: 0;">
                 <div class="bg-[#1e1e1e] px-4 py-1 text-xs font-bold text-gray-500 border-b border-[#333] flex justify-between flex-none h-8 items-center rounded-t-lg">
-                    <span>Interactive Terminal</span>
+                    <div class="flex items-center gap-2">
+                        <span>Interactive Terminal</span>
+                        <button onclick="fillLastInput()" class="bg-[#3c3c3c] hover:bg-[#454545] text-gray-300 px-2 py-0.5 rounded border border-[#444] transition-colors" title="Fill Last Input">Last Input</button>
+                    </div>
                     <div class="flex items-center gap-3">
                         <button onclick="clearOutput()" class="hover:text-white transition-colors duration-200">Clear</button>
                         <button id="popup-close-btn" onclick="toggleOutputPanel(false)" class="hidden hover:text-white transition-colors duration-200 ml-1 px-2 py-0.5 rounded text-red-400 hover:bg-red-500/20" title="Close Popup">✖</button>
                     </div>
                 </div>
-                
-                <div class="p-2 border-b border-[#333] bg-[#252526] flex-none flex flex-col gap-2">
-                    <textarea id="terminal-input" class="w-full bg-[#3c3c3c] text-white px-3 py-2 rounded border border-[#555] focus:outline-none focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc] font-mono text-sm resize-none h-16" placeholder="Type input here (Enter for new line, Ctrl+Enter to send)..." disabled autocomplete="off"></textarea>
-                    <div class="flex justify-end gap-2">
-                        <button onclick="fillLastInput()" class="bg-[#4b5563] hover:bg-[#374151] text-white px-3 py-1.5 rounded text-xs font-medium transition-colors shadow-md flex items-center gap-1" title="Fill Last Input">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <span>Last Input</span>
-                        </button>
-                        <button id="send-input-btn" onclick="sendInput()" class="bg-[#2ea043] hover:bg-[#238636] text-white px-4 py-1.5 rounded text-xs font-medium transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>Send Input</button>
-                    </div>
-                </div>
 
                 <div id="terminal-container" class="flex-1 p-4 font-mono text-sm overflow-auto text-gray-300 relative min-h-0" onclick="focusInput()">
-                    <pre id="output" class="whitespace-pre-wrap break-words block font-[Consolas,Monaco,monospace]"></pre><span class="terminal-cursor"></span>
+                    <pre id="output" class="whitespace-pre-wrap break-words inline font-[Consolas,Monaco,monospace]"></pre><span id="current-input-display" class="terminal-input-echo"></span><span class="terminal-cursor"></span>
                 </div>
             </div>
         </div>
@@ -1059,6 +1054,7 @@
         }
 
         function openFileConfirm() {
+            if (isRunning) return;
             showConfirm("Open File", "Opening a file will overwrite current code.\nAre you sure you want to continue?", triggerFileSelect);
         }
 
@@ -1524,6 +1520,7 @@
         }
 
         function requestNewFile() {
+            if (isRunning) return;
             const project = projects[activeProjectIndex];
             if (project.files.length >= 9) return;
             
@@ -1541,6 +1538,7 @@
         }
         
         function renameFile(index, event) {
+            if (isRunning) return;
             if (event) event.stopPropagation();
             if (index === 0) return; 
             
@@ -1558,6 +1556,7 @@
         }
         
         function deleteFile(index) {
+            if (isRunning) return;
             if (index === 0) return;
             const project = projects[activeProjectIndex];
             showConfirm("Delete File", `Are you sure you want to delete ${project.files[index].name}?`, () => {
@@ -1688,6 +1687,7 @@
         }
 
         function deleteProject(index, event) {
+            if (isRunning) return;
             if (event) event.stopPropagation();
             if (projects[index].id === 'main') {
                 showModal("Notice", "The 'main' project cannot be deleted.");
@@ -1707,6 +1707,7 @@
         }
 
         function selectProject(index) {
+            if (isRunning) return;
             if (index === activeProjectIndex) {
                 toggleSideView('desc');
                 return;
@@ -1978,6 +1979,12 @@
                 if (isUnderline) el.style.textDecoration = 'underline';
             });
             return div.innerHTML;
+        }
+
+        function toggleProblemBold() {
+            document.execCommand('bold', false, null);
+            problemContentEl.focus();
+            problemContentEl.dispatchEvent(new Event('input'));
         }
 
         async function pasteToProblem() {
@@ -2289,6 +2296,7 @@
         }
         
         function resetToTemplate() {
+            if (isRunning) return;
             const project = projects[activeProjectIndex];
             if(!project || !project.testMode || !project.defaultFiles) return;
             showConfirm("Reset to Template", "This will overwrite your current code with the saved template. Continue?", () => {
@@ -2423,14 +2431,15 @@
         function updateLangUI(lang) {
             const logoIcon = document.getElementById('logo-icon');
             if (lang === 'cpp') {
-                if(logoIcon) { logoIcon.innerText = 'C++'; logoIcon.className = "w-7 h-7 rounded bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0"; }
+                if(logoIcon) { logoIcon.innerText = 'C++'; logoIcon.className = "w-7 h-7 rounded bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0 transition-all duration-300"; }
             } else {
-                if(logoIcon) { logoIcon.innerText = 'Py'; logoIcon.className = "w-7 h-7 rounded bg-yellow-500 flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0"; }
+                if(logoIcon) { logoIcon.innerText = 'Py'; logoIcon.className = "w-7 h-7 rounded bg-yellow-500 flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0 transition-all duration-300"; }
             }
             updateDropdownUI('lang-dropdown', lang);
         }
 
         function changeLanguage(newLang) {
+            if (isRunning) return;
             if (newLang === currentLang) return;
             isChangingLang = true;
             saveCurrentProject();
@@ -2441,8 +2450,8 @@
             isChangingLang = false;
         }
         
-        function undoCode() { editor.undo(); }
-        function redoCode() { editor.redo(); }
+        function undoCode() { if (isRunning) return; editor.undo(); }
+        function redoCode() { if (isRunning) return; editor.redo(); }
         
         function toggleComments() {
             const doc = editor.getDoc();
@@ -2489,16 +2498,67 @@
         editor.addOverlay({ token: function(stream) { if (stream.sol()) { if (stream.eatSpace()) return "indent-guides"; } stream.skipToEnd(); return null; } });
         CodeMirror.registerHelper("hint", "clike", codeHint); CodeMirror.registerHelper("hint", "python", codeHint);
 
+        const terminalHiddenInput = document.getElementById('terminal-input-hidden');
+        const currentInputDisplay = document.getElementById('current-input-display');
         const outputPre = document.getElementById('output');
-        const inputField = document.getElementById('terminal-input');
-        const sendInputBtn = document.getElementById('send-input-btn');
         const runBtn = document.getElementById('run-btn');
         const stopBtn = document.getElementById('stop-btn');
         const terminalContainer = document.getElementById('terminal-container');
 
+        function focusInput() {
+            if (isRunning) terminalHiddenInput.focus();
+        }
+
+        terminalHiddenInput.addEventListener('input', function() {
+            currentInputDisplay.innerText = this.value;
+            terminalContainer.scrollTo({ top: terminalContainer.scrollHeight, behavior: 'auto' });
+        });
+
+        terminalHiddenInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendInput();
+            }
+        });
+
+        function sendInput() {
+            if (!isRunning || !socket) return;
+            const text = terminalHiddenInput.value;
+            
+            const project = projects[activeProjectIndex];
+            project.lastInput = text;
+            saveProjectsToStorage();
+            
+            const echo = document.createElement('span'); 
+            echo.className = 'terminal-input-echo animate-fade-in-up block whitespace-pre-wrap'; 
+            echo.innerText = text + '\n'; 
+            outputPre.appendChild(echo); 
+            
+            socket.emit('send_input', { input: text }); 
+            terminalHiddenInput.value = ""; 
+            currentInputDisplay.innerText = "";
+            terminalContainer.scrollTo({ top: terminalContainer.scrollHeight, behavior: 'smooth' }); 
+        }
+
+        function fillLastInput() {
+            const project = projects[activeProjectIndex];
+            if(project && project.lastInput !== null && project.lastInput !== undefined && project.lastInput !== "") {
+                terminalHiddenInput.value = project.lastInput;
+                currentInputDisplay.innerText = project.lastInput;
+                focusInput();
+            }
+        }
+
         if (socket) {
-            socket.on('connect', () => { console.log("Connected"); if(statusDot) statusDot.className = "status-dot status-connected"; if(statusText) { statusText.innerText = "Connected"; statusText.className = "text-green-500 text-xs"; }});
-            socket.on('disconnect', () => { if(statusDot) statusDot.className = "status-dot status-disconnected"; if(statusText) { statusText.innerText = "Disconnected"; statusText.className = "text-red-500 text-xs"; }});
+            socket.on('connect', () => { 
+                console.log("Connected"); 
+                if(statusDot) statusDot.className = "status-dot status-connected"; 
+                if(statusText) { statusText.innerText = "Connected"; statusText.className = "text-green-500 text-xs transition-colors duration-300"; }
+            });
+            socket.on('disconnect', () => { 
+                if(statusDot) statusDot.className = "status-dot status-disconnected"; 
+                if(statusText) { statusText.innerText = "Disconnected"; statusText.className = "text-red-500 text-xs transition-colors duration-300"; }
+            });
             socket.on('program_output', (msg) => {
                 const loader = document.getElementById('compile-loader'); if (loader) loader.remove();
                 const span = document.createElement('span'); 
@@ -2534,10 +2594,17 @@
         function setRunningState(running) {
             isRunning = running;
             if (running) {
-                runBtn.classList.add('hidden'); stopBtn.classList.remove('hidden'); inputField.disabled = false; sendInputBtn.disabled = false; inputField.focus(); 
+                runBtn.classList.add('hidden'); stopBtn.classList.remove('hidden'); 
+                terminalHiddenInput.disabled = false;
+                terminalHiddenInput.focus();
+                editor.setOption("readOnly", true);
                 outputPre.innerHTML = '<div id="compile-loader" class="mb-2 text-left animate-fade-in-up"><span class="text-yellow-500 font-bold text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>[Compiling & Running...]</span><div class="w-40 h-1 bg-gray-700 mt-2 rounded overflow-hidden relative loading-container shadow-lg"><div class="absolute top-0 left-0 h-full bg-yellow-500 animate-loading-bar"></div></div></div>';
             } else {
-                runBtn.classList.remove('hidden'); stopBtn.classList.add('hidden'); inputField.disabled = true; sendInputBtn.disabled = true; inputField.value = "";
+                runBtn.classList.remove('hidden'); stopBtn.classList.add('hidden'); 
+                terminalHiddenInput.disabled = true;
+                terminalHiddenInput.value = "";
+                currentInputDisplay.innerText = "";
+                editor.setOption("readOnly", false);
             }
         }
 
@@ -2571,8 +2638,8 @@
         }
         
         function stopCode() { if(socket) socket.emit('stop_code'); const loader = document.getElementById('compile-loader'); if (loader) loader.remove(); setRunningState(false); }
-        function clearOutput() { outputPre.innerHTML = ""; }
-        function focusInput() { if (isRunning) inputField.focus(); }
+        function clearOutput() { outputPre.innerHTML = ""; currentInputDisplay.innerText = ""; }
+        
         function copyCode() { 
             editor.execCommand('selectAll'); 
             editor.focus(); 
@@ -2584,6 +2651,7 @@
             }); 
         }
         function clearAllCode() { 
+            if (isRunning) return;
             showConfirm("Clear All", "Are you sure you want to clear all code in this file? This action cannot be undone.", () => { 
                 editor.setValue(""); 
                 clearOutput(); 
@@ -2595,6 +2663,7 @@
             }); 
         }
         function insertHelloWorld(auto = false) { 
+            if (isRunning) return;
             const dropdown = document.getElementById('tools-dropdown');
             if(dropdown) {
                 dropdown.classList.remove('open');
@@ -2609,6 +2678,7 @@
              if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")'); }
         }
         async function clearAndPaste() { 
+            if (isRunning) return;
             const dropdown = document.getElementById('tools-dropdown');
             if(dropdown) {
                 dropdown.classList.remove('open');
@@ -2639,13 +2709,9 @@
             showInputModal("Download File", "Enter file name:", defaultFilename, defaultFilename, (filename) => {
                 if (filename.trim() === "") filename = defaultFilename;
                 
-                let ext = currentLang === 'cpp' ? '.cpp' : '.py'; 
-                if (!filename.endsWith(ext)) {
-                    if (filename.includes('.')) {
-                        filename = filename.substring(0, filename.lastIndexOf('.')) + ext;
-                    } else {
-                        filename += ext;
-                    }
+                if (!filename.includes('.')) {
+                    let ext = currentLang === 'cpp' ? '.cpp' : '.py'; 
+                    filename += ext;
                 }
                 
                 const blob = new Blob([code], { type: "application/octet-stream" }); 
@@ -2659,33 +2725,34 @@
                 URL.revokeObjectURL(url);
             });
         }
-        function sendInput() { 
-            if (!isRunning || !socket) return; 
-            const text = inputField.value; 
-            
+
+        function downloadProblem() {
             const project = projects[activeProjectIndex];
-            project.lastInput = text;
-            saveProjectsToStorage();
+            const content = problemContentEl.innerText || "";
+            let defaultFilename = project.title.replace(/\s+/g, '_') + "-題目.txt";
             
-            const echo = document.createElement('span'); 
-            echo.className = 'terminal-input-echo animate-fade-in-up block whitespace-pre-wrap'; 
-            echo.innerText = text + '\n'; 
-            outputPre.appendChild(echo); 
-            socket.emit('send_input', { input: text }); 
-            inputField.value = ""; 
-            terminalContainer.scrollTo({ top: terminalContainer.scrollHeight, behavior: 'smooth' }); 
-            inputField.focus(); 
+            showInputModal("Download Problem", "Enter file name:", defaultFilename, defaultFilename, (filename) => {
+                if (filename.trim() === "") filename = defaultFilename;
+                
+                if (!filename.endsWith('.txt')) {
+                    if (filename.includes('.')) {
+                        filename = filename.substring(0, filename.lastIndexOf('.')) + '.txt';
+                    } else {
+                        filename += '.txt';
+                    }
+                }
+                
+                const blob = new Blob([content], { type: "text/plain" }); 
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a"); 
+                a.href = url; 
+                a.download = filename; 
+                document.body.appendChild(a); 
+                a.click(); 
+                document.body.removeChild(a); 
+                URL.revokeObjectURL(url);
+            });
         }
-        
-        function fillLastInput() {
-            const project = projects[activeProjectIndex];
-            if(project && project.lastInput !== null && project.lastInput !== undefined && project.lastInput !== "") {
-                inputField.value = project.lastInput;
-                inputField.focus();
-            }
-        }
-        
-        inputField.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.ctrlKey) { e.preventDefault(); sendInput(); } });
         
         let activeResizer = null;
         let isResizingProcess = false; 

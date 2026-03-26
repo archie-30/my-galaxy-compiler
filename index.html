@@ -191,7 +191,9 @@
         
         #terminal-container { font-family: Consolas, monospace !important; scroll-behavior: smooth; cursor: text; }
         
-        #terminal-input-hidden { position: absolute; opacity: 0; pointer-events: none; left: -9999px; }
+        #current-input-display { outline: none !important; min-width: 2px; display: inline-block; caret-color: #4ade80; background: transparent !important; box-shadow: none !important; border: none !important; }
+        #current-input-display * { background-color: transparent !important; color: inherit !important; box-shadow: none !important; border: none !important; outline: none !important; text-shadow: none !important; }
+        #current-input-display:focus + .terminal-cursor { display: none; }
 
         .toggle-container-base { display: flex; background-color: #3c3c3c; border-radius: 6px; padding: 2px; position: relative; cursor: pointer; border: 1px solid #333; flex-shrink: 0; transition: all 0.35s var(--ease-spring); }
         .toggle-container-base:active { transform: scale(0.96); }
@@ -295,7 +297,14 @@
             line-height: inherit !important;
         }
         
-        #problem-content b, #problem-content strong { font-weight: bold !important; }
+        /* 增強粗體樣式選擇器，讓舊題目也能自動轉換為亮藍色 */
+        #problem-content b, 
+        #problem-content strong,
+        #problem-content [style*="font-weight: bold"],
+        #problem-content [style*="font-weight: 700"] { 
+            font-weight: 700 !important; 
+            color: #60a5fa !important; 
+        }
         #problem-content i, #problem-content em { font-style: italic !important; }
         #problem-content u { text-decoration: underline !important; }
         
@@ -643,8 +652,6 @@
     <div id="output-backdrop" onclick="toggleOutputPanel(false)"></div>
 
     <input type="file" id="file-input" style="display: none;">
-    
-    <input type="text" id="terminal-input-hidden" autocomplete="off" class="absolute opacity-0 pointer-events-none" style="left: -9999px;" tabindex="-1">
 
     <header class="h-14 border-b border-[#333] flex items-center justify-between px-4 bg-[#252526] flex-none z-50 transition-colors duration-300">
         <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -684,7 +691,7 @@
                     <div id="status-indicator" class="status-dot status-disconnected" style="width: 6px; height: 6px;"></div>
                     <span id="status-text" class="text-gray-500 transition-colors duration-300 text-[10px] leading-none font-bold">Disconnected</span>
                 </div>
-                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.3.0</span>
+                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.3.5</span>
             </div>
 
             <div class="dropdown-container" id="settings-dropdown">
@@ -901,12 +908,12 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <button onclick="clearOutput()" class="hover:text-white transition-colors duration-200">Clear</button>
-                        <button id="popup-close-btn" onclick="toggleOutputPanel(false)" class="hidden hover:text-white transition-colors duration-200 ml-1 px-2 py-0.5 rounded text-red-400 hover:bg-red-500/20" title="Close Popup">✖</button>
+                        <button id="popup-close-btn" onclick="switchToDockedFromPopup()" class="hidden hover:text-white transition-colors duration-200 ml-1 px-2 py-0.5 rounded text-red-400 hover:bg-red-500/20" title="Close Popup">✖</button>
                     </div>
                 </div>
 
                 <div id="terminal-container" class="flex-1 p-4 font-mono text-sm overflow-auto text-gray-300 relative min-h-0" onclick="focusInput()">
-                    <pre id="output" class="whitespace-pre-wrap break-words inline font-[Consolas,Monaco,monospace]"></pre><span id="current-input-display" class="terminal-input-echo"></span><span class="terminal-cursor"></span>
+                    <pre id="output" class="whitespace-pre-wrap break-words inline font-[Consolas,Monaco,monospace]"></pre><span id="current-input-display" class="terminal-input-echo outline-none caret-[#4ade80] min-w-[2px] inline-block" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" contenteditable="false"></span><span class="terminal-cursor" style="display: none;"></span>
                 </div>
             </div>
         </div>
@@ -1261,6 +1268,34 @@
             }
         }
 
+        function switchToDockedFromPopup() {
+            outputWrapper.classList.remove('popup-active');
+            outputBackdrop.classList.remove('active');
+            outputWrapper.classList.add('output-docked-open');
+            terminalResizer.style.display = 'flex'; 
+            
+            let savedFlex = outputWrapper.dataset.lastFlex;
+            if (!savedFlex || savedFlex.includes('0 0 0') || savedFlex === '0px') {
+                savedFlex = '0 0 30%';
+            }
+            
+            outputWrapper.style.flex = savedFlex;
+            editorContainer.style.flex = '1 1 0%'; 
+            
+            outputWrapper.style.minWidth = ""; 
+            outputWrapper.style.minHeight = "";
+            outputWrapper.style.padding = ""; 
+            outputWrapper.style.border = "";
+            
+            document.getElementById('popup-close-btn').classList.add('hidden');
+            
+            document.getElementById('output-toggle-btn').classList.add('active');
+            localStorage.setItem('galaxy_output_open', 'true');
+            
+            setTimeout(() => editor.refresh(), 50);
+            setTimeout(() => editor.refresh(), 400);
+        }
+
         function toggleOutputPanel(forceState = null) {
             const btn = document.getElementById('output-toggle-btn');
             const isOpen = btn.classList.contains('active');
@@ -1300,7 +1335,7 @@
                     document.getElementById('popup-close-btn').classList.add('hidden');
                 }
             } else {
-                if (currentOutputMode === 'default' && outputWrapper.style.flex && !outputWrapper.style.flex.includes('0 0 0')) {
+                if (outputWrapper.style.flex && !outputWrapper.style.flex.includes('0 0 0')) {
                     outputWrapper.dataset.lastFlex = outputWrapper.style.flex;
                 }
 
@@ -1470,7 +1505,7 @@
                 addBtn.style.marginBottom = '1.5px';
                 addBtn.className = 'w-6 h-6 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-gray-400 hover:text-white transition-colors flex-shrink-0 relative z-10 ml-1 mr-2';
                 addBtn.title = 'Add New File (Max 9)';
-                addBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>';
+                addBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>';
                 tabsContainer.appendChild(addBtn);
             }
         }
@@ -1638,8 +1673,8 @@
         }
 
         function requestNewProjectName() {
-            if (projects.length >= 21) { 
-                showModal("Notice", "Project limit reached (20).");
+            if (projects.length >= 31) { 
+                showModal("Notice", "Project limit reached (30).");
                 return;
             }
             let counter = 1;
@@ -1961,12 +1996,33 @@
             }
         });
 
+        problemContentEl.addEventListener('paste', function(e) {
+            e.preventDefault();
+            let html = '';
+            let text = '';
+            if (e.clipboardData || e.originalEvent?.clipboardData) {
+                html = (e.clipboardData || e.originalEvent.clipboardData).getData('text/html');
+                text = (e.clipboardData || e.originalEvent.clipboardData).getData('text/plain');
+            } else if (window.clipboardData) {
+                text = window.clipboardData.getData('Text');
+            }
+
+            if (html) {
+                document.execCommand('insertHTML', false, cleanHTML(html));
+            } else if (text) {
+                document.execCommand('insertText', false, text);
+            }
+            
+            problemContentEl.dispatchEvent(new Event('input'));
+        });
+
         function cleanHTML(html) {
             const div = document.createElement('div');
             div.innerHTML = html;
             div.querySelectorAll('*').forEach(el => {
                 const s = el.style;
-                const isBold = (s.fontWeight === 'bold' || parseInt(s.fontWeight) >= 700) || ['B', 'STRONG'].includes(el.tagName);
+                const fw = s.fontWeight;
+                const isBold = (fw === 'bold' || fw === 'bolder' || parseInt(fw) >= 600) || ['B', 'STRONG'].includes(el.tagName);
                 const isItalic = (s.fontStyle === 'italic') || ['I', 'EM'].includes(el.tagName);
                 const isUnderline = (s.textDecoration.includes('underline')) || el.tagName === 'U';
                 el.removeAttribute('style');
@@ -1974,9 +2030,21 @@
                 if (el.tagName === 'FONT') {
                     el.removeAttribute('color'); el.removeAttribute('face'); el.removeAttribute('size');
                 }
-                if (isBold) el.style.fontWeight = 'bold';
-                if (isItalic) el.style.fontStyle = 'italic';
-                if (isUnderline) el.style.textDecoration = 'underline';
+                if (isBold && !['B', 'STRONG'].includes(el.tagName)) {
+                    const wrap = document.createElement('b');
+                    while (el.firstChild) wrap.appendChild(el.firstChild);
+                    el.appendChild(wrap);
+                }
+                if (isItalic && !['I', 'EM'].includes(el.tagName)) {
+                    const wrap = document.createElement('i');
+                    while (el.firstChild) wrap.appendChild(el.firstChild);
+                    el.appendChild(wrap);
+                }
+                if (isUnderline && el.tagName !== 'U') {
+                    const wrap = document.createElement('u');
+                    while (el.firstChild) wrap.appendChild(el.firstChild);
+                    el.appendChild(wrap);
+                }
             });
             return div.innerHTML;
         }
@@ -2141,6 +2209,7 @@
         }
 
         function selectLanguage(lang) { 
+            if (isRunning) return;
             if (lang === currentLang) return;
             
             toggleDropdown('lang-dropdown'); 
@@ -2498,32 +2567,58 @@
         editor.addOverlay({ token: function(stream) { if (stream.sol()) { if (stream.eatSpace()) return "indent-guides"; } stream.skipToEnd(); return null; } });
         CodeMirror.registerHelper("hint", "clike", codeHint); CodeMirror.registerHelper("hint", "python", codeHint);
 
-        const terminalHiddenInput = document.getElementById('terminal-input-hidden');
         const currentInputDisplay = document.getElementById('current-input-display');
         const outputPre = document.getElementById('output');
         const runBtn = document.getElementById('run-btn');
         const stopBtn = document.getElementById('stop-btn');
         const terminalContainer = document.getElementById('terminal-container');
+        const terminalCursor = document.querySelector('.terminal-cursor');
 
         function focusInput() {
-            if (isRunning) terminalHiddenInput.focus();
+            if (isRunning && currentInputDisplay.getAttribute("contenteditable") === "true") {
+                currentInputDisplay.focus();
+                if (typeof window.getSelection !== "undefined" && typeof document.createRange !== "undefined") {
+                    let range = document.createRange();
+                    range.selectNodeContents(currentInputDisplay);
+                    range.collapse(false);
+                    let sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+            }
         }
 
-        terminalHiddenInput.addEventListener('input', function() {
-            currentInputDisplay.innerText = this.value;
-            terminalContainer.scrollTo({ top: terminalContainer.scrollHeight, behavior: 'auto' });
-        });
-
-        terminalHiddenInput.addEventListener('keydown', function(e) {
+        currentInputDisplay.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 sendInput();
             }
         });
 
+        currentInputDisplay.addEventListener('paste', function(e) {
+            e.preventDefault();
+            let text = '';
+            if (e.clipboardData || e.originalEvent?.clipboardData) {
+                text = (e.clipboardData || e.originalEvent.clipboardData).getData('text/plain');
+            } else if (window.clipboardData) {
+                text = window.clipboardData.getData('Text');
+            }
+            
+            text = text.replace(/\r/g, '');
+            
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            selection.deleteFromDocument();
+            selection.getRangeAt(0).insertNode(document.createTextNode(text));
+            selection.collapseToEnd();
+            
+            currentInputDisplay.dispatchEvent(new Event('input'));
+        });
+
         function sendInput() {
             if (!isRunning || !socket) return;
-            const text = terminalHiddenInput.value;
+            let text = currentInputDisplay.innerText;
+            text = text.replace(/\n$/, ''); 
             
             const project = projects[activeProjectIndex];
             project.lastInput = text;
@@ -2535,7 +2630,6 @@
             outputPre.appendChild(echo); 
             
             socket.emit('send_input', { input: text }); 
-            terminalHiddenInput.value = ""; 
             currentInputDisplay.innerText = "";
             terminalContainer.scrollTo({ top: terminalContainer.scrollHeight, behavior: 'smooth' }); 
         }
@@ -2543,7 +2637,6 @@
         function fillLastInput() {
             const project = projects[activeProjectIndex];
             if(project && project.lastInput !== null && project.lastInput !== undefined && project.lastInput !== "") {
-                terminalHiddenInput.value = project.lastInput;
                 currentInputDisplay.innerText = project.lastInput;
                 focusInput();
             }
@@ -2560,7 +2653,15 @@
                 if(statusText) { statusText.innerText = "Disconnected"; statusText.className = "text-red-500 text-xs transition-colors duration-300"; }
             });
             socket.on('program_output', (msg) => {
-                const loader = document.getElementById('compile-loader'); if (loader) loader.remove();
+                const loader = document.getElementById('compile-loader'); 
+                if (loader) {
+                    loader.remove();
+                    if (isRunning) {
+                        currentInputDisplay.setAttribute("contenteditable", "true");
+                        if(terminalCursor) terminalCursor.style.display = 'inline-block';
+                        focusInput();
+                    }
+                }
                 const span = document.createElement('span'); 
                 span.className = 'terminal-output';
                 span.innerHTML = formatCompilerOutput(msg.data);
@@ -2595,15 +2696,19 @@
             isRunning = running;
             if (running) {
                 runBtn.classList.add('hidden'); stopBtn.classList.remove('hidden'); 
-                terminalHiddenInput.disabled = false;
-                terminalHiddenInput.focus();
+                
+                currentInputDisplay.setAttribute("contenteditable", "false");
+                if (terminalCursor) terminalCursor.style.display = 'none';
+                
                 editor.setOption("readOnly", true);
                 outputPre.innerHTML = '<div id="compile-loader" class="mb-2 text-left animate-fade-in-up"><span class="text-yellow-500 font-bold text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>[Compiling & Running...]</span><div class="w-40 h-1 bg-gray-700 mt-2 rounded overflow-hidden relative loading-container shadow-lg"><div class="absolute top-0 left-0 h-full bg-yellow-500 animate-loading-bar"></div></div></div>';
             } else {
                 runBtn.classList.remove('hidden'); stopBtn.classList.add('hidden'); 
-                terminalHiddenInput.disabled = true;
-                terminalHiddenInput.value = "";
+                
+                currentInputDisplay.setAttribute("contenteditable", "false");
                 currentInputDisplay.innerText = "";
+                if (terminalCursor) terminalCursor.style.display = 'none';
+                
                 editor.setOption("readOnly", false);
             }
         }
@@ -2612,7 +2717,9 @@
             const btn = document.getElementById('output-toggle-btn');
             const isOpen = btn.classList.contains('active');
             
-            if (!isOpen) {
+            if (currentOutputMode === 'popup') {
+                toggleOutputPanel(true);
+            } else if (!isOpen) {
                 toggleOutputPanel(true);
             }
             

@@ -297,7 +297,6 @@
             line-height: inherit !important;
         }
         
-        /* 增強粗體樣式選擇器，讓舊題目也能自動轉換為亮藍色 */
         #problem-content b, 
         #problem-content strong,
         #problem-content [style*="font-weight: bold"],
@@ -319,22 +318,31 @@
             left: 1rem;
         }
 
-        #problem-list { overflow-y: auto; height: 100%; }
-        .problem-item { height: 38px; padding: 0 12px; cursor: grab; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.35s var(--ease-spring), transform 0.35s var(--ease-spring), box-shadow 0.2s var(--ease-spring); }
+        /* 題目列表設計與全隱藏過渡動畫 */
+        #problem-list { overflow-y: auto; height: 100%; position: relative; }
+        .problem-item { height: 38px; padding: 0 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: visible; }
         .problem-item.is-main { cursor: pointer; }
-        .problem-item:hover { background-color: #2d2d2d; }
-        .problem-item:active { transform: scale(0.98); cursor: grabbing; }
-        .problem-item.is-main:active { transform: scale(0.98); cursor: pointer; }
+        .problem-item:hover { background-color: #2d2d2d; z-index: 50; }
+        .problem-item:active { background-color: #3e4451; }
         .problem-item.active { background-color: #37373d; border-left: 3px solid #007acc; }
         
-        .problem-item.dragging { opacity: 0.4; transform: scale(0.96); background-color: #37373d; z-index: 10; }
-        .problem-item.drag-over-top { box-shadow: inset 0 2px 0 #3b82f6; }
-        .problem-item.drag-over-bottom { box-shadow: inset 0 -2px 0 #3b82f6; }
-
-        .problem-item-title { font-size: 13px; color: #ccc; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; padding-right: 8px; pointer-events: none; }
+        .problem-item.drag-hidden, .problem-item.is-inserting { 
+            height: 0 !important; min-height: 0 !important; 
+            padding-top: 0 !important; padding-bottom: 0 !important; 
+            margin-top: 0 !important; margin-bottom: 0 !important; 
+            border-bottom-width: 0 !important; opacity: 0 !important; 
+            overflow: hidden !important; pointer-events: none !important; flex: 0 0 0 !important;
+        }
+        .problem-item.drag-over-top { margin-top: 38px !important; }
+        .problem-item.drag-over-top::before { content: ''; position: absolute; top: -20.5px; left: 12px; right: 12px; height: 3px; background-color: #3b82f6; border-radius: 2px; box-shadow: 0 0 8px rgba(59, 130, 246, 0.8); pointer-events: none; z-index: 60; }
+        .problem-item.drag-over-bottom { margin-bottom: 38px !important; }
+        .problem-item.drag-over-bottom::after { content: ''; position: absolute; bottom: -20.5px; left: 12px; right: 12px; height: 3px; background-color: #3b82f6; border-radius: 2px; box-shadow: 0 0 8px rgba(59, 130, 246, 0.8); pointer-events: none; z-index: 60; }
+        
+        .problem-item-title { font-family: 'Noto Sans TC', sans-serif; font-size: 13px; color: #ccc; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; padding-right: 8px; pointer-events: none; }
         .problem-item.active .problem-item-title { color: #fff; }
-        .problem-item-actions { display: none; gap: 4px; flex-shrink: 0; }
+        .problem-item-actions { display: none; gap: 4px; flex-shrink: 0; align-items: center; }
         .problem-item:hover .problem-item-actions { display: flex; }
+        .problem-item:has(.open) .problem-item-actions { display: flex; }
         .problem-item.is-main .problem-item-actions { display: flex; }
         .problem-action-btn { width: 28px; height: 28px; border-radius: 4px; color: #858585; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: all 0.35s var(--ease-spring); }
         .problem-action-btn:hover { background-color: #454545; color: #fff; }
@@ -612,6 +620,7 @@
             scrollbar-width: none;
         }
         
+        /* 檔案標籤列設計與全隱藏過渡動畫 */
         .editor-tab {
             height: 27px;
             padding: 0 12px;
@@ -623,11 +632,13 @@
             align-items: center;
             gap: 6px;
             cursor: pointer;
-            transition: all 0.35s var(--ease-spring);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
             max-width: 140px;
             flex-shrink: 0;
+            overflow: visible;
         }
-        .editor-tab:active { transform: scale(0.96); }
+        .editor-tab:active { opacity: 0.7; }
         .editor-tab.active {
             background-color: var(--bg-color);
             color: #60a5fa;
@@ -637,8 +648,21 @@
             background-color: #3e4451;
         }
         .editor-tab-name {
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; font-family: 'Noto Sans TC', sans-serif;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; font-family: 'Noto Sans TC', sans-serif; pointer-events: none;
         }
+        
+        .editor-tab.drag-hidden, .editor-tab.is-inserting { 
+            width: 0 !important; max-width: 0 !important; min-width: 0 !important; 
+            padding-left: 0 !important; padding-right: 0 !important; 
+            margin-left: 0 !important; margin-right: 0 !important; 
+            border-left-width: 0 !important; border-right-width: 0 !important; 
+            opacity: 0 !important; flex: 0 0 0 !important; 
+            overflow: hidden !important; pointer-events: none !important; color: transparent !important;
+        }
+        .editor-tab.drag-over-left { margin-left: 28px !important; }
+        .editor-tab.drag-over-left::before { content: ''; position: absolute; left: -15.5px; top: 50%; transform: translateY(-50%); height: 16px; width: 3px; background-color: #3b82f6; border-radius: 2px; box-shadow: 0 0 8px rgba(59, 130, 246, 0.8); pointer-events: none; z-index: 60; }
+        .editor-tab.drag-over-right { margin-right: 28px !important; }
+        .editor-tab.drag-over-right::after { content: ''; position: absolute; right: -15.5px; top: 50%; transform: translateY(-50%); height: 16px; width: 3px; background-color: #3b82f6; border-radius: 2px; box-shadow: 0 0 8px rgba(59, 130, 246, 0.8); pointer-events: none; z-index: 60; }
         
         #add-file-btn { transition: all 0.35s var(--ease-spring); }
         #add-file-btn:active { transform: scale(0.92); }
@@ -691,7 +715,11 @@
                     <div id="status-indicator" class="status-dot status-disconnected" style="width: 6px; height: 6px;"></div>
                     <span id="status-text" class="text-gray-500 transition-colors duration-300 text-[10px] leading-none font-bold">Disconnected</span>
                 </div>
-                <span class="text-[9px] text-gray-400 font-mono select-none leading-none pl-3">v6.3.5</span>
+                <div id="save-status-indicator" class="flex items-center gap-1 pl-3 pointer-events-none w-16">
+                    <svg id="save-icon-saved" class="w-[10px] h-[10px] text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    <svg id="save-icon-saving" class="w-[10px] h-[10px] text-yellow-500 animate-spin hidden" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <span id="save-text" class="text-[9px] text-gray-400 font-mono select-none leading-none">Saved</span>
+                </div>
             </div>
 
             <div class="dropdown-container" id="settings-dropdown">
@@ -704,6 +732,14 @@
                 </div>
                 <div class="dropdown-menu" style="right: 0; left: auto; min-width: 200px; transform-origin: top right; padding: 4px 2px;">
                     
+                    <div class="dropdown-label">Workspace</div>
+                    <div class="dropdown-item !py-1.5 flex items-center justify-start gap-3" onclick="enterReorderMode()">
+                        <svg class="w-4 h-4 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
+                        <span class="text-xs">Reorder Mode</span>
+                    </div>
+
+                    <div class="my-0.5 border-t border-[#3c3c3c]"></div>
+
                     <div class="dropdown-label">System</div>
                     <div class="dropdown-item" id="anim-toggle-opt" onclick="toggleAnimations()">
                         <span>Animations: On</span>
@@ -768,6 +804,9 @@
                         <span>Download</span>
                         <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     </div>
+                    
+                    <div class="my-1 border-t border-[#3c3c3c]"></div>
+                    <div class="text-[10px] text-center text-gray-500 font-mono py-1 cursor-default select-none tracking-wider">v6.5.2</div>
                 </div>
             </div>
 
@@ -978,6 +1017,10 @@
         var currentTheme = 'modern'; 
         var enableAnimations = true; 
 
+        let isReorderMode = false;
+        let reorderBackup = [];
+        let originalSettingsHTML = { btn: '', menu: '' };
+
         const modalOverlay = document.getElementById('modal-overlay');
         const modalTitle = document.getElementById('modal-title');
         const modalMessage = document.getElementById('modal-message');
@@ -1051,6 +1094,8 @@
         
         modalInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
                 const btn = modalFooter.querySelector('.modal-btn-primary');
                 if(btn) btn.click();
             }
@@ -1061,7 +1106,7 @@
         }
 
         function openFileConfirm() {
-            if (isRunning) return;
+            if (isRunning || isReorderMode) return;
             showConfirm("Open File", "Opening a file will overwrite current code.\nAre you sure you want to continue?", triggerFileSelect);
         }
 
@@ -1132,7 +1177,7 @@
             extraKeys: {
                 "Ctrl-Space": "autocomplete",
                 "Enter": function(cm) {
-                    if (cm.getOption("disableInput")) return CodeMirror.Pass;
+                    if (cm.getOption("disableInput") || isReorderMode) return CodeMirror.Pass;
                     var cursor = cm.getCursor(); var line = cm.getLine(cursor.line);
                     if (line.charAt(cursor.ch - 1) === '{' && line.charAt(cursor.ch) === '}') {
                         cm.execCommand("newlineAndIndent"); cm.replaceSelection("\n", "start"); var newCursor = cm.getCursor();
@@ -1143,7 +1188,7 @@
                     return CodeMirror.Pass; 
                 },
                 "Backspace": function(cm) {
-                    if (cm.somethingSelected()) return CodeMirror.Pass;
+                    if (cm.somethingSelected() || isReorderMode) return CodeMirror.Pass;
                     var cursor = cm.getCursor();
                     var line = cm.getLine(cursor.line);
                     var beforeCursor = line.slice(0, cursor.ch);
@@ -1167,7 +1212,7 @@
         });
 
         editor.on("change", function() {
-            if (!isChangingProject && !isChangingLang) {
+            if (!isChangingProject && !isChangingLang && !isReorderMode) {
                 const project = projects[activeProjectIndex];
                 if(project && project.files && project.files[project.activeFileIndex]) {
                     project.files[project.activeFileIndex].code = editor.getValue();
@@ -1184,6 +1229,7 @@
         }
         
         function formatCode() {
+            if (isReorderMode) return;
             var totalLines = editor.lineCount();
             var cursor = editor.getCursor();
             editor.setSelection({line: 0, ch: 0}, {line: totalLines, ch: 0});
@@ -1234,7 +1280,7 @@
         
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && currentOutputMode === 'popup' && outputWrapper.classList.contains('popup-active')) {
-                toggleOutputPanel(false);
+                switchToDockedFromPopup();
             }
         });
 
@@ -1413,6 +1459,7 @@
         }
 
         function toggleSidePanel() {
+            if (isReorderMode) return;
             const newView = currentSideView === 'list' ? 'desc' : 'list';
             toggleSideView(newView);
         }
@@ -1452,11 +1499,111 @@
         }
 
         function getHelloWorld(lang) {
-            if (lang === 'cpp') return '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}';
-            else return 'print("Hello Galaxy Python!")\n\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")';
+            if (lang === 'cpp') return '#include <iostream>\nusing namespace std;\n\nint main(){\n    cout<<"Hello World"<<endl;\n    return 0;\n}';
+            else return 'print("Hello Galaxy Python!")\n\nname=input("Please enter your name:")\nprint(f"Nice to meet you,{name}!")';
         }
 
-        function renderEditorTabs() {
+        let draggedTabIndex = -1;
+
+        function handleTabDragStart(e) {
+            if (isRunning || !isReorderMode) {
+                e.preventDefault();
+                return;
+            }
+            draggedTabIndex = parseInt(this.dataset.index);
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('application/x-galaxy-tab', draggedTabIndex);
+            
+            const emptyCanvas = document.createElement('canvas');
+            emptyCanvas.width = 1;
+            emptyCanvas.height = 1;
+            e.dataTransfer.setDragImage(emptyCanvas, 0, 0);
+            
+            if(enableAnimations) {
+                requestAnimationFrame(() => {
+                    this.classList.add('drag-hidden');
+                });
+            } else {
+                this.classList.add('drag-hidden');
+            }
+        }
+
+        function handleTabDragEnter(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function handleTabDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const targetIndex = parseInt(this.dataset.index);
+            if (draggedTabIndex === targetIndex || draggedTabIndex === -1) return;
+
+            const rect = this.getBoundingClientRect();
+            const midX = rect.left + rect.width / 2;
+            
+            this.classList.remove('drag-over-left', 'drag-over-right');
+            
+            if (e.clientX < midX) {
+                this.classList.add('drag-over-left');
+            } else {
+                this.classList.add('drag-over-right');
+            }
+        }
+
+        function handleTabDragLeave(e) {
+            this.classList.remove('drag-over-left', 'drag-over-right');
+        }
+
+        function handleTabDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            let isRight = this.classList.contains('drag-over-right');
+            this.classList.remove('drag-over-left', 'drag-over-right');
+            
+            let draggedIdxStr = e.dataTransfer.getData('application/x-galaxy-tab');
+            let draggedIdx = draggedIdxStr ? parseInt(draggedIdxStr) : draggedTabIndex;
+            
+            if (isNaN(draggedIdx) || draggedIdx === -1) return;
+            const targetIndex = parseInt(this.dataset.index);
+            if (draggedIdx === targetIndex) return;
+
+            let newIndex = targetIndex;
+            if (isRight) {
+                newIndex = targetIndex + 1;
+            }
+            
+            if (draggedIdx < newIndex) {
+                newIndex--;
+            }
+
+            if (newIndex !== draggedIdx && newIndex >= 0) {
+                const project = projects[activeProjectIndex];
+                const activeFileName = project.files[project.activeFileIndex].name;
+                
+                const [movedFile] = project.files.splice(draggedIdx, 1);
+                project.files.splice(newIndex, 0, movedFile);
+                
+                project.activeFileIndex = project.files.findIndex(f => f.name === activeFileName);
+                
+                saveProjectsToStorage();
+                renderEditorTabs(newIndex);
+            }
+            draggedTabIndex = -1;
+        }
+
+        function handleTabDragEnd(e) {
+            this.classList.remove('drag-hidden');
+            draggedTabIndex = -1;
+            document.querySelectorAll('.editor-tab').forEach(tab => {
+                tab.classList.remove('drag-over-left', 'drag-over-right');
+            });
+        }
+
+        function renderEditorTabs(insertedIdx = -1) {
             const project = projects[activeProjectIndex];
             const tabsContainer = document.getElementById('editor-tabs');
             
@@ -1469,21 +1616,34 @@
             }
             
             project.files.forEach((file, index) => {
+                const isMainFile = file.name === 'main.cpp' || file.name === 'main.py';
                 const tab = document.createElement('div');
                 tab.className = `editor-tab ${index === project.activeFileIndex ? 'active' : ''}`;
+                tab.dataset.index = index;
                 tab.onclick = () => switchFile(index);
                 tab.ondblclick = (e) => {
-                    if(index !== 0) renameFile(index, e);
+                    if(!isMainFile && !isReorderMode) renameFile(index, e);
                 };
+
+                tab.draggable = isReorderMode;
+                if (isReorderMode) {
+                    tab.style.cursor = 'grab';
+                    tab.addEventListener('dragstart', handleTabDragStart);
+                    tab.addEventListener('dragend', handleTabDragEnd);
+                    tab.addEventListener('dragenter', handleTabDragEnter);
+                    tab.addEventListener('dragover', handleTabDragOver);
+                    tab.addEventListener('dragleave', handleTabDragLeave);
+                    tab.addEventListener('drop', handleTabDrop);
+                }
                 
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'editor-tab-name select-none';
                 nameSpan.innerText = file.name;
                 tab.appendChild(nameSpan);
                 
-                if (index !== 0) {
+                if (!isMainFile && !isReorderMode) {
                     const delBtn = document.createElement('span');
-                    delBtn.className = 'text-gray-500 hover:text-red-400 ml-1 text-[16px] leading-none ml-auto';
+                    delBtn.className = 'text-gray-500 hover:text-red-400 ml-1 text-[16px] leading-none ml-auto pointer-events-auto';
                     if (index !== project.activeFileIndex) {
                         delBtn.style.display = 'none';
                     }
@@ -1495,10 +1655,19 @@
                     tab.appendChild(delBtn);
                 }
                 
+                if (index === insertedIdx && enableAnimations) {
+                    tab.classList.add('is-inserting');
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            tab.classList.remove('is-inserting');
+                        });
+                    });
+                }
+                
                 tabsContainer.appendChild(tab);
             });
             
-            if (project.files.length < 9) {
+            if (project.files.length < 9 && !isReorderMode) {
                 const addBtn = document.createElement('button');
                 addBtn.id = 'add-file-btn';
                 addBtn.onclick = requestNewFile;
@@ -1511,6 +1680,7 @@
         }
 
         function switchFile(index) {
+            if (isReorderMode) return;
             const project = projects[activeProjectIndex];
             if (index === project.activeFileIndex && editor.getValue() === project.files[index].code) return;
             
@@ -1555,11 +1725,12 @@
         }
 
         function requestNewFile() {
-            if (isRunning) return;
+            if (isRunning || isReorderMode) return;
             const project = projects[activeProjectIndex];
             if (project.files.length >= 9) return;
             
-            let ext = currentLang === 'cpp' ? '.cpp' : '.py';
+            let position = project.files.length + 1;
+            let ext = currentLang === 'cpp' ? ((position % 2 === 0) ? '.cpp' : '.h') : '.py';
             let defaultName = 'file' + project.files.length + ext;
             
             showInputModal("New File", "Enter file name:", defaultName, defaultName, (name) => {
@@ -1573,28 +1744,31 @@
         }
         
         function renameFile(index, event) {
-            if (isRunning) return;
+            if (isRunning || isReorderMode) return;
             if (event) event.stopPropagation();
-            if (index === 0) return; 
-            
             const project = projects[activeProjectIndex];
-            showInputModal("Rename File", "Enter new file name:", "", project.files[index].name, (newName) => {
-                if (newName === project.files[index].name) return;
+            const file = project.files[index];
+            if (!file || file.name === 'main.cpp' || file.name === 'main.py') return; 
+            
+            showInputModal("Rename File", "Enter new file name:", "", file.name, (newName) => {
+                if (newName === file.name) return;
                 if (project.files.some(f => f.name === newName)) {
                     showModal("Error", "File name already exists.");
                     return;
                 }
-                project.files[index].name = newName;
+                file.name = newName;
                 renderEditorTabs();
                 saveProjectsToStorage();
             });
         }
         
         function deleteFile(index) {
-            if (isRunning) return;
-            if (index === 0) return;
+            if (isRunning || isReorderMode) return;
             const project = projects[activeProjectIndex];
-            showConfirm("Delete File", `Are you sure you want to delete ${project.files[index].name}?`, () => {
+            const file = project.files[index];
+            if (!file || file.name === 'main.cpp' || file.name === 'main.py') return;
+            
+            showConfirm("Delete File", `Are you sure you want to delete ${file.name}?`, () => {
                 project.files.splice(index, 1);
                 if (project.activeFileIndex >= index) {
                     project.activeFileIndex = Math.max(0, project.activeFileIndex - 1);
@@ -1652,12 +1826,40 @@
             loadProject(activeProjectIndex);
         }
 
+        let saveIndicatorTimeout;
+        function showSaveStatus() {
+            const savedIcon = document.getElementById('save-icon-saved');
+            const savingIcon = document.getElementById('save-icon-saving');
+            const saveText = document.getElementById('save-text');
+            
+            if (savedIcon) savedIcon.classList.add('hidden');
+            if (savingIcon) savingIcon.classList.remove('hidden');
+            if (saveText) {
+                saveText.innerText = 'Saving...';
+                saveText.classList.remove('text-gray-400');
+                saveText.classList.add('text-yellow-500');
+            }
+            
+            clearTimeout(saveIndicatorTimeout);
+            saveIndicatorTimeout = setTimeout(() => {
+                if (savingIcon) savingIcon.classList.add('hidden');
+                if (savedIcon) savedIcon.classList.remove('hidden');
+                if (saveText) {
+                    saveText.innerText = 'Saved';
+                    saveText.classList.remove('text-yellow-500');
+                    saveText.classList.add('text-gray-400');
+                }
+            }, 500);
+        }
+
         function saveProjectsToStorage() {
+            if (isReorderMode) return;
             localStorage.setItem(`galaxy_projects_${currentLang}`, JSON.stringify(projects));
+            showSaveStatus();
         }
 
         function saveCurrentProject() {
-            if (projects[activeProjectIndex]) {
+            if (projects[activeProjectIndex] && !isReorderMode) {
                 const project = projects[activeProjectIndex];
                 if(project.files && project.files[project.activeFileIndex]) {
                     project.files[project.activeFileIndex].code = editor.getValue();
@@ -1673,6 +1875,7 @@
         }
 
         function requestNewProjectName() {
+            if (isRunning || isReorderMode) return;
             if (projects.length >= 31) { 
                 showModal("Notice", "Project limit reached (30).");
                 return;
@@ -1701,12 +1904,37 @@
             };
             projects.push(newProject);
             saveProjectsToStorage();
-            renderProjectList();
-            selectProject(projects.length - 1);
+            selectProject(projects.length - 1, true);
+            renderProjectList(projects.length - 1);
         }
         
+        function duplicateProject(index, event) {
+            if (isRunning || isReorderMode) return;
+            if (event) event.stopPropagation();
+            if (projects.length >= 31) { 
+                showModal("Notice", "Project limit reached (30).");
+                return;
+            }
+            
+            const original = projects[index];
+            const newProject = JSON.parse(JSON.stringify(original));
+            
+            newProject.id = Date.now();
+            newProject.title = original.title + "的複製";
+            
+            projects.splice(index + 1, 0, newProject);
+            
+            if (activeProjectIndex > index) {
+                activeProjectIndex++;
+            }
+            
+            saveProjectsToStorage();
+            renderProjectList(index + 1);
+        }
+
         function renameProject(index, event) {
             if (event) event.stopPropagation();
+            if (isReorderMode) return;
             if (projects[index].id === 'main') {
                 showModal("Notice", "The 'main' project cannot be renamed.");
                 return;
@@ -1722,7 +1950,7 @@
         }
 
         function deleteProject(index, event) {
-            if (isRunning) return;
+            if (isRunning || isReorderMode) return;
             if (event) event.stopPropagation();
             if (projects[index].id === 'main') {
                 showModal("Notice", "The 'main' project cannot be deleted.");
@@ -1741,8 +1969,8 @@
             });
         }
 
-        function selectProject(index) {
-            if (isRunning) return;
+        function selectProject(index, skipRender = false) {
+            if (isRunning || isReorderMode) return;
             if (index === activeProjectIndex) {
                 toggleSideView('desc');
                 return;
@@ -1756,7 +1984,7 @@
             triggerProjectSwitchAnimation();
             
             loadProject(index);
-            renderProjectList();
+            if (!skipRender) renderProjectList();
         }
         
         function triggerProjectSwitchAnimation() {
@@ -1802,7 +2030,7 @@
             if (activeFile.cursorPos) {
                 editor.setCursor(activeFile.cursorPos);
                 if (activeFile.scrollPos) {
-                    editor.scrollTo(activeFile.scrollPos.left, activeFile.scrollPos.top);
+                    editor.scrollTo(activeFile.scrollPos.left, editor.getScrollInfo().top);
                 }
                 editor.focus();
             } else {
@@ -1817,80 +2045,101 @@
             isChangingProject = false;
         }
 
-        function renderProjectList() {
-            problemListEl.innerHTML = '';
-            projects.forEach((proj, idx) => {
-                const item = document.createElement('div');
-                const isMain = proj.id === 'main';
-                item.className = `problem-item ${idx === activeProjectIndex ? 'active' : ''} ${isMain ? 'is-main' : ''}`;
-                item.onclick = () => selectProject(idx);
-                item.dataset.index = idx;
-                
-                if (!isMain) {
-                    item.draggable = true;
-                    item.addEventListener('dragstart', handleDragStart);
-                    item.addEventListener('dragenter', handleDragEnter);
-                    item.addEventListener('dragover', handleDragOver);
-                    item.addEventListener('dragleave', handleDragLeave);
-                    item.addEventListener('drop', handleDrop);
-                    item.addEventListener('dragend', handleDragEnd);
-                } else {
-                    item.addEventListener('dragenter', handleDragEnter);
-                    item.addEventListener('dragover', handleDragOver);
-                    item.addEventListener('dragleave', handleDragLeave);
-                    item.addEventListener('drop', handleDrop);
-                }
-                
-                const title = document.createElement('div');
-                title.className = 'problem-item-title';
-                title.innerText = proj.title;
-                
-                const actions = document.createElement('div');
-                actions.className = 'problem-item-actions';
-                
-                if (isMain) {
-                    const pinIcon = document.createElement('div');
-                    pinIcon.className = 'problem-action-btn pin';
-                    pinIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V6a4 4 0 0 0-8 0v6l-2 2v2h5v6h2v-6h5v-2l-2-2z"/></svg>`;
-                    pinIcon.title = "Pinned Project";
-                    actions.appendChild(pinIcon);
-                } else {
-                    const renameBtn = document.createElement('div');
-                    renameBtn.className = 'problem-action-btn';
-                    renameBtn.title = "Rename";
-                    renameBtn.innerHTML = `<svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>`;
-                    renameBtn.onclick = (e) => renameProject(idx, e);
-                    
-                    const delBtn = document.createElement('div');
-                    delBtn.className = 'problem-action-btn';
-                    delBtn.title = "Delete";
-                    delBtn.innerHTML = `<svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>`;
-                    delBtn.onclick = (e) => deleteProject(idx, e);
-                    
-                    actions.appendChild(renameBtn);
-                    actions.appendChild(delBtn);
-                }
-                
-                item.appendChild(title);
-                item.appendChild(actions);
-                problemListEl.appendChild(item);
-            });
+        function enterReorderMode() {
+            if (isRunning) return;
+            isReorderMode = true;
+            let activeId = projects[activeProjectIndex].id;
+            reorderBackup = JSON.parse(JSON.stringify(projects));
+            
+            if (currentSideView === 'desc') {
+                toggleSideView('list');
+            }
+            
+            document.getElementById('side-panel-toggle-container').style.pointerEvents = 'none';
+            document.getElementById('side-panel-toggle-container').style.opacity = '0.5';
+            editor.setOption('readOnly', true);
+            
+            const btn = document.querySelector('.settings-btn');
+            const menu = document.querySelector('#settings-dropdown .dropdown-menu');
+            
+            if (!originalSettingsHTML.btn) {
+                originalSettingsHTML.btn = btn.innerHTML;
+                originalSettingsHTML.menu = menu.innerHTML;
+            }
+            
+            btn.innerHTML = `<svg class="w-4 h-4 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg><span class="w-full text-center text-purple-400 font-bold tracking-wide">Reorder</span>`;
+            btn.classList.add('!border-purple-500', '!bg-purple-900/30');
+            
+            menu.innerHTML = `
+                <div class="dropdown-label">Apply Changes</div>
+                <div class="dropdown-item !py-1.5 flex items-center justify-start gap-3 hover:!bg-[#2ea043] hover:!text-white group" onclick="saveReorder()">
+                    <svg class="w-4 h-4 text-[#2ea043] group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <span class="text-xs font-bold text-gray-300 group-hover:text-white">Save Order</span>
+                </div>
+                <div class="dropdown-item !py-1.5 flex items-center justify-start gap-3 hover:!bg-red-600 hover:!text-white group mt-1" onclick="cancelReorder()">
+                    <svg class="w-4 h-4 text-[#e04f5f] group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <span class="text-xs font-bold text-gray-300 group-hover:text-white">Cancel</span>
+                </div>
+            `;
+            
+            closeAllDropdowns();
+            renderProjectList();
+            renderEditorTabs();
         }
-        
+
+        function exitReorderMode(save) {
+            if (save) {
+                localStorage.setItem(`galaxy_projects_${currentLang}`, JSON.stringify(projects));
+                showSaveStatus();
+            } else {
+                const activeId = projects[activeProjectIndex].id;
+                projects = JSON.parse(JSON.stringify(reorderBackup));
+                activeProjectIndex = Math.max(0, projects.findIndex(p => p.id === activeId));
+            }
+            
+            isReorderMode = false;
+            
+            document.getElementById('side-panel-toggle-container').style.pointerEvents = '';
+            document.getElementById('side-panel-toggle-container').style.opacity = '';
+            editor.setOption('readOnly', false);
+            
+            const btn = document.querySelector('.settings-btn');
+            const menu = document.querySelector('#settings-dropdown .dropdown-menu');
+            btn.innerHTML = originalSettingsHTML.btn;
+            btn.classList.remove('!border-purple-500', '!bg-purple-900/30');
+            menu.innerHTML = originalSettingsHTML.menu;
+            
+            updateSettingsDropdownState();
+            closeAllDropdowns();
+            renderProjectList();
+            renderEditorTabs();
+        }
+
+        function saveReorder() { exitReorderMode(true); }
+        function cancelReorder() { exitReorderMode(false); }
+
         let draggedProjectIndex = -1;
 
         function handleDragStart(e) {
+            if (!isReorderMode) {
+                e.preventDefault();
+                return;
+            }
             draggedProjectIndex = parseInt(this.dataset.index);
-            this.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', draggedProjectIndex);
+            e.dataTransfer.setData('application/x-galaxy-problem', draggedProjectIndex);
+            
+            const emptyCanvas = document.createElement('canvas');
+            emptyCanvas.width = 1;
+            emptyCanvas.height = 1;
+            e.dataTransfer.setDragImage(emptyCanvas, 0, 0);
             
             if(enableAnimations) {
                 requestAnimationFrame(() => {
-                    this.style.opacity = '0.4';
+                    this.classList.add('drag-hidden');
                 });
             } else {
-                this.style.opacity = '0.4';
+                this.classList.add('drag-hidden');
             }
         }
 
@@ -1912,9 +2161,7 @@
             
             this.classList.remove('drag-over-top', 'drag-over-bottom');
             
-            if (targetIndex === 0) {
-                this.classList.add('drag-over-bottom');
-            } else if (e.clientY < midY) {
+            if (e.clientY < midY) {
                 this.classList.add('drag-over-top');
             } else {
                 this.classList.add('drag-over-bottom');
@@ -1928,22 +2175,19 @@
         function handleDrop(e) {
             e.preventDefault();
             e.stopPropagation();
+            
+            let isBottom = this.classList.contains('drag-over-bottom');
             this.classList.remove('drag-over-top', 'drag-over-bottom');
             
-            let draggedIdxStr = e.dataTransfer.getData('text/plain');
+            let draggedIdxStr = e.dataTransfer.getData('application/x-galaxy-problem');
             let draggedIdx = draggedIdxStr ? parseInt(draggedIdxStr) : draggedProjectIndex;
             
             if (isNaN(draggedIdx) || draggedIdx === -1) return;
             const targetIndex = parseInt(this.dataset.index);
             if (draggedIdx === targetIndex) return;
 
-            const rect = this.getBoundingClientRect();
-            const midY = rect.top + rect.height / 2;
-            
             let newIndex = targetIndex;
-            if (targetIndex === 0) {
-                newIndex = 1;
-            } else if (e.clientY >= midY) {
+            if (isBottom) {
                 newIndex = targetIndex + 1;
             }
             
@@ -1951,7 +2195,7 @@
                 newIndex--;
             }
 
-            if (newIndex !== draggedIdx) {
+            if (newIndex !== draggedIdx && newIndex >= 0) {
                 const activeId = projects[activeProjectIndex].id;
                 
                 const [movedProject] = projects.splice(draggedIdx, 1);
@@ -1960,18 +2204,121 @@
                 activeProjectIndex = projects.findIndex(p => p.id === activeId);
                 
                 saveProjectsToStorage();
-                renderProjectList();
+                renderProjectList(newIndex);
             }
             draggedProjectIndex = -1;
         }
 
         function handleDragEnd(e) {
-            this.classList.remove('dragging');
-            this.style.opacity = '';
+            this.classList.remove('drag-hidden');
             draggedProjectIndex = -1;
             
             document.querySelectorAll('.problem-item').forEach(item => {
                 item.classList.remove('drag-over-top', 'drag-over-bottom');
+            });
+        }
+
+        function renderProjectList(insertedIdx = -1) {
+            problemListEl.innerHTML = '';
+            projects.forEach((proj, idx) => {
+                const item = document.createElement('div');
+                const isMain = proj.id === 'main';
+                item.className = `problem-item ${idx === activeProjectIndex ? 'active' : ''} ${isMain ? 'is-main' : ''}`;
+                item.dataset.index = idx;
+                
+                if (isReorderMode) {
+                    item.style.cursor = 'grab';
+                } else {
+                    item.onclick = (e) => {
+                        if (!e.target.closest('.problem-item-actions')) selectProject(idx);
+                    };
+                }
+                
+                item.draggable = isReorderMode;
+                if (isReorderMode) {
+                    item.addEventListener('dragstart', handleDragStart);
+                    item.addEventListener('dragend', handleDragEnd);
+                    item.addEventListener('dragenter', handleDragEnter);
+                    item.addEventListener('dragover', handleDragOver);
+                    item.addEventListener('dragleave', handleDragLeave);
+                    item.addEventListener('drop', handleDrop);
+                }
+                
+                const title = document.createElement('div');
+                title.className = 'problem-item-title';
+                title.innerText = proj.title;
+                
+                const actions = document.createElement('div');
+                actions.className = 'problem-item-actions';
+                
+                if (isReorderMode) {
+                    const handleIcon = document.createElement('div');
+                    handleIcon.className = 'text-gray-500 flex items-center justify-center pointer-events-none opacity-50';
+                    handleIcon.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>`;
+                    actions.appendChild(handleIcon);
+                    actions.style.display = 'flex';
+                } else {
+                    if (isMain) {
+                        const pinIcon = document.createElement('div');
+                        pinIcon.className = 'problem-action-btn pin';
+                        pinIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V6a4 4 0 0 0-8 0v6l-2 2v2h5v6h2v-6h5v-2l-2-2z"/></svg>`;
+                        pinIcon.title = "Pinned Project";
+                        actions.appendChild(pinIcon);
+                    } else {
+                        const moreMenuContainer = document.createElement('div');
+                        moreMenuContainer.className = 'dropdown-container hover-dropdown ml-1';
+                        moreMenuContainer.id = `problem-dropdown-${proj.id}`;
+                        
+                        const moreBtn = document.createElement('div');
+                        moreBtn.className = 'problem-action-btn flex items-center justify-center';
+                        moreBtn.title = "Options";
+                        moreBtn.innerHTML = `<svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>`;
+                        moreBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            toggleDropdown(`problem-dropdown-${proj.id}`);
+                        };
+                        
+                        const menu = document.createElement('div');
+                        menu.className = 'dropdown-menu shadow-lg z-[999]';
+                        menu.style.cssText = 'right: 0; left: auto; min-width: 130px; transform-origin: top right; padding: 4px 2px;';
+                        
+                        const renameBtn = document.createElement('div');
+                        renameBtn.className = 'dropdown-item !py-1.5 flex items-center justify-start gap-3';
+                        renameBtn.innerHTML = `<svg class="w-[16px] h-[16px] text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg><span class="text-xs">Rename</span>`;
+                        renameBtn.onclick = (e) => renameProject(idx, e);
+
+                        const dupBtn = document.createElement('div');
+                        dupBtn.className = 'dropdown-item !py-1.5 flex items-center justify-start gap-3';
+                        dupBtn.innerHTML = `<svg class="w-[16px] h-[16px] text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg><span class="text-xs">Duplicate</span>`;
+                        dupBtn.onclick = (e) => duplicateProject(idx, e);
+                        
+                        const delBtn = document.createElement('div');
+                        delBtn.className = 'dropdown-item !py-1.5 flex items-center justify-start gap-3 hover:!bg-red-600 hover:!text-white group';
+                        delBtn.innerHTML = `<svg class="w-[16px] h-[16px] text-gray-400 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg><span class="text-xs text-[#e04f5f] group-hover:text-white">Delete</span>`;
+                        delBtn.onclick = (e) => deleteProject(idx, e);
+                        
+                        menu.appendChild(renameBtn);
+                        menu.appendChild(dupBtn);
+                        menu.appendChild(delBtn);
+                        
+                        moreMenuContainer.appendChild(moreBtn);
+                        moreMenuContainer.appendChild(menu);
+                        actions.appendChild(moreMenuContainer);
+                    }
+                }
+                
+                if (idx === insertedIdx && enableAnimations) {
+                    item.classList.add('is-inserting');
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            item.classList.remove('is-inserting');
+                        });
+                    });
+                }
+                
+                item.appendChild(title);
+                item.appendChild(actions);
+                problemListEl.appendChild(item);
             });
         }
         
@@ -2209,7 +2556,7 @@
         }
 
         function selectLanguage(lang) { 
-            if (isRunning) return;
+            if (isRunning || isReorderMode) return;
             if (lang === currentLang) return;
             
             toggleDropdown('lang-dropdown'); 
@@ -2508,7 +2855,7 @@
         }
 
         function changeLanguage(newLang) {
-            if (isRunning) return;
+            if (isRunning || isReorderMode) return;
             if (newLang === currentLang) return;
             isChangingLang = true;
             saveCurrentProject();
@@ -2519,8 +2866,8 @@
             isChangingLang = false;
         }
         
-        function undoCode() { if (isRunning) return; editor.undo(); }
-        function redoCode() { if (isRunning) return; editor.redo(); }
+        function undoCode() { if (isRunning || isReorderMode) return; editor.undo(); }
+        function redoCode() { if (isRunning || isReorderMode) return; editor.redo(); }
         
         function toggleComments() {
             const doc = editor.getDoc();
@@ -2753,12 +3100,12 @@
             navigator.clipboard.writeText(editor.getValue()).then(() => { 
                 const btn = document.getElementById('copy-btn'); 
                 const originalContent = btn.innerHTML; 
-                btn.innerHTML = `<svg class="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> <span class="text-xs text-green-400">Copied!</span>`; 
+                btn.innerHTML = `<svg class="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M20 6L9 17l-5-5"/></svg> <span class="text-xs text-green-400">Copied!</span>`; 
                 setTimeout(() => { btn.innerHTML = originalContent; }, 2000); 
             }); 
         }
         function clearAllCode() { 
-            if (isRunning) return;
+            if (isRunning || isReorderMode) return;
             showConfirm("Clear All", "Are you sure you want to clear all code in this file? This action cannot be undone.", () => { 
                 editor.setValue(""); 
                 clearOutput(); 
@@ -2770,7 +3117,7 @@
             }); 
         }
         function insertHelloWorld(auto = false) { 
-            if (isRunning) return;
+            if (isRunning || isReorderMode) return;
             const dropdown = document.getElementById('tools-dropdown');
             if(dropdown) {
                 dropdown.classList.remove('open');
@@ -2778,14 +3125,14 @@
             }
             if (!auto) {
                 showConfirm("Insert Template", "Clear current code and insert Hello World?", () => {
-                    if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")'); }
+                    if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main(){\n    cout<<"Hello World"<<endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname=input("Please enter your name:")\nprint(f"Nice to meet you,{name}!")'); }
                 });
                 return;
             }
-             if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")'); }
+             if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main(){\n    cout<<"Hello World"<<endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname=input("Please enter your name:")\nprint(f"Nice to meet you,{name}!")'); }
         }
         async function clearAndPaste() { 
-            if (isRunning) return;
+            if (isRunning || isReorderMode) return;
             const dropdown = document.getElementById('tools-dropdown');
             if(dropdown) {
                 dropdown.classList.remove('open');

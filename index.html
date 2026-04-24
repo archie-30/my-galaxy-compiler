@@ -233,9 +233,7 @@
         
         .dropdown-menu { position: absolute; top: calc(100% + 6px); left: 0; width: 100%; background-color: #252526; border: 1px solid #454545; border-radius: 6px; padding: 4px; z-index: 100; opacity: 0; visibility: hidden; transform: scale(0.95) translateY(-10px); transform-origin: top; transition: all 0.4s var(--ease-spring); }
         .dropdown-container.open .dropdown-menu { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
-        .hover-dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
-        .hover-dropdown:hover .dropdown-trigger { background-color: #454545; border-color: #666; }
-
+        
         .dropdown-item { padding: 4px 10px; cursor: pointer; border-radius: 4px; color: #ccc; font-weight: normal; display: flex; justify-content: space-between; align-items: center; transition: all 0.35s var(--ease-spring); }
         .dropdown-item:hover { background-color: #007acc; color: white; }
         .dropdown-item:active:not(.disabled) { transform: scale(0.96); background-color: rgba(255,255,255,0.1); }
@@ -348,7 +346,7 @@
         .problem-item { 
             height: 38px; margin: 4px 8px; padding: 0 12px; border-radius: 6px; 
             display: flex; justify-content: space-between; align-items: center; 
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: all 0.35s var(--ease-spring); 
             position: relative; overflow: visible; 
             z-index: 1; background-color: transparent; border: 1px solid transparent;
         }
@@ -395,11 +393,12 @@
         .problem-item.active .problem-item-title { color: #fff; font-weight: 700; }
         .problem-item-actions { display: none; gap: 4px; flex-shrink: 0; align-items: center; }
         .problem-item:hover .problem-item-actions { display: flex; }
-        .problem-item:has(.open) .problem-item-actions { display: flex; }
+        .problem-item.active .problem-item-actions { display: flex; }
         .problem-item.is-main .problem-item-actions { display: flex; }
         .problem-action-btn { width: 28px; height: 28px; border-radius: 4px; color: #858585; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: all 0.35s var(--ease-spring); }
         .problem-action-btn:hover { background-color: #454545; color: #fff; }
         .problem-action-btn:active { transform: scale(0.90); }
+        .dropdown-container.open .problem-action-btn { background-color: #454545; color: #fff; }
         .problem-action-btn.pin { color: #eab308; cursor: default; }
         .problem-action-btn.pin:hover { background-color: transparent; }
 
@@ -880,7 +879,7 @@
                     </div>
                     
                     <div class="my-1 border-t border-[#3c3c3c]"></div>
-                    <div class="text-[10px] text-center text-gray-500 font-mono py-1 cursor-default select-none tracking-wider">v6.5.5</div>
+                    <div class="text-[10px] text-center text-gray-500 font-mono py-1 cursor-default select-none tracking-wider">v6.6.0</div>
                 </div>
             </div>
 
@@ -1133,7 +1132,7 @@
             modalOverlay.classList.add('open');
         }
 
-        function showInputModal(title, message, placeholder, defaultValue, onConfirm) {
+        function showInputModal(title, message, placeholder, defaultValue, onConfirm, onDelete = null) {
             modalTitle.innerText = title;
             modalMessage.innerHTML = message.replace(/\n/g, '<br>');
             modalInput.classList.remove('hidden');
@@ -1142,6 +1141,18 @@
             
             modalFooter.innerHTML = '';
             
+            if (onDelete) {
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'modal-btn modal-btn-danger';
+                deleteBtn.style.marginRight = 'auto';
+                deleteBtn.innerText = 'Delete';
+                deleteBtn.onclick = function() {
+                    closeModal();
+                    onDelete();
+                };
+                modalFooter.appendChild(deleteBtn);
+            }
+
             const cancelBtn = document.createElement('button');
             cancelBtn.className = 'modal-btn modal-btn-secondary';
             cancelBtn.innerText = 'Cancel';
@@ -1299,6 +1310,8 @@
             document.querySelectorAll('.dropdown-container').forEach(el => { 
                 el.classList.remove('open'); 
                 el.querySelector('.dropdown-trigger')?.classList.remove('active'); 
+                const parentItem = el.closest('.problem-item');
+                if (parentItem) parentItem.style.zIndex = '';
             });
         }
         
@@ -1701,7 +1714,7 @@
             });
         }
 
-        function renderEditorTabs() {
+        function renderEditorTabs(insertedIdx = -1) {
             const project = projects[activeProjectIndex];
             const tabsContainer = document.getElementById('editor-tabs');
             
@@ -1739,18 +1752,13 @@
                 nameSpan.innerText = file.name;
                 tab.appendChild(nameSpan);
                 
-                if (!isMainFile && !isReorderMode) {
-                    const delBtn = document.createElement('span');
-                    delBtn.className = 'text-gray-500 hover:text-red-400 ml-1 text-[16px] leading-none ml-auto pointer-events-auto';
-                    if (index !== project.activeFileIndex) {
-                        delBtn.style.display = 'none';
-                    }
-                    delBtn.innerHTML = '&times;';
-                    delBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        deleteFile(index);
-                    };
-                    tab.appendChild(delBtn);
+                if (index === insertedIdx && enableAnimations) {
+                    tab.classList.add('is-inserting');
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            tab.classList.remove('is-inserting');
+                        });
+                    });
                 }
                 
                 tabsContainer.appendChild(tab);
@@ -1850,26 +1858,40 @@
                 file.name = newName;
                 renderEditorTabs();
                 saveProjectsToStorage();
+            }, () => {
+                deleteFile(index, false);
             });
         }
         
-        function deleteFile(index) {
+        function deleteFile(index, skipConfirm = false) {
             if (isRunning || isReorderMode) return;
             const project = projects[activeProjectIndex];
             const file = project.files[index];
             if (!file || file.name === 'main.cpp' || file.name === 'main.py') return;
             
-            showConfirm("Delete File", `Are you sure you want to delete ${file.name}?`, () => {
-                const performDelete = () => {
-                    project.files.splice(index, 1);
-                    if (project.activeFileIndex >= index) {
-                        project.activeFileIndex = Math.max(0, project.activeFileIndex - 1);
-                    }
-                    switchFile(project.activeFileIndex);
-                    renderEditorTabs();
-                    saveProjectsToStorage();
-                };
+            const performDelete = () => {
+                project.files.splice(index, 1);
+                if (project.activeFileIndex >= index) {
+                    project.activeFileIndex = Math.max(0, project.activeFileIndex - 1);
+                }
+                switchFile(project.activeFileIndex);
+                renderEditorTabs();
+                saveProjectsToStorage();
+            };
 
+            if (skipConfirm) {
+                const tabsContainer = document.getElementById('editor-tabs');
+                const itemEl = tabsContainer.children[index];
+                if (itemEl && enableAnimations) {
+                    itemEl.classList.add('is-deleting');
+                    setTimeout(performDelete, 300);
+                } else {
+                    performDelete();
+                }
+                return;
+            }
+            
+            showConfirm("Delete File", `Are you sure you want to delete ${file.name}?`, () => {
                 const tabsContainer = document.getElementById('editor-tabs');
                 const itemEl = tabsContainer.children[index];
                 if (itemEl && enableAnimations) {
@@ -2006,8 +2028,8 @@
             };
             projects.push(newProject);
             saveProjectsToStorage();
-            renderProjectList();
             selectProject(projects.length - 1, true);
+            renderProjectList(projects.length - 1);
         }
         
         function duplicateProject(index, event) {
@@ -2031,7 +2053,7 @@
             }
             
             saveProjectsToStorage();
-            renderProjectList();
+            renderProjectList(index + 1);
         }
 
         function renameProject(index, event) {
@@ -2074,7 +2096,7 @@
                 const itemEl = problemListEl.children[index];
                 if (itemEl && enableAnimations) {
                     itemEl.classList.add('is-deleting');
-                    setTimeout(performDelete, 300);
+                    setTimeout(performDelete, 350);
                 } else {
                     performDelete();
                 }
@@ -2318,7 +2340,7 @@
                 activeProjectIndex = projects.findIndex(p => p.id === activeId);
                 
                 saveProjectsToStorage();
-                renderProjectList();
+                renderProjectList(newIndex);
             }
             draggedProjectIndex = -1;
         }
@@ -2332,7 +2354,7 @@
             });
         }
 
-        function renderProjectList() {
+        function renderProjectList(insertedIdx = -1) {
             problemListEl.innerHTML = '';
             projects.forEach((proj, idx) => {
                 const item = document.createElement('div');
@@ -2382,7 +2404,7 @@
                         actions.appendChild(pinIcon);
                     } else {
                         const moreMenuContainer = document.createElement('div');
-                        moreMenuContainer.className = 'dropdown-container hover-dropdown ml-1';
+                        moreMenuContainer.className = 'dropdown-container ml-1';
                         moreMenuContainer.id = `problem-dropdown-${proj.id}`;
                         
                         const moreBtn = document.createElement('div');
@@ -2421,6 +2443,15 @@
                         moreMenuContainer.appendChild(menu);
                         actions.appendChild(moreMenuContainer);
                     }
+                }
+                
+                if (idx === insertedIdx && enableAnimations) {
+                    item.classList.add('is-inserting');
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            item.classList.remove('is-inserting');
+                        });
+                    });
                 }
                 
                 item.appendChild(title);
@@ -2627,8 +2658,22 @@
         function toggleDropdown(id) {
             const container = document.getElementById(id); if (!container) return;
             const trigger = container.querySelector('.dropdown-trigger');
-            document.querySelectorAll('.dropdown-container').forEach(el => { if (el.id !== id) { el.classList.remove('open'); el.querySelector('.dropdown-trigger')?.classList.remove('active'); } });
-            container.classList.toggle('open'); if(trigger) trigger.classList.toggle('active');
+            document.querySelectorAll('.dropdown-container').forEach(el => { 
+                if (el.id !== id) { 
+                    el.classList.remove('open'); 
+                    el.querySelector('.dropdown-trigger')?.classList.remove('active'); 
+                    const parentItem = el.closest('.problem-item');
+                    if (parentItem) parentItem.style.zIndex = '';
+                } 
+            });
+            const isOpen = container.classList.toggle('open'); 
+            if(trigger) trigger.classList.toggle('active');
+            
+            const parentItem = container.closest('.problem-item');
+            if (parentItem) {
+                parentItem.style.zIndex = isOpen ? '100' : '';
+            }
+            
             if(id === 'settings-dropdown' && container.classList.contains('open')) {
                 updateSettingsDropdownState();
             }
@@ -3232,11 +3277,11 @@
             }
             if (!auto) {
                 showConfirm("Insert Template", "Clear current code and insert Hello World?", () => {
-                    if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main(){\n    cout<<"Hello World"<<endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname=input("Please enter your name:")\nprint(f"Nice to meet you,{name}!")'); }
+                    if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")'); }
                 });
                 return;
             }
-             if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main(){\n    cout<<"Hello World"<<endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname=input("Please enter your name:")\nprint(f"Nice to meet you,{name}!")'); }
+             if (currentLang === 'cpp') { editor.setValue('#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World" << endl;\n    return 0;\n}'); } else { editor.setValue('print("Hello Galaxy Python!")\n\nname = input("Please enter your name: ")\nprint(f"Nice to meet you, {name}!")'); }
         }
         async function clearAndPaste() { 
             if (isRunning || isReorderMode) return;

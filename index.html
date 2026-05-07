@@ -54,6 +54,14 @@
         }
         html { height: 100%; width: 100%; overflow: hidden; overscroll-behavior: none; }
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); color: var(--text-color); height: 100%; width: 100%; position: fixed; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; transition: background-color 0.4s var(--ease-spring), color 0.4s var(--ease-spring); }
+        
+        * { scrollbar-width: thin; scrollbar-color: #454545 transparent; }
+        ::-webkit-scrollbar { width: 12px; height: 12px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #454545; border-radius: 6px; border: 3px solid var(--bg-color); transition: background-color 0.3s; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #666; }
+        ::-webkit-scrollbar-corner { background: transparent; }
+
         .CodeMirror { height: 100% !important; width: 100% !important; font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace !important; font-size: var(--editor-font-size); font-variant-ligatures: none !important; font-feature-settings: "liga" 0, "calt" 0 !important; transition: opacity 0.35s var(--ease-spring); }
         .CodeMirror-matchingbracket { box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.8); background-color: rgba(255, 215, 0, 0.25); color: inherit !important; }
         .CodeMirror-nonmatchingbracket { box-shadow: 0 0 0 1px rgba(255, 68, 68, 0.8); background-color: rgba(255, 68, 68, 0.2); }

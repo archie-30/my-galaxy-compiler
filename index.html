@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>C++ Galaxy Compiler (Cloud Edition)</title>
+    <title>C++ Galaxy Compiler</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     
@@ -69,7 +69,6 @@
         .cm-matchhighlight.cm-keyword, .cm-matchhighlight.cm-string, .cm-matchhighlight.cm-comment, .cm-matchhighlight.cm-builtin, .cm-matchhighlight.cm-type, .cm-matchhighlight.cm-string-type, .cm-matchhighlight.cm-meta, .cm-matchhighlight.cm-number, .cm-matchhighlight.cm-control { background-color: transparent !important; }
         [data-theme="classic"] .cm-matchhighlight { background-color: rgba(255, 255, 255, 0.22); }
         [data-theme="classic"] .cm-matchhighlight.cm-keyword, [data-theme="classic"] .cm-matchhighlight.cm-string, [data-theme="classic"] .cm-matchhighlight.cm-comment, [data-theme="classic"] .cm-matchhighlight.cm-builtin, [data-theme="classic"] .cm-matchhighlight.cm-type, [data-theme="classic"] .cm-matchhighlight.cm-string-type, [data-theme="classic"] .cm-matchhighlight.cm-meta, [data-theme="classic"] .cm-matchhighlight.cm-number, [data-theme="classic"] .cm-matchhighlight.cm-control { background-color: transparent !important; }
-        
         .cm-s-cloudjudge.CodeMirror { background-color: var(--bg-color); color: var(--text-color); }
         .cm-s-cloudjudge .CodeMirror-gutters { background: var(--bg-color); color: #858585; border: none; transition: background-color 0.4s var(--ease-spring); }
         .cm-s-cloudjudge .CodeMirror-linenumber { color: #858585; }
@@ -92,7 +91,6 @@
         .cm-s-cloudjudge span.cm-operator, .cm-s-cloudjudge span.cm-punctuation { color: var(--syntax-operator) !important; font-weight: normal !important; transition: color 0.4s var(--ease-spring); }
         .cm-s-cloudjudge .cm-indent-guides { display: inline-block; background-image: linear-gradient(to right, var(--bg-color) 4ch, transparent 4ch), repeating-linear-gradient(to right, #404040 0, #404040 1px, transparent 1px, transparent 4ch); background-position: 0 0; background-repeat: no-repeat; background-size: 100% 100%; transition: background-image 0.4s var(--ease-spring); }
         [data-theme="classic"] .cm-s-cloudjudge .cm-indent-guides { background-image: linear-gradient(to right, var(--bg-color) 4ch, transparent 4ch), repeating-linear-gradient(to right, #505050 0, #505050 1px, transparent 1px, transparent 4ch); }
-        
         .CodeMirror-hints { background: #252526; border: 1px solid #454545; color: #d4d4d4; }
         li.CodeMirror-hint-active { background: #007acc; color: white; }
         .resizer-split { flex: none; background-color: transparent; z-index: 20; display: flex; justify-content: center; align-items: center; transition: background-color 0.35s var(--ease-spring); position: relative; touch-action: none; }
@@ -158,28 +156,27 @@
         .settings-btn:hover, .dropdown-container.open .settings-btn { background-color: #454545; color: white; border-color: #555; }
         .settings-btn:active { transform: scale(0.95); }
         .settings-btn svg { position: absolute; left: 8px; }
-        
-        .animate-loading-bar { width: 40%; height: 100%; background: linear-gradient(90deg, transparent, #eab308, #fbbf24, transparent); animation: electric-slide 1.2s infinite ease-in-out; filter: blur(1px); }
         @keyframes electric-slide { 0% { transform: translateX(-100%); opacity: 0.5; } 50% { opacity: 1; } 100% { transform: translateX(300%); opacity: 0.5; } }
-        .animate-fade-in-up { animation: fadeInUp 0.4s var(--ease-spring) forwards; }
+        .animate-loading-bar { width: 40%; height: 100%; background: linear-gradient(90deg, transparent, #eab308, #fbbf24, transparent); animation: electric-slide 1.2s infinite ease-in-out; filter: blur(1px); }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.4s var(--ease-spring) forwards; }
         .animate-quick-fade { animation: quickFade 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
         @keyframes quickFade { from { opacity: 0; transform: scale(0.97) translateY(8px); filter: blur(3px); } to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
-        .animate-tab-switch { animation: tabSwitchAnim 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
         @keyframes tabSwitchAnim { 0% { opacity: 0; transform: scale(0.98) translateY(5px); filter: blur(2px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
+        .animate-tab-switch { animation: tabSwitchAnim 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
         .action-btn { transition: all 0.35s var(--ease-spring); }
         .action-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
         .action-btn:active { transform: scale(0.95); }
-        
         #problem-container { transition: width 0.4s var(--ease-spring), transform 0.4s var(--ease-spring), opacity 0.3s var(--ease-spring); overflow: hidden; width: 25%; transform-origin: right center; will-change: transform, width, opacity; } 
         #problem-container:not(.problem-open) { transform: perspective(800px) translateZ(-60px) translateX(-40px) rotateY(-5deg); opacity: 0; pointer-events: none; }
         #problem-container.problem-open { transform: perspective(800px) translateZ(0) translateX(0) rotateY(0deg); opacity: 1; pointer-events: auto; }
         #problem-content { font-size: var(--problem-font-size); line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; outline: none; overflow-y: auto; height: 100%; position: relative; }
         #problem-content * { background-color: transparent !important; color: inherit !important; box-shadow: none !important; font-family: inherit !important; font-size: inherit !important; line-height: inherit !important; }
-        #problem-content b, #problem-content strong { font-weight: 700 !important; color: #60a5fa !important; }
+        #problem-content b, #problem-content strong, #problem-content [style*="font-weight: bold"], #problem-content [style*="font-weight: 700"] { font-weight: 700 !important; color: #60a5fa !important; }
+        #problem-content i, #problem-content em { font-style: italic !important; }
+        #problem-content u { text-decoration: underline !important; }
         #problem-content.empty::before { content: "Enter problem description here..."; color: #666; font-style: italic; pointer-events: none; display: block; position: absolute; top: 1rem; left: 1rem; }
         #problem-list { overflow-y: auto; height: 100%; position: relative; padding: 4px 0; }
-        
         .problem-item { height: 38px; margin: 4px 8px; padding: 0 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; transition: all 0.35s var(--ease-spring); position: relative; overflow: visible; z-index: 1; background-color: transparent; border: 1px solid transparent; }
         .problem-item::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background-color: transparent; border: 1px solid transparent; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: -1; }
         .problem-item::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(90deg, rgba(0, 122, 204, 0.4) 0%, #37373d 60%, #37373d 100%); opacity: 0; transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: -1; pointer-events: none; }
@@ -198,7 +195,15 @@
         .problem-item-title { font-family: 'Noto Sans TC', sans-serif; font-size: 13px; color: #ccc; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; padding-right: 8px; pointer-events: none; transition: color 0.3s; }
         .problem-item.active .problem-item-title { color: #fff; font-weight: 700; }
         .problem-item-actions { display: none; gap: 4px; flex-shrink: 0; align-items: center; }
-        .problem-item:hover .problem-item-actions, .problem-item.active .problem-item-actions, .problem-item.is-main .problem-item-actions, .problem-item.active-folder .problem-item-actions, .problem-item.dropdown-open .problem-item-actions { display: flex; }
+        
+        .problem-item:hover .problem-item-actions, 
+        .problem-item.active .problem-item-actions, 
+        .problem-item.is-main .problem-item-actions, 
+        .problem-item.active-folder .problem-item-actions, 
+        .problem-item.dropdown-open .problem-item-actions { 
+            display: flex; 
+        }
+        
         .problem-action-btn { width: 28px; height: 28px; border-radius: 4px; color: #858585; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: all 0.35s var(--ease-spring); }
         .problem-action-btn:hover { background-color: #454545; color: #fff; }
         .problem-action-btn:active { transform: scale(0.90); }
@@ -207,24 +212,23 @@
         .problem-action-btn.pin:hover { background-color: transparent; }
         .side-view-content { animation: fadeIn 0.4s var(--ease-spring); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
-        #modal-overlay, #auth-modal-overlay, #admin-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s var(--ease-spring); }
-        #modal-overlay.open, #auth-modal-overlay.open, #admin-modal-overlay.open { opacity: 1; pointer-events: auto; }
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s var(--ease-spring); }
+        #modal-overlay.open { opacity: 1; pointer-events: auto; }
         .modal-box { background: #252526; border: 1px solid #454545; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); width: 90%; max-width: 400px; transform: scale(0.95); transition: transform 0.4s var(--ease-spring); overflow: hidden; display: flex; flex-direction: column; }
-        #modal-overlay.open .modal-box, #auth-modal-overlay.open .modal-box, #admin-modal-overlay.open .modal-box { transform: scale(1); }
+        #modal-overlay.open .modal-box { transform: scale(1); }
         .modal-header { padding: 12px 16px; background: #2d2d2d; border-bottom: 1px solid #333; font-weight: bold; color: #fff; display: flex; justify-content: space-between; align-items: center; }
         .modal-body { padding: 20px 16px; color: #d4d4d4; font-size: 14px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; max-height: 70vh; overflow-y: auto;}
         .modal-footer { padding: 12px 16px; background: #252526; border-top: 1px solid #333; display: flex; justify-content: flex-end; gap: 8px; }
         .modal-btn { padding: 6px 14px; border-radius: 4px; font-size: 13px; font-weight: 500; transition: all 0.35s var(--ease-spring); cursor: pointer; border: 1px solid transparent; }
+        .modal-btn:active { transform: scale(0.95); }
         .modal-btn-primary { background: #007acc; color: white; border-color: #007acc; }
         .modal-btn-primary:hover { background: #0062a3; }
         .modal-btn-danger { background: #e04f5f; color: white; border-color: #e04f5f; }
         .modal-btn-danger:hover { background: #c03645; }
         .modal-btn-secondary { background: #3c3c3c; color: #ccc; border-color: #555; }
         .modal-btn-secondary:hover { background: #454545; color: white; }
-        .modal-input { background-color: #3c3c3c; border: 1px solid #555; color: white; padding: 8px; border-radius: 4px; outline: none; width: 100%; font-family: 'Noto Sans TC', sans-serif; }
+        .modal-input { background-color: #3c3c3c; border: 1px solid #555; color: white; padding: 8px; border-radius: 4px; outline: none; width: 100%; }
         .modal-input:focus { border-color: #007acc; }
-        
         .header-icon-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background-color: #3c3c3c; border: 1px solid #333; color: #9ca3af; transition: all 0.35s var(--ease-spring); cursor: pointer; flex-shrink: 0; }
         .header-icon-btn:hover { background-color: #505050; color: #fff; }
         .header-icon-btn:active { transform: scale(0.92); }
@@ -238,7 +242,20 @@
         @keyframes popupScaleIn { from { opacity: 0; transform: translate(-50%, -45%) scale(0.95); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
         #output-backdrop { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 9998; opacity: 0; pointer-events: none; transition: opacity 0.4s var(--ease-spring); }
         #output-backdrop.active { opacity: 1; pointer-events: auto; }
-        
+        @media (max-width: 1024px) {
+            .action-btn span { display: none; }
+            .action-btn svg { margin: 0; }
+            .action-btn { padding: 6px 10px; }
+            #problem-container { position: absolute; left: 0; top: 0; bottom: 0; width: 0; z-index: 50; border-right: none; box-shadow: none; background-color: var(--bg-color); }
+            #problem-container.problem-open { width: 75% !important; border-right: 1px solid var(--border-color); box-shadow: 4px 0 20px rgba(0,0,0,0.5); }
+            #problem-resizer { display: none !important; } 
+        }
+        @media (max-width: 768px) {
+            header { padding: 0 8px; }
+            .dropdown-trigger { padding: 4px 6px; min-width: auto; }
+            #logo-icon { width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
+            #output-container-wrapper.popup-active { width: 95% !important; height: 95% !important; }
+        }
         .system-switch-overlay { position: fixed; inset: 0; background-color: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s var(--ease-spring); }
         .system-switch-overlay.active { opacity: 1; pointer-events: auto; }
         .switch-container { display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', 'Noto Sans TC', sans-serif; font-size: 32px; font-weight: 700; color: #fff; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,255,255,0.3); perspective: 1000px; position: relative; z-index: 20; }
@@ -258,7 +275,6 @@
         .char-bounce { display: inline-block; animation: bounce-char 0.4s var(--ease-spring); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
         .editor-tab { height: 27px; padding: 0 12px; background-color: transparent; border: 1px solid transparent; border-bottom: none; border-radius: 6px 6px 0 0; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; max-width: 140px; flex-shrink: 0; overflow: visible; z-index: 1; }
         .editor-tab::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background-color: #2d2d2d; border: 1px solid #333; border-bottom: none; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: -1; }
         .editor-tab::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(90deg, rgba(0, 122, 204, 0.35) 0%, var(--bg-color) 50%, var(--bg-color) 100%); box-shadow: inset 0 2px 0 #007acc; border: 1px solid #454545; border-bottom: none; opacity: 0; transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: -1; }
@@ -280,37 +296,39 @@
         #logo-icon { transition: all 0.4s var(--ease-spring); }
         #logo-icon:active { transform: scale(0.92); }
 
-        .folder-content-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s var(--ease-spring); }
-        .folder-content-wrapper.open { grid-template-rows: 1fr; }
-        .folder-content-inner { overflow: hidden; position: relative; min-height: 0; }
-        .folder-content-inner::before { content: ''; position: absolute; left: 21px; top: 0; bottom: 18px; width: 1px; background-color: #454545; z-index: 0; }
-        .folder-child-item { margin: 4px 8px 4px 28px !important; position: relative; }
-        .folder-tree-line { position: absolute; left: -14px; top: 50%; width: 14px; height: 1px; background-color: #454545; z-index: 0; pointer-events: none; }
-        .folder-child-item:hover .folder-tree-line, .folder-child-item.active .folder-tree-line { background-color: #007acc; }
-        
-        /* Auth Tabs */
-        .auth-tab-btn { flex: 1; text-align: center; padding: 8px 0; border-bottom: 2px solid transparent; cursor: pointer; color: #858585; transition: all 0.3s; }
-        .auth-tab-btn.active { border-bottom-color: #007acc; color: #fff; font-weight: bold; }
-        
-        @media (max-width: 1024px) {
-            .action-btn span { display: none; }
-            .action-btn svg { margin: 0; }
-            .action-btn { padding: 6px 10px; }
-            #problem-container { position: absolute; left: 0; top: 0; bottom: 0; width: 0; z-index: 50; border-right: none; box-shadow: none; background-color: var(--bg-color); }
-            #problem-container.problem-open { width: 75% !important; border-right: 1px solid var(--border-color); box-shadow: 4px 0 20px rgba(0,0,0,0.5); }
-            #problem-resizer { display: none !important; } 
+        .folder-content-wrapper {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.35s var(--ease-spring);
         }
-        @media (max-width: 768px) {
-            header { padding: 0 8px; }
-            .dropdown-trigger { padding: 4px 6px; min-width: auto; }
-            #logo-icon { width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
-            #output-container-wrapper.popup-active { width: 95% !important; height: 95% !important; }
+        .folder-content-wrapper.open {
+            grid-template-rows: 1fr;
+        }
+        .folder-content-inner {
+            overflow: hidden;
+            position: relative;
+            min-height: 0;
+        }
+        .folder-content-inner::before {
+            content: ''; position: absolute; left: 21px; top: 0; bottom: 18px; width: 1px; background-color: #454545; z-index: 0;
+        }
+        
+        .folder-child-item {
+            margin: 4px 8px 4px 28px !important;
+            position: relative;
+        }
+        .folder-tree-line {
+            position: absolute; left: -14px; top: 50%; width: 14px; height: 1px; background-color: #454545; z-index: 0; pointer-events: none;
+        }
+        .folder-child-item:hover .folder-tree-line, .folder-child-item.active .folder-tree-line {
+            background-color: #007acc;
         }
     </style>
 </head>
 <body class="flex flex-col select-none overflow-hidden fixed inset-0 w-full h-full" data-theme="modern" data-layout="right">
 
     <div id="output-backdrop" onclick="toggleOutputPanel(false)"></div>
+
     <input type="file" id="file-input" style="display: none;">
 
     <header class="h-14 border-b border-[#333] flex items-center justify-between px-4 bg-[#252526] flex-none z-50 transition-colors duration-300">
@@ -357,17 +375,6 @@
                 </div>
             </div>
 
-            <!-- Auth 按鈕 -->
-            <div class="dropdown-container" id="auth-dropdown">
-                <div class="settings-btn dropdown-trigger !px-3" onclick="toggleAuthDropdown()" id="auth-btn-trigger">
-                    <svg class="w-4 h-4 text-blue-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    <span id="auth-btn-text" class="w-full text-center">Login</span>
-                </div>
-                <div class="dropdown-menu" id="auth-menu-content" style="right: 0; left: auto; min-width: 140px; transform-origin: top right; padding: 4px 2px;">
-                    <!-- 動態渲染 -->
-                </div>
-            </div>
-
             <div class="dropdown-container" id="settings-dropdown">
                 <div class="settings-btn dropdown-trigger" onclick="toggleDropdown('settings-dropdown')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -383,12 +390,6 @@
                         <span class="text-xs">Reorder Mode</span>
                     </div>
                     <div class="my-0.5 border-t border-[#3c3c3c]"></div>
-                    <div class="dropdown-label">System Admin</div>
-                    <div class="dropdown-item !py-1.5 flex items-center justify-start gap-3" onclick="promptDeveloperMode()">
-                        <svg class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" /></svg>
-                        <span class="text-xs text-red-400 font-bold">Developer Access</span>
-                    </div>
-                    <div class="my-0.5 border-t border-[#3c3c3c]"></div>
                     <div class="dropdown-label">System</div>
                     <div class="dropdown-item" id="anim-toggle-opt" onclick="toggleAnimations()">
                         <span>Animations: On</span>
@@ -397,8 +398,14 @@
                     <div class="my-0.5 border-t border-[#3c3c3c]"></div>
                     <div class="dropdown-label">Layout</div>
                     <div class="segment-group">
-                        <div class="segment-btn" id="layout-opt-right" onclick="selectLayout('right')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="15" y1="3" x2="15" y2="21"></line></svg><span>Right</span></div>
-                        <div class="segment-btn" id="layout-opt-bottom" onclick="selectLayout('bottom')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="15" x2="21" y2="15"></line></svg><span>Bottom</span></div>
+                        <div class="segment-btn" id="layout-opt-right" onclick="selectLayout('right')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                            <span>Right</span>
+                        </div>
+                        <div class="segment-btn" id="layout-opt-bottom" onclick="selectLayout('bottom')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="15" x2="21" y2="15"></line></svg>
+                            <span>Bottom</span>
+                        </div>
                     </div>
                     <div class="my-0.5 border-t border-[#3c3c3c]"></div>
                     <div class="dropdown-label">Output View</div>
@@ -419,8 +426,14 @@
                     <div class="my-0.5 border-t border-[#3c3c3c]"></div>
                     <div class="dropdown-label">Theme</div>
                     <div class="segment-group">
-                        <div class="segment-btn" id="theme-opt-modern" onclick="setTheme('modern')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg><span>Modern</span></div>
-                        <div class="segment-btn" id="theme-opt-classic" onclick="setTheme('classic')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><span>Classic</span></div>
+                        <div class="segment-btn" id="theme-opt-modern" onclick="setTheme('modern')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                            <span>Modern</span>
+                        </div>
+                        <div class="segment-btn" id="theme-opt-classic" onclick="setTheme('classic')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                            <span>Classic</span>
+                        </div>
                     </div>
                     <div class="my-0.5 border-t border-[#3c3c3c]"></div>
                     <div class="dropdown-label">File</div>
@@ -433,7 +446,7 @@
                         <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     </div>
                     <div class="my-1 border-t border-[#3c3c3c]"></div>
-                    <div class="text-[10px] text-center text-gray-500 font-mono py-1 cursor-default select-none tracking-wider">v8.1.0-Cloud</div>
+                    <div class="text-[10px] text-center text-gray-500 font-mono py-1 cursor-default select-none tracking-wider">v7.0.3</div>
                 </div>
             </div>
 
@@ -443,7 +456,6 @@
     </header>
 
     <main id="main-container" class="flex-1 flex flex-row overflow-hidden relative bg-[#1e1e1e] min-h-0">
-        <!-- 左側問題區 -->
         <div id="problem-container" class="flex flex-col bg-[#1e1e1e] border-r border-[#333] min-w-0 ease-out problem-open">
             <div class="flex items-center px-2 py-1 bg-[#252526] border-b border-[#333] flex-none h-8 gap-2">
                 <div class="flex items-center gap-1">
@@ -490,7 +502,6 @@
         <div id="problem-resizer" class="resizer-split resizer-col" title="Drag to resize"></div>
 
         <div id="center-area" class="flex-1 flex flex-row min-w-0 min-h-0">
-            <!-- 程式碼編輯區 -->
             <div id="editor-container" class="flex-col relative min-h-0 min-w-0 flex" style="flex: 1 1 0%;">
                 <div class="bg-[#252526] pr-2 text-xs font-mono text-gray-500 flex justify-between items-end select-none flex-none border-b border-[#333] h-8 transition-colors duration-300">
                     <div class="flex items-end h-full flex-1 overflow-hidden relative" id="editor-tabs-container">
@@ -571,7 +582,6 @@
             
             <div id="terminal-resizer" class="resizer-split resizer-col" title="Drag to resize" style="display: none;"></div>
             
-            <!-- 輸出區 -->
             <div id="output-container-wrapper" class="flex-col bg-[#1e1e1e] min-h-0 min-w-0 flex" style="flex: 0 0 0%; min-width: 0; min-height: 0;">
                 <div class="bg-[#1e1e1e] px-4 py-1 text-xs font-bold text-gray-500 border-b border-[#333] flex justify-between flex-none h-8 items-center rounded-t-lg">
                     <div class="flex items-center gap-2">
@@ -583,6 +593,7 @@
                         <button id="popup-close-btn" onclick="switchToDockedFromPopup()" class="hidden hover:text-white transition-colors duration-200 ml-1 px-2 py-0.5 rounded text-red-400 hover:bg-red-500/20" title="Close Popup">✖</button>
                     </div>
                 </div>
+
                 <div id="terminal-container" class="flex-1 p-4 font-mono text-sm overflow-auto text-gray-300 relative min-h-0" onclick="focusInput()">
                     <pre id="output" class="whitespace-pre-wrap break-words inline font-[Consolas,Monaco,monospace]"></pre><span id="current-input-display" class="terminal-input-echo outline-none caret-[#4ade80] min-w-[2px] inline-block" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" contenteditable="false"></span><span class="terminal-cursor" style="display: none;"></span>
                 </div>
@@ -590,7 +601,6 @@
         </div>
     </main>
 
-    <!-- 系統預設彈出層 -->
     <div id="modal-overlay">
         <div class="modal-box">
             <div class="modal-header">
@@ -607,84 +617,6 @@
         </div>
     </div>
 
-    <!-- 會員登入/註冊/忘記密碼 專屬彈出層 -->
-    <div id="auth-modal-overlay">
-        <div class="modal-box">
-            <div class="modal-header">
-                <span id="auth-modal-title">登入 / 註冊</span>
-                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-white">&times;</button>
-            </div>
-            <div class="flex border-b border-[#333] bg-[#2d2d2d]" id="auth-tabs">
-                <div class="auth-tab-btn active" onclick="switchAuthTab('login')" id="tab-login">登入</div>
-                <div class="auth-tab-btn" onclick="switchAuthTab('register')" id="tab-register">註冊</div>
-            </div>
-            <div class="modal-body">
-                <!-- 錯誤訊息提示 -->
-                <div id="auth-error-msg" class="text-red-400 text-xs text-center hidden mb-2"></div>
-                
-                <div id="auth-content-login">
-                    <input type="text" id="login-username" class="modal-input mb-3" placeholder="帳號 (英文數字)">
-                    <input type="password" id="login-password" class="modal-input mb-1" placeholder="密碼">
-                    <div class="text-right"><span class="text-xs text-blue-400 cursor-pointer hover:underline" onclick="switchAuthTab('forgot')">忘記密碼？</span></div>
-                </div>
-                
-                <div id="auth-content-register" class="hidden">
-                    <input type="text" id="reg-username" class="modal-input mb-3" placeholder="帳號名稱 (僅限英文及數字)">
-                    <input type="password" id="reg-password" class="modal-input mb-3" placeholder="設定密碼">
-                    <input type="password" id="reg-password-confirm" class="modal-input mb-3" placeholder="再次輸入密碼">
-                    <input type="email" id="reg-email" class="modal-input mb-3" placeholder="Gmail信箱 (用於忘記密碼重設)">
-                    <div id="reg-otp-section" class="hidden flex gap-2">
-                        <input type="text" id="reg-otp" class="modal-input flex-1" placeholder="請輸入6位數驗證碼">
-                    </div>
-                </div>
-
-                <div id="auth-content-forgot" class="hidden">
-                    <div class="text-xs text-gray-400 mb-3">請輸入註冊時的帳號與綁定的信箱，系統將發送驗證碼給您。</div>
-                    <input type="text" id="forgot-username" class="modal-input mb-3" placeholder="帳號名稱">
-                    <input type="email" id="forgot-email" class="modal-input mb-3" placeholder="綁定的Gmail信箱">
-                    <div id="forgot-otp-section" class="hidden flex flex-col gap-3">
-                        <input type="text" id="forgot-otp" class="modal-input" placeholder="請輸入6位數驗證碼">
-                        <input type="password" id="forgot-new-pwd" class="modal-input" placeholder="設定新密碼">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer" id="auth-footer">
-                <!-- 按鈕動態渲染 -->
-            </div>
-        </div>
-    </div>
-
-    <!-- 開發者後台彈出層 (View Users) -->
-    <div id="admin-modal-overlay">
-        <div class="modal-box !max-w-[600px] !w-[95%]">
-            <div class="modal-header !bg-red-900/30 !border-red-500/50">
-                <span class="text-red-400 font-bold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" /></svg>Developer Access - Users</span>
-                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white">&times;</button>
-            </div>
-            <div class="modal-body !p-0">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-gray-300">
-                        <thead class="bg-[#2d2d2d] border-b border-[#454545]">
-                            <tr>
-                                <th class="p-3 font-semibold">帳號名稱</th>
-                                <th class="p-3 font-semibold">Gmail</th>
-                                <th class="p-3 font-semibold w-1/3">備註</th>
-                                <th class="p-3 font-semibold text-center">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-users-table">
-                            <!-- 動態填入 -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" onclick="closeAdminModal()">關閉</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 動畫覆蓋層 -->
     <div id="transition-overlay" class="system-switch-overlay">
         <div class="ripple-container">
             <div class="ripple-ring" style="animation-delay: 0s;"></div>
@@ -701,13 +633,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/searchcursor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/match-highlighter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/format/formatting.min.js"></script>
 
-    <!-- 基礎變數與通用函式 -->
     <script>
         var socket;
-        try { socket=io(); } catch(e) { console.error("Socket.io fail",e); }
+        try { socket=io(); } catch(e) { console.error("Socket.io fail to load",e); }
 
         var isRunning=false;
+        var statusDot=document.getElementById('status-indicator');
+        var statusText=document.getElementById('status-text');
         var currentLayout='right';
         var currentOutputMode='default';
         var fontSize=14;
@@ -721,26 +657,36 @@
         var currentSideView='list'; 
         var currentTheme='modern'; 
         var enableAnimations=true; 
-        var isReorderMode=false;
-        var originalSettingsHTML={ btn:'', menu:'' };
-        
+
+        let isReorderMode=false;
         let reorderBackup=[];
         let reorderFolderBackup=[];
+        let originalSettingsHTML={ btn:'', menu:'' };
 
-        // 登入系統變數
-        var isLoggedIn = false;
-        var currentUser = '';
+        const modalOverlay=document.getElementById('modal-overlay');
+        const modalTitle=document.getElementById('modal-title');
+        const modalMessage=document.getElementById('modal-message');
+        const modalInput=document.getElementById('modal-input');
+        const modalFooter=document.getElementById('modal-footer');
 
         const problemContainer=document.getElementById('problem-container');
         const problemResizer=document.getElementById('problem-resizer');
         const centerArea=document.getElementById('center-area');
         const problemListEl=document.getElementById('problem-list');
         const problemContentEl=document.getElementById('problem-content');
+        const problemToggleBtn=document.getElementById('problem-toggle-btn');
         const editorContainer=document.getElementById('editor-container');
+        const listToolbar=document.getElementById('list-toolbar');
+        const descToolbar=document.getElementById('desc-toolbar');
+        const toggleListBtn=document.getElementById('side-toggle-list');
+        const toggleDescBtn=document.getElementById('side-toggle-desc');
+        const toggleContainer=document.getElementById('side-panel-toggle-container');
+        const outputToggleBtn=document.getElementById('output-toggle-btn');
         const outputWrapper=document.getElementById('output-container-wrapper');
         const terminalResizer=document.getElementById('terminal-resizer');
+        const outputBackdrop=document.getElementById('output-backdrop');
 
-        var cppKeywords=["#include","iostream","cstdlib","iomanip","using","namespace","std","int","main","return","cout","endl","cin","vector","string","void","char","bool","float","double","if","else","for","while","switch","case","break","continue","struct","class","public","private","protected","true","false","const","auto","size_t","push_back","pop_back","length","size","begin","end","algorithm","cmath"];
+        var cppKeywords=["#include","iostream","cstdlib","iomanip","using","namespace","std","int","main","return","cout","endl","cin","vector","string","void","char","bool","float","double","if","else","for","while","do","switch","case","break","continue","struct","class","public","private","protected","true","false","const","auto","size_t","push_back","pop_back","length","size","begin","end","algorithm","cmath"];
         var pythonKeywords=["print","import","from","def","return","if","elif","else","for","while","break","continue","pass","class","try","except","finally","with","as","lambda","True","False","None","and","or","not","is","in","global","range","len","input","int","str","list","dict"];
 
         function codeHint(editor) {
@@ -759,9 +705,11 @@
         }
 
         var isChangingProject=false;
+        var isChangingLang=false;
 
         var editor=CodeMirror.fromTextArea(document.getElementById("code-editor"), {
             mode: "text/x-c++src", theme: "cloudjudge", lineNumbers: true, matchBrackets: true, autoCloseBrackets: true, indentUnit: 4, tabSize: 4, lineWrapping: true,
+            highlightSelectionMatches: { showToken: /\w/, annotateScrollbar: true },
             extraKeys: {
                 "Ctrl-Space": "autocomplete",
                 "Enter": function(cm) {
@@ -793,14 +741,29 @@
 
         editor.on("mousedown", function() { closeAllDropdowns(); });
         editor.on("change", function() {
-            if (!isChangingProject && !isReorderMode) {
+            if (!isChangingProject && !isChangingLang && !isReorderMode) {
                 const project=projects[activeProjectIndex];
                 if(project && project.files && project.files[project.activeFileIndex]) {
                     project.files[project.activeFileIndex].code=editor.getValue();
-                    saveProjectsToStorage();
+                    if(typeof saveProjectsToStorage==='function') saveProjectsToStorage();
                 }
             }
         });
+        
+        // 這裡修復了關閉下拉選單時一併清空 .dropdown-open 狀態的邏輯
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown-container').forEach(el=>{ 
+                el.classList.remove('open'); 
+                el.querySelector('.dropdown-trigger')?.classList.remove('active'); 
+                const parentItem=el.closest('.problem-item');
+                if(parentItem) {
+                    parentItem.style.zIndex='';
+                    parentItem.classList.remove('dropdown-open');
+                }
+                const wrapper = el.closest('.folder-content-wrapper');
+                if (wrapper) wrapper.style.zIndex='';
+            });
+        }
 
         editor.addOverlay({
             token: function(stream) {
@@ -818,22 +781,459 @@
         });
         editor.addOverlay({ token:function(stream){if(stream.sol()){if(stream.eatSpace())return "indent-guides";} stream.skipToEnd();return null;} });
         CodeMirror.registerHelper("hint","clike",codeHint); CodeMirror.registerHelper("hint","python",codeHint);
+    </script>
+    <script>
+        function showModal(title, message) {
+            modalTitle.innerText=title;
+            modalMessage.innerHTML=message.replace(/\n/g,'<br>');
+            modalInput.classList.add('hidden');
+            modalFooter.innerHTML='<button class="modal-btn modal-btn-primary" onclick="closeModal()">OK</button>';
+            modalOverlay.classList.add('open');
+        }
         
-        function getApiUrl(path) {
-            if (!window.location.origin || window.location.origin === "null" || window.location.protocol === "blob:" || window.location.protocol === "data:") {
-                return "http://localhost:5000" + path;
-            }
-            return path;
+        function showConfirm(title, message, onConfirm) {
+            modalTitle.innerText=title;
+            modalMessage.innerHTML=message.replace(/\n/g,'<br>');
+            modalInput.classList.add('hidden');
+            modalFooter.innerHTML='';
+            const cancelBtn=document.createElement('button');
+            cancelBtn.className='modal-btn modal-btn-secondary';
+            cancelBtn.innerText='Cancel';
+            cancelBtn.onclick=closeModal;
+            const confirmBtn=document.createElement('button');
+            confirmBtn.className='modal-btn modal-btn-danger';
+            confirmBtn.innerText='Confirm';
+            confirmBtn.onclick=function(){ closeModal(); onConfirm(); };
+            modalFooter.appendChild(cancelBtn);
+            modalFooter.appendChild(confirmBtn);
+            modalOverlay.classList.add('open');
         }
 
-        function updateLangUI(lang) {
-            const logoIcon=document.getElementById('logo-icon');
-            if(lang==='cpp') {
-                if(logoIcon) { logoIcon.innerText='C++'; logoIcon.className="w-7 h-7 rounded bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0 transition-all duration-300"; }
-            } else {
-                if(logoIcon) { logoIcon.innerText='Py'; logoIcon.className="w-7 h-7 rounded bg-yellow-500 flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0 transition-all duration-300"; }
+        function showInputModal(title, message, placeholder, defaultValue, onConfirm, onDelete=null) {
+            modalTitle.innerText=title;
+            modalMessage.innerHTML=message.replace(/\n/g,'<br>');
+            modalInput.classList.remove('hidden');
+            modalInput.placeholder=placeholder||'';
+            modalInput.value=defaultValue||'';
+            modalFooter.innerHTML='';
+            
+            if (onDelete) {
+                const deleteBtn=document.createElement('button');
+                deleteBtn.className='modal-btn modal-btn-danger';
+                deleteBtn.style.marginRight='auto';
+                deleteBtn.innerText='Delete';
+                deleteBtn.onclick=function(){ closeModal(); onDelete(); };
+                modalFooter.appendChild(deleteBtn);
             }
-            updateDropdownUI('lang-dropdown', lang);
+
+            const cancelBtn=document.createElement('button');
+            cancelBtn.className='modal-btn modal-btn-secondary';
+            cancelBtn.innerText='Cancel';
+            cancelBtn.onclick=closeModal;
+            
+            const confirmBtn=document.createElement('button');
+            confirmBtn.className='modal-btn modal-btn-primary';
+            confirmBtn.innerText='Confirm';
+            confirmBtn.onclick=function(){
+                const val=modalInput.value.trim();
+                if(val) { closeModal(); onConfirm(val); } else { modalInput.focus(); }
+            };
+            
+            modalFooter.appendChild(cancelBtn);
+            modalFooter.appendChild(confirmBtn);
+            modalOverlay.classList.add('open');
+            setTimeout(()=>modalInput.focus(),100);
+        }
+        
+        modalInput.addEventListener('keydown', (e)=>{
+            if (e.key==='Enter') {
+                e.preventDefault(); e.stopPropagation();
+                const btn=modalFooter.querySelector('.modal-btn-primary');
+                if(btn) btn.click();
+            }
+        });
+        
+        function closeModal() { modalOverlay.classList.remove('open'); }
+
+        function toggleDropdown(id) {
+            const container=document.getElementById(id); if(!container) return;
+            const trigger=container.querySelector('.dropdown-trigger');
+            document.querySelectorAll('.dropdown-container').forEach(el=>{ 
+                if (el.id!==id) { 
+                    el.classList.remove('open'); 
+                    el.querySelector('.dropdown-trigger')?.classList.remove('active'); 
+                    const parentItem=el.closest('.problem-item');
+                    if (parentItem) {
+                        parentItem.style.zIndex='';
+                        parentItem.classList.remove('dropdown-open');
+                    }
+                    const wrapper = el.closest('.folder-content-wrapper');
+                    if (wrapper) wrapper.style.zIndex='';
+                } 
+            });
+            const isOpen=container.classList.toggle('open'); 
+            if(trigger) trigger.classList.toggle('active');
+            
+            const parentItem=container.closest('.problem-item');
+            if(parentItem) {
+                parentItem.style.zIndex=isOpen?'100':'';
+                if(isOpen) parentItem.classList.add('dropdown-open');
+                else parentItem.classList.remove('dropdown-open');
+            }
+            const wrapper = container.closest('.folder-content-wrapper');
+            if (wrapper) wrapper.style.zIndex = isOpen ? '100' : '';
+            
+            if(id==='settings-dropdown'&&container.classList.contains('open')) {
+                if(typeof updateSettingsDropdownState==='function') updateSettingsDropdownState();
+            }
+        }
+
+        document.addEventListener('click', function(e){
+            if (!e.target.closest('.dropdown-container')) closeAllDropdowns();
+        });
+
+        document.addEventListener('keydown', function(e){
+            if (e.key==='Escape'&&currentOutputMode==='popup'&&outputWrapper.classList.contains('popup-active')) switchToDockedFromPopup();
+        });
+
+        let activeResizer=null;
+        let isResizingProcess=false; 
+        
+        const MIN_PROBLEM_WIDTH_PX=300; 
+        const MIN_EDITOR_WIDTH_PX=450;  
+        const MIN_EDITOR_HEIGHT_PX=150; 
+        
+        problemResizer.addEventListener('mousedown',(e)=>startResize(e,'problem'));
+        terminalResizer.addEventListener('mousedown',(e)=>startResize(e,'terminal'));
+        problemResizer.addEventListener('touchstart',(e)=>startResize(e,'problem'), { passive: false });
+        terminalResizer.addEventListener('touchstart',(e)=>startResize(e,'terminal'), { passive: false });
+
+        function startResize(e, type) {
+            if(e.type==='mousedown'||e.type==='touchstart'){ if(e.cancelable&&e.type==='mousedown') e.preventDefault(); }
+            activeResizer=type;
+            const targetResizer=type==='problem'?problemResizer:terminalResizer;
+            targetResizer.classList.add('resizing');
+            document.body.style.cursor=(type==='problem'||currentLayout==='right')?'col-resize':'row-resize';
+            if(type==='problem') problemContainer.style.transition='none';
+            if(type==='terminal') outputWrapper.style.transition='none';
+            
+            document.addEventListener('mousemove',handleMouseMove);
+            document.addEventListener('mouseup',stopResize);
+            document.addEventListener('touchmove',handleTouchMove,{passive:false});
+            document.addEventListener('touchend',stopResize);
+        }
+
+        function handleTouchMove(e) {
+            if(!activeResizer) return;
+            if(e.cancelable) e.preventDefault();
+            handleMouseMove(e.touches[0]); 
+        }
+
+        function handleMouseMove(e) {
+            if(!activeResizer) return;
+            if(isResizingProcess) return;
+            isResizingProcess=true;
+            requestAnimationFrame(()=>{
+                performResize(e.clientX,e.clientY);
+                isResizingProcess=false;
+            });
+        }
+        
+        function performResize(clientX, clientY) {
+            const containerRect=document.getElementById('main-container').getBoundingClientRect();
+            const centerAreaRect=centerArea.getBoundingClientRect();
+            
+            if (activeResizer==='problem') {
+                let newWidthPx=clientX-containerRect.left;
+                if(newWidthPx<MIN_PROBLEM_WIDTH_PX) newWidthPx=MIN_PROBLEM_WIDTH_PX;
+                if(containerRect.width-newWidthPx<MIN_EDITOR_WIDTH_PX) newWidthPx=containerRect.width-MIN_EDITOR_WIDTH_PX;
+                let newWidthPercent=(newWidthPx/containerRect.width)*100;
+                problemContainer.style.width=`${newWidthPercent}%`;
+            } else if (activeResizer==='terminal') {
+                if (currentLayout==='bottom') {
+                    let newEditorHeightPx=clientY-centerAreaRect.top;
+                    if(newEditorHeightPx<MIN_EDITOR_HEIGHT_PX) newEditorHeightPx=MIN_EDITOR_HEIGHT_PX;
+                    if(centerAreaRect.height-newEditorHeightPx<50) newEditorHeightPx=centerAreaRect.height-50;
+                    let newHeightPercent=(newEditorHeightPx/centerAreaRect.height)*100;
+                    editorContainer.style.flex='1 1 0%';
+                    outputWrapper.style.flex=`0 0 ${100-newHeightPercent}%`;
+                } else {
+                    let newEditorWidthPx=clientX-centerAreaRect.left;
+                    if(newEditorWidthPx<MIN_EDITOR_WIDTH_PX) newEditorWidthPx=MIN_EDITOR_WIDTH_PX;
+                    if(centerAreaRect.width-newEditorWidthPx<100) newEditorWidthPx=centerAreaRect.width-100;
+                    let newWidthPercent=(newEditorWidthPx/centerAreaRect.width)*100;
+                    if(newWidthPercent>90) newWidthPercent=90;
+                    editorContainer.style.flex='1 1 0%';
+                    outputWrapper.style.flex=`0 0 ${100-newWidthPercent}%`;
+                }
+            }
+        }
+
+        function stopResize() { 
+            if(activeResizer) {
+                const targetResizer=activeResizer==='problem'?problemResizer:terminalResizer;
+                targetResizer.classList.remove('resizing');
+                if(activeResizer==='problem') problemContainer.style.transition='';
+                if(activeResizer==='terminal') outputWrapper.style.transition='';
+            }
+            activeResizer=null; 
+            document.body.style.cursor='default'; 
+            document.removeEventListener('mousemove',handleMouseMove); 
+            document.removeEventListener('mouseup',stopResize);
+            document.removeEventListener('touchmove',handleTouchMove);
+            document.removeEventListener('touchend',stopResize);
+            if (typeof editor !== 'undefined') editor.refresh();
+        }
+        
+        function toggleProblemPanel() {
+            if(problemContainer.classList.contains('problem-open')){
+                problemContainer.classList.remove('problem-open');
+                problemContainer.style.width='0px';
+                if(window.innerWidth>1024) problemResizer.classList.add('hidden');
+                problemToggleBtn.classList.remove('active');
+                if (typeof editor !== 'undefined') editor.focus();
+            } else {
+                problemContainer.classList.add('problem-open');
+                if(window.innerWidth>1024) {
+                    problemContainer.style.width='25%';
+                    problemResizer.classList.remove('hidden');
+                }
+                problemToggleBtn.classList.add('active');
+            }
+            if (typeof editor !== 'undefined') setTimeout(()=>editor.refresh(),400);
+        }
+        
+        function selectOutputMode(mode) {
+            currentOutputMode=mode;
+            if(typeof updateSettingsDropdownState==='function') updateSettingsDropdownState();
+            localStorage.setItem("galaxy_output_mode",mode);
+            const btn=document.getElementById('output-toggle-btn');
+            if(btn&&btn.classList.contains('active')) toggleOutputPanel(true);
+        }
+
+        function switchToDockedFromPopup() {
+            outputWrapper.classList.remove('popup-active');
+            outputBackdrop.classList.remove('active');
+            outputWrapper.classList.add('output-docked-open');
+            terminalResizer.style.display='flex'; 
+            let savedFlex=outputWrapper.dataset.lastFlex;
+            if(!savedFlex||savedFlex.includes('0 0 0')||savedFlex==='0px') savedFlex='0 0 30%';
+            outputWrapper.style.flex=savedFlex;
+            editorContainer.style.flex='1 1 0%'; 
+            outputWrapper.style.minWidth=""; 
+            outputWrapper.style.minHeight="";
+            outputWrapper.style.padding=""; 
+            outputWrapper.style.border="";
+            document.getElementById('popup-close-btn').classList.add('hidden');
+            document.getElementById('output-toggle-btn').classList.add('active');
+            localStorage.setItem('galaxy_output_open','true');
+            if (typeof editor !== 'undefined') {
+                setTimeout(()=>editor.refresh(),50);
+                setTimeout(()=>editor.refresh(),400);
+            }
+        }
+
+        function toggleOutputPanel(forceState=null) {
+            const btn=document.getElementById('output-toggle-btn');
+            const isOpen=btn.classList.contains('active');
+            let targetState=(forceState!==null)?forceState:!isOpen;
+
+            if(targetState) {
+                btn.classList.add('active');
+                localStorage.setItem('galaxy_output_open','true');
+                if(currentOutputMode==='popup') {
+                    terminalResizer.style.display='none';
+                    outputWrapper.classList.remove('output-docked-open');
+                    outputWrapper.classList.add('popup-active');
+                    outputBackdrop.classList.add('active');
+                    editorContainer.style.flex='1 1 0%';
+                    document.getElementById('popup-close-btn').classList.remove('hidden');
+                } else {
+                    outputWrapper.classList.remove('popup-active');
+                    outputBackdrop.classList.remove('active');
+                    outputWrapper.classList.add('output-docked-open');
+                    terminalResizer.style.display='flex'; 
+                    let savedFlex=outputWrapper.dataset.lastFlex;
+                    if(!savedFlex||savedFlex.includes('0 0 0')||savedFlex==='0px') savedFlex='0 0 30%';
+                    outputWrapper.style.flex=savedFlex;
+                    editorContainer.style.flex='1 1 0%'; 
+                    outputWrapper.style.minWidth=""; 
+                    outputWrapper.style.minHeight="";
+                    outputWrapper.style.padding=""; 
+                    outputWrapper.style.border="";
+                    document.getElementById('popup-close-btn').classList.add('hidden');
+                }
+            } else {
+                if(outputWrapper.style.flex&&!outputWrapper.style.flex.includes('0 0 0')) {
+                    outputWrapper.dataset.lastFlex=outputWrapper.style.flex;
+                }
+                outputWrapper.classList.remove('popup-active');
+                outputBackdrop.classList.remove('active');
+                outputWrapper.classList.remove('output-docked-open');
+                outputWrapper.style.flex='0 0 0%';
+                editorContainer.style.flex='1 1 0%'; 
+                outputWrapper.style.minWidth="0";
+                outputWrapper.style.minHeight="0";
+                terminalResizer.style.display='none';
+                btn.classList.remove('active');
+                localStorage.setItem('galaxy_output_open','false');
+            }
+            if (typeof editor !== 'undefined') {
+                setTimeout(()=>editor.refresh(),50);
+                setTimeout(()=>editor.refresh(),400);
+            }
+        }
+
+        function resetLayout() {
+            const btn=document.getElementById('output-toggle-btn');
+            const isOpen=btn&&btn.classList.contains('active');
+            if(window.innerWidth>1024) {
+                if(!problemContainer.classList.contains('problem-open')) toggleProblemPanel();
+                problemContainer.style.width='25%';
+                currentLayout='right';
+                document.body.setAttribute('data-layout','right');
+                centerArea.classList.remove('flex-col'); 
+                centerArea.classList.add('flex-row');
+                terminalResizer.className='resizer-split resizer-col';
+                terminalResizer.title="Drag to resize width";
+                editorContainer.style.flex='1 1 0%';
+                if(isOpen){
+                    if(currentOutputMode==='popup') { outputWrapper.dataset.lastFlex='0 0 30%'; } 
+                    else {
+                        outputWrapper.classList.add('output-docked-open');
+                        outputWrapper.style.flex='0 0 30%';
+                        outputWrapper.dataset.lastFlex='0 0 30%';
+                        outputWrapper.style.minWidth=""; 
+                        outputWrapper.style.minHeight="";
+                        terminalResizer.style.display='flex';
+                    }
+                } else {
+                    outputWrapper.classList.remove('output-docked-open');
+                    outputWrapper.style.flex='0 0 0%';
+                    outputWrapper.style.minWidth="0";
+                    outputWrapper.style.minHeight="0";
+                    terminalResizer.style.display='none';
+                }
+                if (typeof editor !== 'undefined') setTimeout(()=>editor.refresh(),50);
+            } else {
+                if(typeof changeLayout==='function') changeLayout('right');
+            }
+            const dropdown=document.getElementById('settings-dropdown');
+            if(dropdown) { dropdown.classList.remove('open'); dropdown.querySelector('.dropdown-trigger')?.classList.remove('active'); }
+            if(typeof updateSettingsDropdownState==='function') updateSettingsDropdownState();
+            localStorage.setItem("galaxy_layout",'right');
+            if (typeof editor !== 'undefined') editor.refresh();
+        }
+
+        function toggleSidePanel() {
+            if(isReorderMode) return;
+            const newView=currentSideView==='list'?'desc':'list';
+            toggleSideView(newView);
+        }
+
+        function toggleSideView(view) {
+            currentSideView=view;
+            problemListEl.classList.remove('side-view-content');
+            problemContentEl.classList.remove('side-view-content');
+            void problemListEl.offsetWidth; 
+            void problemContentEl.offsetWidth;
+            if(view==='list') {
+                problemListEl.classList.remove('hidden');
+                problemListEl.classList.add('side-view-content');
+                problemContentEl.classList.add('hidden');
+                listToolbar.style.display='flex';
+                descToolbar.style.display='none';
+                toggleListBtn.classList.add('active');
+                toggleDescBtn.classList.remove('active');
+                toggleContainer.classList.remove('show-desc'); 
+            } else {
+                problemListEl.classList.add('hidden');
+                problemContentEl.classList.remove('hidden');
+                problemContentEl.classList.add('side-view-content');
+                listToolbar.style.display='none';
+                descToolbar.style.display='flex';
+                toggleListBtn.classList.remove('active');
+                toggleDescBtn.classList.add('active');
+                toggleContainer.classList.add('show-desc'); 
+            }
+            if(typeof updateProblemContentPlaceholder==='function') updateProblemContentPlaceholder();
+        }
+
+        function changeFontSize(delta) { fontSize=Math.min(32,Math.max(10,fontSize+delta)); applyFontSize(); }
+        function resetFontSize() { fontSize=14; applyFontSize(); }
+        function applyFontSize() {
+            document.documentElement.style.setProperty('--editor-font-size', fontSize+'px');
+            if (typeof editor !== 'undefined') {
+                editor.getWrapperElement().style.fontSize=fontSize+"px"; 
+                editor.refresh();
+            }
+            localStorage.setItem("galaxy_font_size",fontSize);
+        }
+
+        function changeProblemFontSize(delta) { problemFontSize=Math.min(32,Math.max(10,problemFontSize+delta)); applyProblemFontSize(); }
+        function resetProblemFontSize() { problemFontSize=14; applyProblemFontSize(); }
+        function applyProblemFontSize() {
+            document.documentElement.style.setProperty('--problem-font-size', problemFontSize+'px');
+            localStorage.setItem("galaxy_problem_font_size",problemFontSize);
+        }
+
+        function setTheme(mode, refresh=true) {
+            currentTheme=mode;
+            if(mode==='classic') document.body.setAttribute('data-theme','classic'); else document.body.removeAttribute('data-theme');
+            localStorage.setItem("galaxy_theme",mode);
+            if(typeof updateSettingsDropdownState==='function') updateSettingsDropdownState(); 
+            if(refresh && typeof editor !== 'undefined') editor.refresh();
+        }
+
+        function toggleAnimations() {
+            enableAnimations=!enableAnimations; localStorage.setItem('galaxy_animations',enableAnimations); updateAnimationToggleUI();
+            const dropdown=document.getElementById('settings-dropdown');
+            if(dropdown) { dropdown.classList.remove('open'); dropdown.querySelector('.dropdown-trigger')?.classList.remove('active'); }
+        }
+        
+        function updateAnimationToggleUI() {
+            const opt=document.getElementById('anim-toggle-opt');
+            if(opt) {
+                const textSpan=opt.querySelector('span'); const icon=opt.querySelector('svg');
+                if(enableAnimations) { textSpan.innerText='Animations: On'; icon.classList.remove('opacity-0'); opt.classList.add('selected'); } 
+                else { textSpan.innerText='Animations: Off'; icon.classList.add('opacity-0'); opt.classList.remove('selected'); }
+            }
+        }
+
+        function selectLayout(layout) { 
+            changeLayout(layout); 
+            const dropdown=document.getElementById('settings-dropdown');
+            if(dropdown) { dropdown.classList.remove('open'); dropdown.querySelector('.dropdown-trigger')?.classList.remove('active'); }
+        } 
+
+        function changeLayout(mode) {
+            currentLayout=mode; document.body.setAttribute('data-layout',mode);
+            const btn=document.getElementById('output-toggle-btn'); const isOpen=btn&&btn.classList.contains('active');
+            if(isOpen&&currentOutputMode==='default'&&outputWrapper.style.flex&&!outputWrapper.style.flex.includes('0 0 0')) outputWrapper.dataset.lastFlex=outputWrapper.style.flex;
+
+            if(mode==='bottom') {
+                centerArea.classList.remove('flex-row'); centerArea.classList.add('flex-col');
+                terminalResizer.className='resizer-split resizer-row'; terminalResizer.title="Drag to resize height";
+            } else {
+                centerArea.classList.remove('flex-col'); centerArea.classList.add('flex-row');
+                terminalResizer.className='resizer-split resizer-col'; terminalResizer.title="Drag to resize width";
+            }
+            
+            if(isOpen) {
+                if(currentOutputMode==='default') {
+                    editorContainer.style.flex='1 1 0%'; 
+                    let savedFlex=outputWrapper.dataset.lastFlex||'0 0 30%';
+                    if(savedFlex.includes('0 0 0')) savedFlex='0 0 30%';
+                    outputWrapper.style.flex=savedFlex; outputWrapper.style.minWidth=""; outputWrapper.style.minHeight=""; terminalResizer.style.display='flex';
+                }
+            } else {
+                editorContainer.style.flex='1 1 0%'; outputWrapper.style.flex='0 0 0%'; outputWrapper.style.minWidth="0"; outputWrapper.style.minHeight="0"; terminalResizer.style.display='none';
+            }
+            const dropdown=document.getElementById('settings-dropdown');
+            if(dropdown) { dropdown.classList.remove('open'); dropdown.querySelector('.dropdown-trigger')?.classList.remove('active'); }
+            if(typeof updateSettingsDropdownState==='function') updateSettingsDropdownState();
+            localStorage.setItem("galaxy_layout",mode); 
+            if (typeof editor !== 'undefined') editor.refresh();
         }
 
         function updateDropdownUI(id, value) {
@@ -850,6 +1250,1014 @@
                 const triggerSpan=document.getElementById('lang-display');
                 if(triggerSpan) triggerSpan.innerText=matchedText;
             }
+        }
+    </script>
+    <script>
+        function openFileConfirm() {
+            if(isRunning||isReorderMode) return;
+            showConfirm("Open File", "Opening a file will overwrite current code.\nAre you sure you want to continue?", triggerFileSelect);
+        }
+
+        function triggerFileSelect() {
+            const fileInput=document.getElementById('file-input');
+            fileInput.accept=currentLang==='cpp'?'.cpp':'.py';
+            fileInput.click();
+        }
+
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file=e.target.files[0];
+            if(!file) return;
+            const filename=file.name.toLowerCase();
+            if(currentLang==='cpp'&&!filename.endsWith('.cpp')) { showModal("Error", "Please select a valid C++ file (.cpp)"); this.value=''; return; }
+            if(currentLang==='python'&&!filename.endsWith('.py')) { showModal("Error", "Please select a valid Python file (.py)"); this.value=''; return; }
+            const reader=new FileReader();
+            reader.onload=function(e) { editor.setValue(e.target.result); saveCurrentProject(); };
+            reader.readAsText(file); this.value='';
+        });
+
+        function updateProjectListActiveState() {
+            document.querySelectorAll('.problem-item').forEach(item=>{
+                if(item.dataset.type === 'folder') return;
+                const idx=parseInt(item.dataset.index);
+                if(idx===activeProjectIndex) item.classList.add('active');
+                else item.classList.remove('active');
+            });
+        }
+
+        function updateEditorTabsActiveState() {
+            const project=projects[activeProjectIndex];
+            document.querySelectorAll('.editor-tab').forEach(tab=>{
+                const tabIdx=parseInt(tab.dataset.index);
+                if(tabIdx===project.activeFileIndex) tab.classList.add('active');
+                else tab.classList.remove('active');
+            });
+        }
+
+        let draggedTabIndex=-1;
+
+        function handleTabDragStart(e) {
+            if(isRunning||!isReorderMode) { e.preventDefault(); return; }
+            draggedTabIndex=parseInt(this.dataset.index);
+            e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('application/x-galaxy-tab',draggedTabIndex); e.dataTransfer.setData('text/plain','');
+            const emptyCanvas=document.createElement('canvas'); emptyCanvas.width=1; emptyCanvas.height=1; e.dataTransfer.setDragImage(emptyCanvas,0,0);
+            if(enableAnimations) requestAnimationFrame(()=>{ this.classList.add('drag-hidden'); });
+            else this.classList.add('drag-hidden');
+        }
+
+        function handleTabDragEnter(e) { e.preventDefault(); e.stopPropagation(); }
+
+        function handleTabDragOver(e) {
+            e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect='move';
+            const targetIndex=parseInt(this.dataset.index);
+            if(draggedTabIndex===targetIndex||draggedTabIndex===-1) return;
+            const rect=this.getBoundingClientRect(); const midX=rect.left+rect.width/2;
+            this.classList.remove('drag-over-left','drag-over-right');
+            if(e.clientX<midX) this.classList.add('drag-over-left');
+            else this.classList.add('drag-over-right');
+        }
+
+        function handleTabDragLeave(e) { this.classList.remove('drag-over-left','drag-over-right'); }
+
+        function handleTabDrop(e) {
+            e.preventDefault(); e.stopPropagation();
+            let isRight=this.classList.contains('drag-over-right'); this.classList.remove('drag-over-left','drag-over-right');
+            let draggedIdxStr=e.dataTransfer.getData('application/x-galaxy-tab');
+            let draggedIdx=draggedIdxStr?parseInt(draggedIdxStr):draggedTabIndex;
+            if(isNaN(draggedIdx)||draggedIdx===-1) return;
+            const targetIndex=parseInt(this.dataset.index);
+            if(draggedIdx===targetIndex) return;
+
+            let newIndex=targetIndex;
+            if(isRight) newIndex=targetIndex+1;
+            if(draggedIdx<newIndex) newIndex--;
+
+            if(newIndex!==draggedIdx&&newIndex>=0) {
+                const project=projects[activeProjectIndex];
+                const activeFileName=project.files[project.activeFileIndex].name;
+                const [movedFile]=project.files.splice(draggedIdx,1);
+                project.files.splice(newIndex,0,movedFile);
+                project.activeFileIndex=project.files.findIndex(f=>f.name===activeFileName);
+                saveProjectsToStorage(); renderEditorTabs();
+            }
+            draggedTabIndex=-1;
+        }
+
+        function handleTabDragEnd(e) {
+            this.classList.remove('drag-hidden'); draggedTabIndex=-1;
+            document.querySelectorAll('.editor-tab').forEach(tab=>{ tab.classList.remove('drag-over-left','drag-over-right'); });
+        }
+
+        function renderEditorTabs(insertedIdx=-1) {
+            const project=projects[activeProjectIndex];
+            const tabsContainer=document.getElementById('editor-tabs');
+            tabsContainer.innerHTML='';
+            
+            if(!project.files) {
+                let ext=currentLang==='cpp'?'.cpp':'.py';
+                project.files=[{name:'main'+ext, code:project.code||''}]; project.activeFileIndex=0;
+            }
+            
+            project.files.forEach((file, index)=>{
+                const isMainFile=file.name==='main.cpp'||file.name==='main.py';
+                const tab=document.createElement('div');
+                tab.className=`editor-tab ${index===project.activeFileIndex?'active':''}`;
+                tab.dataset.index=index; tab.onclick=()=>switchFile(index);
+                tab.ondblclick=(e)=>{ if(!isMainFile&&!isReorderMode) renameFile(index,e); };
+
+                tab.draggable=isReorderMode;
+                if(isReorderMode) {
+                    tab.style.cursor='grab'; tab.addEventListener('dragstart',handleTabDragStart); tab.addEventListener('dragend',handleTabDragEnd);
+                    tab.addEventListener('dragenter',handleTabDragEnter); tab.addEventListener('dragover',handleTabDragOver);
+                    tab.addEventListener('dragleave',handleTabDragLeave); tab.addEventListener('drop',handleTabDrop);
+                }
+                
+                const nameSpan=document.createElement('span'); nameSpan.className='editor-tab-name select-none'; nameSpan.innerText=file.name;
+                tab.appendChild(nameSpan);
+                
+                if(index===insertedIdx&&enableAnimations) {
+                    tab.classList.add('is-inserting');
+                    requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ tab.classList.remove('is-inserting'); }); });
+                }
+                tabsContainer.appendChild(tab);
+            });
+            
+            if(project.files.length<9&&!isReorderMode) {
+                const addBtn=document.createElement('button'); addBtn.id='add-file-btn'; addBtn.onclick=requestNewFile; addBtn.style.marginBottom='1.5px';
+                addBtn.className='w-6 h-6 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-gray-400 hover:text-white transition-colors flex-shrink-0 relative z-10 ml-1 mr-2';
+                addBtn.title='Add New File (Max 9)'; addBtn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>';
+                tabsContainer.appendChild(addBtn);
+            }
+        }
+
+        function switchFile(index) {
+            if(isReorderMode) return;
+            const project=projects[activeProjectIndex];
+            if(index===project.activeFileIndex&&editor.getValue()===project.files[index].code) return;
+            
+            if(project.files[project.activeFileIndex]) {
+                const cur=editor.getCursor(); const scroll=editor.getScrollInfo();
+                project.files[project.activeFileIndex].code=editor.getValue();
+                project.files[project.activeFileIndex].history=editor.getHistory();
+                project.files[project.activeFileIndex].cursorPos=cur;
+                project.files[project.activeFileIndex].scrollPos={left:scroll.left, top:scroll.top};
+            }
+            
+            project.activeFileIndex=index; isChangingProject=true;
+            const codeWrapper=document.getElementById('code-wrapper'); codeWrapper.classList.remove('animate-tab-switch'); void codeWrapper.offsetWidth; codeWrapper.classList.add('animate-tab-switch');
+            editor.setValue(project.files[index].code||"");
+            
+            if(project.files[index].history) editor.setHistory(project.files[index].history);
+            else editor.clearHistory();
+            
+            const newFile=project.files[index];
+            if(newFile.cursorPos) { editor.setCursor(newFile.cursorPos); if(newFile.scrollPos) editor.scrollTo(newFile.scrollPos.left,newFile.scrollPos.top); } 
+            else { editor.setCursor({line:0,ch:0}); editor.scrollTo(0,0); }
+            
+            isChangingProject=false; updateEditorTabsActiveState(); saveProjectsToStorage(); editor.focus();
+        }
+
+        function requestNewFile() {
+            if(isRunning||isReorderMode) return;
+            const project=projects[activeProjectIndex];
+            if(project.files.length>=9) return;
+            let count=project.files.length; let position=count+1;
+            let ext=currentLang==='cpp'?((position%2===0)?'.cpp':'.h'):'.py'; let defaultName='file'+count+ext;
+            showInputModal("New File", "Enter file name:", defaultName, defaultName, (name)=>{
+                if(project.files.some(f=>f.name===name)) { showModal("Error", "File name already exists."); return; }
+                project.files.push({name:name, code:""}); renderEditorTabs(); switchFile(project.files.length-1);
+            });
+        }
+        
+        function renameFile(index, event) {
+            if(isRunning||isReorderMode) return;
+            if(event) event.stopPropagation();
+            const project=projects[activeProjectIndex]; const file=project.files[index];
+            if(!file||file.name==='main.cpp'||file.name==='main.py') return; 
+            
+            showInputModal("Rename File", "Enter new file name:", "", file.name, (newName)=>{
+                if(newName===file.name) return;
+                if(project.files.some(f=>f.name===newName)) { showModal("Error", "File name already exists."); return; }
+                file.name=newName; renderEditorTabs(); saveProjectsToStorage();
+            }, ()=>{ deleteFile(index,false); });
+        }
+        
+        function deleteFile(index, skipConfirm=false) {
+            if(isRunning||isReorderMode) return;
+            const project=projects[activeProjectIndex]; const file=project.files[index];
+            if(!file||file.name==='main.cpp'||file.name==='main.py') return;
+            
+            const performDelete=()=>{
+                project.files.splice(index,1);
+                if(project.activeFileIndex>=index) project.activeFileIndex=Math.max(0,project.activeFileIndex-1);
+                switchFile(project.activeFileIndex); renderEditorTabs(); saveProjectsToStorage();
+            };
+
+            if(skipConfirm) {
+                const tabsContainer=document.getElementById('editor-tabs'); const itemEl=tabsContainer.children[index];
+                if(itemEl&&enableAnimations) { itemEl.classList.add('is-deleting'); setTimeout(performDelete,300); } 
+                else performDelete(); return;
+            }
+            showConfirm("Delete File", `Are you sure you want to delete ${file.name}?`, ()=>{
+                const tabsContainer=document.getElementById('editor-tabs'); const itemEl=tabsContainer.children[index];
+                if(itemEl&&enableAnimations) { itemEl.classList.add('is-deleting'); setTimeout(performDelete,300); } 
+                else performDelete();
+            });
+        }
+
+        function initProjects() {
+            try {
+                const savedFolders=localStorage.getItem(`galaxy_folders_${currentLang}`);
+                if(savedFolders) folders=JSON.parse(savedFolders); else folders=[];
+            } catch(e) { folders=[]; }
+
+            try {
+                const savedProjects=localStorage.getItem(`galaxy_projects_${currentLang}`);
+                let ext=currentLang==='cpp'?'.cpp':'.py';
+                
+                if(savedProjects) {
+                    projects=JSON.parse(savedProjects);
+                    projects.forEach(p=>{
+                        if(!p.files) {
+                            p.files=[{name:'main'+ext, code:p.code||''}]; p.activeFileIndex=0;
+                            if(p.defaultCode) p.defaultFiles=[{name:'main'+ext, code:p.defaultCode}];
+                            delete p.code; delete p.defaultCode;
+                        }
+                        if(p.testMode&&p.defaultFiles) p.files=JSON.parse(JSON.stringify(p.defaultFiles));
+                    });
+                    
+                    const mainIndex=projects.findIndex(p=>p.id==='main');
+                    if(mainIndex===-1) projects.unshift({id:'main', title:'main', files:[{name:'main'+ext, code:(typeof getHelloWorld==='function')?getHelloWorld(currentLang):''}], activeFileIndex:0, desc:'', folderId:null});
+                    else if(mainIndex>0) { const mainProject=projects.splice(mainIndex,1)[0]; projects.unshift(mainProject); }
+                    projects[0].title='main';
+                } else {
+                    projects=[{id:'main', title:'main', files:[{name:'main'+ext, code:(typeof getHelloWorld==='function')?getHelloWorld(currentLang):''}], activeFileIndex:0, desc:'', folderId:null}];
+                }
+                
+                const savedIndex=parseInt(localStorage.getItem(`galaxy_active_project_${currentLang}`)||"0");
+                activeProjectIndex=(savedIndex>=0&&savedIndex<projects.length)?savedIndex:0;
+            } catch(e) {
+                let ext=currentLang==='cpp'?'.cpp':'.py';
+                projects=[{id:'main', title:'main', files:[{name:'main'+ext, code:(typeof getHelloWorld==='function')?getHelloWorld(currentLang):''}], activeFileIndex:0, desc:'', folderId:null}];
+                activeProjectIndex=0;
+            }
+            
+            renderProjectList(); loadProject(activeProjectIndex);
+        }
+
+        let saveIndicatorTimeout;
+        function showSaveStatus() {
+            const savedIcon=document.getElementById('save-icon-saved'); const savingIcon=document.getElementById('save-icon-saving'); const saveText=document.getElementById('save-text');
+            if(savedIcon) savedIcon.classList.add('hidden'); if(savingIcon) savingIcon.classList.remove('hidden');
+            if(saveText) { saveText.innerText='Saving...'; saveText.classList.remove('text-gray-400'); saveText.classList.add('text-yellow-500'); }
+            clearTimeout(saveIndicatorTimeout);
+            saveIndicatorTimeout=setTimeout(()=>{
+                if(savingIcon) savingIcon.classList.add('hidden'); if(savedIcon) savedIcon.classList.remove('hidden');
+                if(saveText) { saveText.innerText='Saved'; saveText.classList.remove('text-yellow-500'); saveText.classList.add('text-gray-400'); }
+            },500);
+        }
+
+        function saveProjectsToStorage() {
+            if(isReorderMode) return;
+            localStorage.setItem(`galaxy_projects_${currentLang}`, JSON.stringify(projects));
+            showSaveStatus();
+        }
+
+        function saveFoldersToStorage() {
+            if(isReorderMode) return;
+            localStorage.setItem(`galaxy_folders_${currentLang}`, JSON.stringify(folders));
+        }
+
+        function saveCurrentProject() {
+            if(projects[activeProjectIndex]&&!isReorderMode) {
+                const project=projects[activeProjectIndex];
+                if(project.files&&project.files[project.activeFileIndex]) {
+                    project.files[project.activeFileIndex].code=editor.getValue();
+                    project.files[project.activeFileIndex].history=editor.getHistory();
+                    const cur=editor.getCursor(); const scroll=editor.getScrollInfo();
+                    project.files[project.activeFileIndex].cursorPos=cur;
+                    project.files[project.activeFileIndex].scrollPos={left:scroll.left, top:scroll.top};
+                }
+                project.desc=problemContentEl.innerHTML;
+                saveProjectsToStorage();
+            }
+        }
+
+        function handleAddClick(e) {
+            if(isRunning||isReorderMode) return;
+            if(e) e.stopPropagation();
+            if(currentFolderId!==null) {
+                requestNewProjectName();
+            } else {
+                closeAllDropdowns();
+                const container = document.getElementById('add-dropdown-container');
+                if (container) container.classList.toggle('open');
+            }
+        }
+
+        function requestNewProjectName() {
+            if(isRunning||isReorderMode) return;
+            if(projects.length>=31) { showModal("Notice", "Project limit reached (30)"); return; }
+            let counter=1;
+            while(projects.some(p=>p.title.toLowerCase()===`program ${counter}`)) { counter++; }
+            const defaultName=`program ${counter}`;
+
+            showInputModal("New Project", "Enter project name:", "e.g. program 1", defaultName, (name)=>{
+                addProject(name||defaultName);
+            });
+        }
+
+        function showFolderModal(title, defaultName, defaultColor, onConfirm) {
+            modalTitle.innerText=title;
+            modalMessage.innerHTML='';
+            const colors=['#facc15','#60a5fa','#f87171','#4ade80','#a78bfa','#fb923c','#9ca3af'];
+            let selectedColor=defaultColor||colors[0];
+
+            const input=document.createElement('input');
+            input.className='modal-input mt-2';
+            input.value=defaultName||'';
+            input.placeholder='Enter folder name';
+            
+            const colorContainer=document.createElement('div');
+            colorContainer.className='flex gap-2 mt-4 justify-center';
+            colors.forEach(c=>{
+                const circle=document.createElement('div');
+                circle.className=`w-6 h-6 rounded-full cursor-pointer border-2 transition-all ${c===selectedColor?'border-white scale-110':'border-transparent'}`;
+                circle.style.backgroundColor=c;
+                circle.onclick=()=>{
+                    selectedColor=c;
+                    Array.from(colorContainer.children).forEach(child=>{ child.classList.remove('border-white','scale-110'); child.classList.add('border-transparent'); });
+                    circle.classList.remove('border-transparent'); circle.classList.add('border-white','scale-110');
+                };
+                colorContainer.appendChild(circle);
+            });
+
+            modalMessage.appendChild(input);
+            modalMessage.appendChild(colorContainer);
+            modalInput.classList.add('hidden');
+            
+            modalFooter.innerHTML='';
+            const cancelBtn=document.createElement('button');
+            cancelBtn.className='modal-btn modal-btn-secondary';
+            cancelBtn.innerText='Cancel';
+            cancelBtn.onclick=closeModal;
+            
+            const confirmBtn=document.createElement('button');
+            confirmBtn.className='modal-btn modal-btn-primary';
+            confirmBtn.innerText='Confirm';
+            confirmBtn.onclick=()=>{
+                const val=input.value.trim();
+                if(val) { closeModal(); onConfirm(val,selectedColor); } else { input.focus(); }
+            };
+            
+            modalFooter.appendChild(cancelBtn);
+            modalFooter.appendChild(confirmBtn);
+            modalOverlay.classList.add('open');
+            setTimeout(()=>input.focus(),100);
+        }
+
+        function requestNewFolder() {
+            let counter=1;
+            while(folders.some(f=>f.title===`Folder ${counter}`)) { counter++; }
+            showFolderModal("New Folder", `Folder ${counter}`, null, (name, color)=>{
+                folders.push({ id:'folder_'+Date.now(), title:name, color:color });
+                saveFoldersToStorage(); renderProjectList();
+            });
+        }
+
+        function editFolder(fIdx) {
+            const folder=folders[fIdx];
+            showFolderModal("Edit Folder", folder.title, folder.color, (name, color)=>{
+                folder.title=name; folder.color=color;
+                saveFoldersToStorage(); renderProjectList();
+            });
+        }
+
+        function deleteFolder(fIdx) {
+            const folder=folders[fIdx];
+            showConfirm("Delete Folder", `Are you sure you want to delete folder '${folder.title}'?\n(Projects inside will be moved to the root level)`, ()=>{
+                projects.forEach(p=>{ if(p.folderId===folder.id) p.folderId=null; });
+                folders.splice(fIdx,1);
+                if (currentFolderId === folder.id) currentFolderId = null;
+                saveFoldersToStorage(); saveProjectsToStorage(); renderProjectList();
+            });
+        }
+
+        function addProject(title) {
+            let ext=currentLang==='cpp'?'.cpp':'.py';
+            const newProject={
+                id: Date.now().toString(),
+                title: title,
+                files: [{name:'main'+ext, code:(typeof getHelloWorld==='function')?getHelloWorld(currentLang):''}],
+                activeFileIndex: 0, desc: "", testMode: false,
+                folderId: currentFolderId
+            };
+            projects.push(newProject); saveProjectsToStorage();
+            selectProject(projects.length-1, true); renderProjectList(projects.length-1);
+        }
+        
+        function duplicateProject(index, event) {
+            if(isRunning||isReorderMode) return;
+            if(event) event.stopPropagation();
+            if(projects.length>=31) { showModal("Notice", "Project limit reached (30)"); return; }
+            const original=projects[index]; const newProject=JSON.parse(JSON.stringify(original));
+            newProject.id=Date.now().toString(); newProject.title=original.title+" - Copy";
+            projects.splice(index+1, 0, newProject);
+            if(activeProjectIndex>index) activeProjectIndex++;
+            saveProjectsToStorage(); renderProjectList(index+1);
+        }
+
+        function renameProject(index, event) {
+            if(event) event.stopPropagation();
+            if(isReorderMode) return;
+            if(projects[index].id==='main') { showModal("Notice", "The 'main' project cannot be renamed."); return; }
+            showInputModal("Rename", `Enter new name:`, "", projects[index].title, (newName)=>{
+                projects[index].title=newName; saveProjectsToStorage(); renderProjectList();
+                if(index===activeProjectIndex) document.getElementById('current-project-title').innerText=newName;
+            });
+        }
+
+        function deleteProject(index, event) {
+            if(isRunning||isReorderMode) return;
+            if(event) event.stopPropagation();
+            if(projects[index].id==='main') { showModal("Notice", "The 'main' project cannot be deleted."); return; }
+            showConfirm("Delete Project", `Are you sure you want to delete '${projects[index].title}'? This action cannot be undone.`, ()=>{
+                const performDelete=()=>{
+                    projects.splice(index,1);
+                    if(index===activeProjectIndex) activeProjectIndex=Math.max(0,index-1);
+                    else if(index<activeProjectIndex) activeProjectIndex--;
+                    saveProjectsToStorage(); renderProjectList(); loadProject(activeProjectIndex);
+                };
+                const itemEl=problemListEl.querySelector(`.problem-item[data-index="${index}"]`);
+                if(itemEl&&enableAnimations) { itemEl.classList.add('is-deleting'); setTimeout(performDelete,350); } 
+                else performDelete();
+            });
+        }
+
+        function selectProject(index, skipRender=false) {
+            if(isRunning||isReorderMode) return;
+            if(index===activeProjectIndex) { toggleSideView('desc'); return; }
+            
+            saveCurrentProject();
+            activeProjectIndex=index; localStorage.setItem(`galaxy_active_project_${currentLang}`, activeProjectIndex);
+            triggerProjectSwitchAnimation(); loadProject(index);
+            if(!skipRender) updateProjectListActiveState();
+        }
+        
+        function triggerProjectSwitchAnimation() {
+            if(!enableAnimations) return;
+            const codeWrapper=document.getElementById('code-wrapper'); const problemContent=document.getElementById('problem-content');
+            codeWrapper.classList.remove('animate-tab-switch'); problemContent.classList.remove('animate-quick-fade');
+            void codeWrapper.offsetWidth;
+            codeWrapper.classList.add('animate-tab-switch'); problemContent.classList.add('animate-quick-fade');
+        }
+
+        function loadProject(index) {
+            const project=projects[index];
+            if(!project) return;
+            isChangingProject=true;
+            
+            if(!project.files) {
+                let ext=currentLang==='cpp'?'.cpp':'.py';
+                project.files=[{name:'main'+ext, code:project.code||''}]; project.activeFileIndex=0;
+                if(project.defaultCode) project.defaultFiles=[{name:'main'+ext, code:project.defaultCode}];
+            }
+            
+            let activeFile=project.files[project.activeFileIndex];
+            if(!activeFile) { project.activeFileIndex=0; activeFile=project.files[0]; }
+            
+            editor.setValue(activeFile.code||"");
+            if(activeFile.history) editor.setHistory(activeFile.history); else editor.clearHistory();
+            
+            problemContentEl.innerHTML=project.desc||""; document.getElementById('current-project-title').innerText=project.title;
+            
+            if(activeFile.cursorPos) { editor.setCursor(activeFile.cursorPos); if(activeFile.scrollPos) editor.scrollTo(activeFile.scrollPos.left,editor.getScrollInfo().top); editor.focus(); } 
+            else { editor.setCursor({line:0,ch:0}); editor.scrollTo(0,0); }
+            
+            if(typeof updateProblemSettingsUI==='function') updateProblemSettingsUI(); 
+            if(typeof updateProblemContentPlaceholder==='function') updateProblemContentPlaceholder(); 
+            renderEditorTabs();
+            isChangingProject=false;
+        }
+
+        function moveToFolderPrompt(pIdx) {
+            let optionsHtml='';
+            folders.forEach(f=>{
+                optionsHtml+=`<button class="w-full text-left px-3 py-2 hover:bg-[#3c3c3c] rounded flex items-center gap-2 mb-1 transition-colors" onclick="executeMoveToFolder(${pIdx}, '${f.id}')">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="${f.color||'#facc15'}" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+                    <span class="truncate text-white text-sm">${f.title}</span>
+                </button>`;
+            });
+            
+            modalTitle.innerText="Select Target Folder";
+            modalMessage.innerHTML=`<div class="max-h-48 overflow-y-auto pr-1">${optionsHtml}</div>`;
+            modalInput.classList.add('hidden');
+            modalFooter.innerHTML='';
+            
+            const cancelBtn=document.createElement('button');
+            cancelBtn.className='modal-btn modal-btn-secondary';
+            cancelBtn.innerText='Cancel';
+            cancelBtn.onclick=closeModal;
+            modalFooter.appendChild(cancelBtn);
+            modalOverlay.classList.add('open');
+        }
+
+        window.executeMoveToFolder = function(pIdx, folderId) {
+            closeModal(); projects[pIdx].folderId=folderId;
+            saveProjectsToStorage(); renderProjectList();
+        };
+
+        function removeFromFolder(pIdx) {
+            projects[pIdx].folderId=null;
+            saveProjectsToStorage(); renderProjectList();
+        }
+
+        function enterReorderMode() {
+            if(isRunning) return;
+            isReorderMode=true; let activeId=projects[activeProjectIndex].id;
+            reorderBackup=JSON.parse(JSON.stringify(projects));
+            reorderFolderBackup=JSON.parse(JSON.stringify(folders));
+            if(currentSideView==='desc') toggleSideView('list');
+            
+            document.getElementById('side-panel-toggle-container').style.pointerEvents='none'; document.getElementById('side-panel-toggle-container').style.opacity='0.5';
+            editor.setOption('readOnly',true);
+            
+            const btn=document.querySelector('.settings-btn'); const menu=document.querySelector('#settings-dropdown .dropdown-menu');
+            if(!originalSettingsHTML.btn) { originalSettingsHTML.btn=btn.innerHTML; originalSettingsHTML.menu=menu.innerHTML; }
+            
+            btn.innerHTML=`<svg class="w-4 h-4 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg><span class="w-full text-center text-purple-400 font-bold tracking-wide">Reorder</span>`;
+            btn.classList.add('!border-purple-500','!bg-purple-900/30');
+            
+            menu.innerHTML=`
+                <div class="dropdown-label">Apply Changes</div>
+                <div class="dropdown-item !py-1.5 flex items-center justify-start gap-3 hover:!bg-[#2ea043] hover:!text-white group" onclick="saveReorder()">
+                    <svg class="w-4 h-4 text-[#2ea043] group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-xs font-bold text-gray-300 group-hover:text-white">Save Order</span>
+                </div>
+                <div class="dropdown-item !py-1.5 flex items-center justify-start gap-3 hover:!bg-red-600 hover:!text-white group mt-1" onclick="cancelReorder()">
+                    <svg class="w-4 h-4 text-[#e04f5f] group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span class="text-xs font-bold text-gray-300 group-hover:text-white">Cancel</span>
+                </div>
+            `;
+            closeAllDropdowns(); renderProjectList(); renderEditorTabs();
+        }
+
+        function exitReorderMode(save) {
+            if(save) {
+                saveProjectsToStorage(); saveFoldersToStorage();
+            } else {
+                const activeId=projects[activeProjectIndex].id;
+                projects=JSON.parse(JSON.stringify(reorderBackup));
+                folders=JSON.parse(JSON.stringify(reorderFolderBackup));
+                activeProjectIndex=Math.max(0,projects.findIndex(p=>p.id===activeId));
+            }
+            isReorderMode=false;
+            document.getElementById('side-panel-toggle-container').style.pointerEvents=''; document.getElementById('side-panel-toggle-container').style.opacity='';
+            editor.setOption('readOnly',false);
+            
+            const btn=document.querySelector('.settings-btn'); const menu=document.querySelector('#settings-dropdown .dropdown-menu');
+            btn.innerHTML=originalSettingsHTML.btn; btn.classList.remove('!border-purple-500','!bg-purple-900/30'); menu.innerHTML=originalSettingsHTML.menu;
+            
+            if(typeof updateSettingsDropdownState==='function') updateSettingsDropdownState(); 
+            closeAllDropdowns(); renderProjectList(); renderEditorTabs();
+        }
+
+        function saveReorder() { exitReorderMode(true); }
+        function cancelReorder() { exitReorderMode(false); }
+
+        let draggedProjectIndex=-1;
+        let draggedFolderIndex=-1;
+        let draggedItemType=null;
+
+        function handleDragStart(e) {
+            if(!isReorderMode) { e.preventDefault(); return; }
+            
+            draggedItemType=this.dataset.type||'project';
+            if(draggedItemType==='folder') {
+                draggedFolderIndex=parseInt(this.dataset.folderIndex);
+                e.dataTransfer.setData('application/x-galaxy-folder',draggedFolderIndex);
+            } else {
+                draggedProjectIndex=parseInt(this.dataset.index);
+                e.dataTransfer.setData('application/x-galaxy-problem',draggedProjectIndex);
+            }
+            
+            e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain','');
+            
+            const emptyCanvas=document.createElement('canvas'); emptyCanvas.width=1; emptyCanvas.height=1; e.dataTransfer.setDragImage(emptyCanvas,0,0);
+            if(enableAnimations) requestAnimationFrame(()=>{ this.classList.add('drag-hidden'); });
+            else this.classList.add('drag-hidden');
+        }
+
+        function handleDragEnter(e) { e.preventDefault(); e.stopPropagation(); }
+
+        function handleDragOver(e) {
+            e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect='move';
+            const targetType=this.dataset.type||'project';
+            if(draggedItemType!==targetType) return;
+            
+            const targetIndex=targetType==='folder'?parseInt(this.dataset.folderIndex):parseInt(this.dataset.index);
+            let currentDragIdx=draggedItemType==='folder'?draggedFolderIndex:draggedProjectIndex;
+            if(currentDragIdx===targetIndex||currentDragIdx===-1) return;
+            
+            const rect=this.getBoundingClientRect(); const midY=rect.top+rect.height/2;
+            this.classList.remove('drag-over-top','drag-over-bottom');
+            if(e.clientY<midY) this.classList.add('drag-over-top');
+            else this.classList.add('drag-over-bottom');
+        }
+
+        function handleDragLeave(e) { this.classList.remove('drag-over-top','drag-over-bottom'); }
+
+        function handleDrop(e) {
+            e.preventDefault(); e.stopPropagation();
+            const targetType=this.dataset.type||'project';
+            if(draggedItemType!==targetType) return;
+            
+            let isBottom=this.classList.contains('drag-over-bottom'); this.classList.remove('drag-over-top','drag-over-bottom');
+            
+            if(targetType==='folder') {
+                let draggedIdxStr=e.dataTransfer.getData('application/x-galaxy-folder');
+                let draggedIdx=draggedIdxStr?parseInt(draggedIdxStr):draggedFolderIndex;
+                if(isNaN(draggedIdx)||draggedIdx===-1) return;
+                const targetIndex=parseInt(this.dataset.folderIndex);
+                if(draggedIdx===targetIndex) return;
+
+                let newIndex=targetIndex;
+                if(isBottom) newIndex=targetIndex+1;
+                if(draggedIdx<newIndex) newIndex--;
+
+                if(newIndex!==draggedIdx&&newIndex>=0) {
+                    const [movedFolder]=folders.splice(draggedIdx,1);
+                    folders.splice(newIndex,0,movedFolder);
+                    saveFoldersToStorage(); renderProjectList();
+                }
+            } else {
+                let draggedIdxStr=e.dataTransfer.getData('application/x-galaxy-problem');
+                let draggedIdx=draggedIdxStr?parseInt(draggedIdxStr):draggedProjectIndex;
+                if(isNaN(draggedIdx)||draggedIdx===-1) return;
+                const targetIndex=parseInt(this.dataset.index);
+                if(draggedIdx===targetIndex) return;
+
+                if(projects[draggedIdx].folderId !== projects[targetIndex].folderId) {
+                    showModal("Error", "Cannot reorder across folders. Use 'Move to Folder' instead.");
+                    return;
+                }
+
+                let newIndex=targetIndex;
+                if(isBottom) newIndex=targetIndex+1;
+                if(draggedIdx<newIndex) newIndex--;
+
+                if(newIndex!==draggedIdx&&newIndex>=0) {
+                    const activeId=projects[activeProjectIndex].id;
+                    const [movedProject]=projects.splice(draggedIdx,1);
+                    projects.splice(newIndex,0,movedProject);
+                    activeProjectIndex=projects.findIndex(p=>p.id===activeId);
+                    saveProjectsToStorage(); renderProjectList();
+                }
+            }
+            draggedItemType=null; draggedProjectIndex=-1; draggedFolderIndex=-1;
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('drag-hidden'); draggedItemType=null; draggedProjectIndex=-1; draggedFolderIndex=-1;
+            document.querySelectorAll('.problem-item').forEach(item=>{ item.classList.remove('drag-over-top','drag-over-bottom'); });
+        }
+
+        function toggleFolder(folderId) {
+            if(isReorderMode) return;
+            if (currentFolderId === folderId) {
+                const wrapper = document.getElementById(`folder-content-${folderId}`);
+                if (wrapper) {
+                    const inner = wrapper.querySelector('.folder-content-inner');
+                    if(inner) inner.style.overflow = 'hidden';
+                    wrapper.classList.remove('open');
+                }
+                const header = document.getElementById(`folder-header-${folderId}`);
+                if (header) {
+                    header.classList.remove('bg-[#2d2d2d]', 'border-[#454545]', 'active-folder');
+                    const svg = header.querySelector('.folder-icon-svg');
+                    if(svg) svg.innerHTML = `<path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>`;
+                    const span = header.querySelector('.folder-title-text');
+                    if(span) span.classList.remove('text-white', 'font-bold');
+                }
+                currentFolderId = null;
+            } else {
+                if (currentFolderId) {
+                    const prevWrapper = document.getElementById(`folder-content-${currentFolderId}`);
+                    if (prevWrapper) {
+                        const prevInner = prevWrapper.querySelector('.folder-content-inner');
+                        if(prevInner) prevInner.style.overflow = 'hidden';
+                        prevWrapper.classList.remove('open');
+                    }
+                    const prevHeader = document.getElementById(`folder-header-${currentFolderId}`);
+                    if (prevHeader) {
+                        prevHeader.classList.remove('bg-[#2d2d2d]', 'border-[#454545]', 'active-folder');
+                        const svg = prevHeader.querySelector('.folder-icon-svg');
+                        if(svg) svg.innerHTML = `<path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>`;
+                        const span = prevHeader.querySelector('.folder-title-text');
+                        if(span) span.classList.remove('text-white', 'font-bold');
+                    }
+                }
+                currentFolderId = folderId;
+                const newWrapper = document.getElementById(`folder-content-${folderId}`);
+                if (newWrapper) {
+                    newWrapper.classList.add('open');
+                    setTimeout(() => {
+                        if (currentFolderId === folderId) {
+                            const inner = newWrapper.querySelector('.folder-content-inner');
+                            if(inner) inner.style.overflow = 'visible';
+                        }
+                    }, 350);
+                }
+                const newHeader = document.getElementById(`folder-header-${folderId}`);
+                if (newHeader) {
+                    newHeader.classList.add('bg-[#2d2d2d]', 'border-[#454545]', 'active-folder');
+                    const svg = newHeader.querySelector('.folder-icon-svg');
+                    if(svg) svg.innerHTML = `<path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v6H4a2 2 0 01-2-2V6zm14 3a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2v-6a2 2 0 012-2h10z" clip-rule="evenodd"/>`;
+                    const span = newHeader.querySelector('.folder-title-text');
+                    if(span) span.classList.add('text-white', 'font-bold');
+                    setTimeout(() => newHeader.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 350);
+                }
+            }
+        }
+
+        function createProjectItemElement(proj, originalIndex, insertedIdx, inFolder) {
+            const item=document.createElement('div');
+            const isMain=proj.id==='main';
+            item.className=`problem-item ${originalIndex===activeProjectIndex?'active':''} ${isMain?'is-main':''} ${inFolder?'folder-child-item':''}`;
+            item.dataset.type='project'; item.dataset.index=originalIndex;
+            
+            if(isReorderMode) {
+                item.style.cursor='grab';
+            } else {
+                item.onclick=(e)=>{ if(!e.target.closest('.problem-item-actions')) selectProject(originalIndex); };
+            }
+            
+            item.draggable=isReorderMode;
+            if(isReorderMode) {
+                item.addEventListener('dragstart',handleDragStart); item.addEventListener('dragend',handleDragEnd);
+                item.addEventListener('dragenter',handleDragEnter); item.addEventListener('dragover',handleDragOver);
+                item.addEventListener('dragleave',handleDragLeave); item.addEventListener('drop',handleDrop);
+            }
+            
+            if (inFolder) {
+                const treeLine = document.createElement('div');
+                treeLine.className = 'folder-tree-line';
+                item.appendChild(treeLine);
+            }
+            
+            const title=document.createElement('div'); title.className='problem-item-title'; title.innerText=proj.title;
+            const actions=document.createElement('div'); actions.className='problem-item-actions';
+            
+            if(isReorderMode) {
+                actions.innerHTML=`<div class="text-gray-500 flex items-center justify-center pointer-events-none opacity-50"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></div>`;
+                actions.style.display='flex';
+            } else {
+                if(isMain) {
+                    const pinIcon=document.createElement('div'); pinIcon.className='problem-action-btn pin';
+                    pinIcon.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V6a4 4 0 0 0-8 0v6l-2 2v2h5v6h2v-6h5v-2l-2-2z"/></svg>`;
+                    pinIcon.title="Pinned Project"; actions.appendChild(pinIcon);
+                } else {
+                    const moreMenuContainer=document.createElement('div'); moreMenuContainer.className='dropdown-container ml-1'; moreMenuContainer.id=`problem-dropdown-${proj.id}`;
+                    const moreBtn=document.createElement('div'); moreBtn.className='problem-action-btn flex items-center justify-center'; moreBtn.title="Options";
+                    moreBtn.innerHTML=`<svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>`;
+                    moreBtn.onclick=(e)=>{ e.stopPropagation(); toggleDropdown(`problem-dropdown-${proj.id}`); };
+                    
+                    const menu=document.createElement('div'); menu.className='dropdown-menu shadow-lg z-[999]'; menu.style.cssText='right: 0; left: auto; min-width: 155px; transform-origin: top right; padding: 4px 2px;';
+                    
+                    const renameBtn=document.createElement('div'); renameBtn.className='dropdown-item !py-1.5 flex items-center justify-start gap-3';
+                    renameBtn.innerHTML=`<svg class="w-[16px] h-[16px] text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg><span class="text-xs">Rename</span>`;
+                    renameBtn.onclick=(e)=>renameProject(originalIndex,e);
+
+                    const dupBtn=document.createElement('div'); dupBtn.className='dropdown-item !py-1.5 flex items-center justify-start gap-3';
+                    dupBtn.innerHTML=`<svg class="w-[16px] h-[16px] text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg><span class="text-xs">Duplicate</span>`;
+                    dupBtn.onclick=(e)=>duplicateProject(originalIndex,e);
+
+                    if(!inFolder) {
+                        const moveToFolderBtn=document.createElement('div');
+                        moveToFolderBtn.className=`dropdown-item !py-1.5 flex items-center justify-start gap-3 ${folders.length===0?'disabled':''}`;
+                        moveToFolderBtn.innerHTML=`<svg class="w-[16px] h-[16px] text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg><span class="text-xs">Move to Folder</span>`;
+                        if(folders.length>0) moveToFolderBtn.onclick=(e)=>{ e.stopPropagation(); moveToFolderPrompt(originalIndex); };
+                        menu.appendChild(moveToFolderBtn);
+                    } else {
+                        const removeFromFolderBtn=document.createElement('div');
+                        removeFromFolderBtn.className='dropdown-item !py-1.5 flex items-center justify-start gap-3';
+                        removeFromFolderBtn.innerHTML=`<svg class="w-[16px] h-[16px] text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg><span class="text-xs">Remove from Folder</span>`;
+                        removeFromFolderBtn.onclick=(e)=>{ e.stopPropagation(); removeFromFolder(originalIndex); };
+                        menu.appendChild(removeFromFolderBtn);
+                    }
+                    
+                    const delBtn=document.createElement('div'); delBtn.className='dropdown-item !py-1.5 flex items-center justify-start gap-3 hover:!bg-red-600 hover:!text-white group mt-1 border-t border-[#454545] pt-1';
+                    delBtn.innerHTML=`<svg class="w-[16px] h-[16px] text-gray-400 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg><span class="text-xs text-[#e04f5f] group-hover:text-white">Delete</span>`;
+                    delBtn.onclick=(e)=>deleteProject(originalIndex,e);
+                    
+                    menu.appendChild(renameBtn); menu.appendChild(dupBtn); menu.appendChild(delBtn);
+                    moreMenuContainer.appendChild(moreBtn); moreMenuContainer.appendChild(menu); actions.appendChild(moreMenuContainer);
+                }
+            }
+            
+            if(originalIndex===insertedIdx&&enableAnimations) {
+                item.classList.add('is-inserting');
+                requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ item.classList.remove('is-inserting'); }); });
+            }
+            item.appendChild(title); item.appendChild(actions); 
+            return item;
+        }
+
+        function renderProjectList(insertedIdx=-1) {
+            problemListEl.innerHTML='';
+            
+            folders.forEach((folder, fIdx)=>{
+                const isOpen = currentFolderId === folder.id;
+                
+                const item=document.createElement('div');
+                item.id = `folder-header-${folder.id}`;
+                item.className=`problem-item folder-item ${isOpen ? 'bg-[#2d2d2d] border-[#454545] active-folder' : ''}`;
+                item.dataset.type='folder'; item.dataset.folderIndex=fIdx;
+                
+                item.onclick=(e)=>{ if(!e.target.closest('.problem-item-actions')) toggleFolder(folder.id); };
+                
+                item.draggable=isReorderMode;
+                if(isReorderMode) {
+                    item.style.cursor='grab';
+                    item.addEventListener('dragstart',handleDragStart); item.addEventListener('dragend',handleDragEnd);
+                    item.addEventListener('dragenter',handleDragEnter); item.addEventListener('dragover',handleDragOver);
+                    item.addEventListener('dragleave',handleDragLeave); item.addEventListener('drop',handleDrop);
+                }
+                
+                const title=document.createElement('div'); title.className='problem-item-title flex items-center gap-2';
+                const folderIcon = isOpen ? 
+                    `<path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v6H4a2 2 0 01-2-2V6zm14 3a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2v-6a2 2 0 012-2h10z" clip-rule="evenodd"/>` : 
+                    `<path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>`;
+                title.innerHTML=`<svg class="folder-icon-svg w-4 h-4 flex-shrink-0" fill="${folder.color||'#facc15'}" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">${folderIcon}</svg><span class="folder-title-text ${isOpen ? 'text-white font-bold' : ''}">${folder.title}</span>`;
+                
+                const actions=document.createElement('div'); actions.className='problem-item-actions';
+                if(isReorderMode) {
+                    actions.innerHTML=`<div class="text-gray-500 flex items-center justify-center pointer-events-none opacity-50"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></div>`;
+                    actions.style.display='flex';
+                } else {
+                    const moreMenuContainer=document.createElement('div'); moreMenuContainer.className='dropdown-container ml-1'; moreMenuContainer.id=`folder-dropdown-${folder.id}`;
+                    const moreBtn=document.createElement('div'); moreBtn.className='problem-action-btn flex items-center justify-center'; moreBtn.title="Options";
+                    moreBtn.innerHTML=`<svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>`;
+                    moreBtn.onclick=(e)=>{ e.stopPropagation(); toggleDropdown(`folder-dropdown-${folder.id}`); };
+                    
+                    const menu=document.createElement('div'); menu.className='dropdown-menu shadow-lg z-[999]'; menu.style.cssText='right: 0; left: auto; min-width: 130px; transform-origin: top right; padding: 4px 2px;';
+                    
+                    const editBtn=document.createElement('div'); editBtn.className='dropdown-item !py-1.5 flex items-center justify-start gap-3';
+                    editBtn.innerHTML=`<svg class="w-[16px] h-[16px] text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg><span class="text-xs">Edit Folder</span>`;
+                    editBtn.onclick=(e)=>{ e.stopPropagation(); editFolder(fIdx); };
+                    
+                    const delBtn=document.createElement('div'); delBtn.className='dropdown-item !py-1.5 flex items-center justify-start gap-3 hover:!bg-red-600 hover:!text-white group mt-1 border-t border-[#454545] pt-1';
+                    delBtn.innerHTML=`<svg class="w-[16px] h-[16px] text-gray-400 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg><span class="text-xs text-[#e04f5f] group-hover:text-white">Delete Folder</span>`;
+                    delBtn.onclick=(e)=>{ e.stopPropagation(); deleteFolder(fIdx); };
+                    
+                    menu.appendChild(editBtn); menu.appendChild(delBtn);
+                    moreMenuContainer.appendChild(moreBtn); moreMenuContainer.appendChild(menu); actions.appendChild(moreMenuContainer);
+                }
+                item.appendChild(title); item.appendChild(actions); problemListEl.appendChild(item);
+
+                const contentWrapper = document.createElement('div');
+                contentWrapper.id = `folder-content-${folder.id}`;
+                contentWrapper.className = `folder-content-wrapper ${isOpen ? 'open' : ''}`;
+                const contentInner = document.createElement('div');
+                contentInner.className = 'folder-content-inner';
+                if (isOpen) contentInner.style.overflow = 'visible';
+                
+                const folderProjects = projects.map((p, i) => ({...p, originalIndex: i})).filter(p => p.folderId === folder.id);
+                
+                if (folderProjects.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-xs text-gray-500 italic py-1 pl-[42px] pointer-events-none select-none';
+                    emptyMsg.innerText = 'Empty folder';
+                    contentInner.appendChild(emptyMsg);
+                } else {
+                    folderProjects.forEach(p => {
+                        const pItem = createProjectItemElement(p, p.originalIndex, insertedIdx, true);
+                        contentInner.appendChild(pItem);
+                    });
+                }
+                
+                contentWrapper.appendChild(contentInner);
+                problemListEl.appendChild(contentWrapper);
+            });
+
+            if(folders.length>0 && projects.some(p=>!p.folderId)) {
+                const divider=document.createElement('div'); divider.className='my-2 border-b border-[#3c3c3c] mx-3';
+                problemListEl.appendChild(divider);
+            }
+
+            projects.forEach((proj, idx)=>{
+                if(proj.folderId) return;
+                const pItem = createProjectItemElement(proj, idx, insertedIdx, false);
+                problemListEl.appendChild(pItem);
+            });
+        }
+
+        function downloadCode() {
+            if(isRunning||isReorderMode) return;
+            const project=projects[activeProjectIndex];
+            const activeFile=project.files[project.activeFileIndex];
+            const code=editor.getValue(); 
+            
+            let defaultFilename=project.title.replace(/\s+/g,'_')+"_"+activeFile.name;
+            
+            showInputModal("Download Code", "Enter file name:", defaultFilename, defaultFilename, (filename)=>{
+                if(filename.trim()==="") filename=defaultFilename;
+                if(!filename.includes('.')) {
+                    let ext=currentLang==='cpp'?'.cpp':'.py'; 
+                    filename+=ext;
+                }
+                const blob=new Blob([code], {type:"text/plain;charset=utf-8"}); 
+                const url=URL.createObjectURL(blob);
+                const a=document.createElement("a"); 
+                a.href=url; a.download=filename; 
+                document.body.appendChild(a); a.click(); document.body.removeChild(a); 
+                URL.revokeObjectURL(url);
+                
+                const dropdown=document.getElementById('settings-dropdown');
+                if(dropdown) { dropdown.classList.remove('open'); dropdown.querySelector('.dropdown-trigger')?.classList.remove('active'); }
+            });
+        }
+
+        function downloadProblem() {
+            if(isRunning||isReorderMode) return;
+            const project=projects[activeProjectIndex];
+            const content=problemContentEl.innerText||"";
+            let defaultFilename=project.title.replace(/\s+/g,'_')+"-題目.txt";
+            
+            showInputModal("Download Problem", "Enter file name:", defaultFilename, defaultFilename, (filename)=>{
+                if(filename.trim()==="") filename=defaultFilename;
+                if(!filename.endsWith('.txt')) {
+                    if(filename.includes('.')) filename=filename.substring(0,filename.lastIndexOf('.'))+'.txt';
+                    else filename+='.txt';
+                }
+                const blob=new Blob([content], {type:"text/plain;charset=utf-8"}); 
+                const url=URL.createObjectURL(blob);
+                const a=document.createElement("a"); 
+                a.href=url; a.download=filename; 
+                document.body.appendChild(a); a.click(); document.body.removeChild(a); 
+                URL.revokeObjectURL(url);
+                
+                const dropdown=document.getElementById('settings-dropdown');
+                if(dropdown) { dropdown.classList.remove('open'); dropdown.querySelector('.dropdown-trigger')?.classList.remove('active'); }
+            });
+        }
+    </script>
+    <script>
+        function getHelloWorld(lang) {
+            if(lang==='cpp') return '#include <iostream>\nusing namespace std;\nint main(){\n    cout<<"Hello World"<<endl;\n    return 0;\n}';
+            else return 'print("Hello Galaxy Python!")\nname=input("Please enter your name:")\nprint(f"Nice to meet you,{name}!")';
+        }
+
+        function updateProblemSettingsUI() {
+            const project=projects[activeProjectIndex];
+            const testToolsSection=document.getElementById('test-tools-section');
+            const toolsTestIcon=document.getElementById('tools-test-icon');
+            const statusIcon=document.getElementById('test-mode-status-icon');
+            const statusText=document.getElementById('test-mode-status-text');
+            const resetOpt=document.getElementById('reset-template-opt');
+            const exitOpt=document.getElementById('exit-test-mode-opt');
+            
+            if(project&&project.id==='main') {
+                if(testToolsSection) testToolsSection.classList.add('opacity-50','pointer-events-none');
+                if(toolsTestIcon) { toolsTestIcon.classList.remove('text-green-400'); toolsTestIcon.classList.add('text-gray-500'); }
+                if(statusIcon) { statusIcon.classList.remove('text-green-400'); statusIcon.classList.add('text-gray-500'); }
+                if(statusText) { statusText.innerText="INACTIVE"; statusText.classList.remove('text-green-400'); statusText.classList.add('text-gray-500'); }
+            } else {
+                if(testToolsSection) testToolsSection.classList.remove('opacity-50','pointer-events-none');
+                if(project) {
+                    if(project.testMode) {
+                        if(toolsTestIcon) { toolsTestIcon.classList.remove('text-gray-500'); toolsTestIcon.classList.add('text-green-400'); }
+                        if(statusIcon) { statusIcon.classList.remove('text-gray-500'); statusIcon.classList.add('text-green-400'); }
+                        if(statusText) { statusText.innerText="ACTIVE"; statusText.classList.remove('text-gray-500'); statusText.classList.add('text-green-400'); }
+                        if(exitOpt) exitOpt.classList.remove('disabled');
+                    } else {
+                        if(toolsTestIcon) { toolsTestIcon.classList.remove('text-green-400'); toolsTestIcon.classList.add('text-gray-500'); }
+                        if(statusIcon) { statusIcon.classList.remove('text-green-400'); statusIcon.classList.add('text-gray-500'); }
+                        if(statusText) { statusText.innerText="INACTIVE"; statusText.classList.remove('text-green-400'); statusText.classList.add('text-gray-500'); }
+                        if(exitOpt) exitOpt.classList.add('disabled');
+                    }
+                    const isSafe=project.testMode;
+                    const hasTemplate=!!project.defaultFiles;
+                    if(isSafe&&hasTemplate) { if(resetOpt) resetOpt.classList.remove('disabled'); } 
+                    else { if(resetOpt) resetOpt.classList.add('disabled'); }
+                }
+            }
+        }
+
+        function updateSettingsDropdownState() {
+            document.getElementById('layout-opt-right')?.classList.remove('selected'); document.getElementById('layout-opt-bottom')?.classList.remove('selected');
+            if(currentLayout==='right') document.getElementById('layout-opt-right')?.classList.add('selected'); else document.getElementById('layout-opt-bottom')?.classList.add('selected');
+            document.getElementById('theme-opt-modern')?.classList.remove('selected'); document.getElementById('theme-opt-classic')?.classList.remove('selected');
+            if(currentTheme==='classic') document.getElementById('theme-opt-classic')?.classList.add('selected'); else document.getElementById('theme-opt-modern')?.classList.add('selected');
+            document.getElementById('output-mode-default')?.classList.remove('selected'); document.getElementById('output-mode-popup')?.classList.remove('selected');
+            if(currentOutputMode==='popup') document.getElementById('output-mode-popup')?.classList.add('selected'); else document.getElementById('output-mode-default')?.classList.add('selected');
+        }
+
+        function updateLangUI(lang) {
+            const logoIcon=document.getElementById('logo-icon');
+            if(lang==='cpp') {
+                if(logoIcon) { logoIcon.innerText='C++'; logoIcon.className="w-7 h-7 rounded bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0 transition-all duration-300"; }
+            } else {
+                if(logoIcon) { logoIcon.innerText='Py'; logoIcon.className="w-7 h-7 rounded bg-yellow-500 flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0 transition-all duration-300"; }
+            }
+            if(typeof updateDropdownUI==='function') updateDropdownUI('lang-dropdown', lang);
         }
 
         function changeLanguage(newLang) {
@@ -973,7 +2381,7 @@
             if(!isChangingProject) {
                 if(this.innerText.trim()==="") projects[activeProjectIndex].desc="";
                 else projects[activeProjectIndex].desc=this.innerHTML;
-                saveProjectsToStorage();
+                if(typeof saveProjectsToStorage==='function') saveProjectsToStorage();
             }
         });
 
@@ -1033,7 +2441,7 @@
                     problemContentEl.focus(); document.execCommand('selectAll',false,null); document.execCommand('insertText',false,text);
                     problemContentEl.dispatchEvent(new Event('input'));
                 } catch(e) {
-                    showModal("Paste Error", "Could not read clipboard. Please paste manually (Ctrl+V)"); 
+                    if(typeof showModal==='function') showModal("Paste Error", "Could not read clipboard. Please paste manually (Ctrl+V)"); 
                 }
             }
         }
@@ -1078,914 +2486,174 @@
                 btn.title="Hide Comments";
             }
         }
-        
-        function updateProblemSettingsUI() {
-            const project=projects[activeProjectIndex];
-            const testToolsSection=document.getElementById('test-tools-section');
-            const toolsTestIcon=document.getElementById('tools-test-icon');
-            const statusIcon=document.getElementById('test-mode-status-icon');
-            const statusText=document.getElementById('test-mode-status-text');
-            const resetOpt=document.getElementById('reset-template-opt');
-            const exitOpt=document.getElementById('exit-test-mode-opt');
-            
-            if(project&&project.id==='main') {
-                if(testToolsSection) testToolsSection.classList.add('opacity-50','pointer-events-none');
-                if(toolsTestIcon) { toolsTestIcon.classList.remove('text-green-400'); toolsTestIcon.classList.add('text-gray-500'); }
-                if(statusIcon) { statusIcon.classList.remove('text-green-400'); statusIcon.classList.add('text-gray-500'); }
-                if(statusText) { statusText.innerText="INACTIVE"; statusText.classList.remove('text-green-400'); statusText.classList.add('text-gray-500'); }
-            } else {
-                if(testToolsSection) testToolsSection.classList.remove('opacity-50','pointer-events-none');
-                if(project) {
-                    if(project.testMode) {
-                        if(toolsTestIcon) { toolsTestIcon.classList.remove('text-gray-500'); toolsTestIcon.classList.add('text-green-400'); }
-                        if(statusIcon) { statusIcon.classList.remove('text-gray-500'); statusIcon.classList.add('text-green-400'); }
-                        if(statusText) { statusText.innerText="ACTIVE"; statusText.classList.remove('text-gray-500'); statusText.classList.add('text-green-400'); }
-                        if(exitOpt) exitOpt.classList.remove('disabled');
-                    } else {
-                        if(toolsTestIcon) { toolsTestIcon.classList.remove('text-green-400'); toolsTestIcon.classList.add('text-gray-500'); }
-                        if(statusIcon) { statusIcon.classList.remove('text-green-400'); statusIcon.classList.add('text-gray-500'); }
-                        if(statusText) { statusText.innerText="INACTIVE"; statusText.classList.remove('text-green-400'); statusText.classList.add('text-gray-500'); }
-                        if(exitOpt) exitOpt.classList.add('disabled');
-                    }
-                    const isSafe=project.testMode;
-                    const hasTemplate=!!project.defaultFiles;
-                    if(isSafe&&hasTemplate) { if(resetOpt) resetOpt.classList.remove('disabled'); } 
-                    else { if(resetOpt) resetOpt.classList.add('disabled'); }
+
+        const currentInputDisplay=document.getElementById('current-input-display');
+        const outputPre=document.getElementById('output');
+        const runBtn=document.getElementById('run-btn');
+        const stopBtn=document.getElementById('stop-btn');
+        const terminalContainer=document.getElementById('terminal-container');
+        const terminalCursor=document.querySelector('.terminal-cursor');
+
+        function focusInput() {
+            if(isRunning&&currentInputDisplay.getAttribute("contenteditable")==="true") {
+                currentInputDisplay.focus();
+                if(typeof window.getSelection!=="undefined"&&typeof document.createRange!=="undefined") {
+                    let range=document.createRange(); range.selectNodeContents(currentInputDisplay); range.collapse(false);
+                    let sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
                 }
             }
         }
-    </script>
-    <script>
-        function openFileConfirm() {
-            if(isRunning||isReorderMode) return;
-            showConfirm("Open File", "Opening a file will overwrite current code.\nAre you sure you want to continue?", triggerFileSelect);
-        }
 
-        function triggerFileSelect() {
-            const fileInput=document.getElementById('file-input');
-            fileInput.accept=currentLang==='cpp'?'.cpp':'.py';
-            fileInput.click();
-        }
-
-        document.getElementById('file-input').addEventListener('change', function(e) {
-            const file=e.target.files[0];
-            if(!file) return;
-            const filename=file.name.toLowerCase();
-            if(currentLang==='cpp'&&!filename.endsWith('.cpp')) { showModal("Error", "Please select a valid C++ file (.cpp)"); this.value=''; return; }
-            if(currentLang==='python'&&!filename.endsWith('.py')) { showModal("Error", "Please select a valid Python file (.py)"); this.value=''; return; }
-            const reader=new FileReader();
-            reader.onload=function(e) { editor.setValue(e.target.result); saveCurrentProject(); };
-            reader.readAsText(file); this.value='';
+        currentInputDisplay.addEventListener('keydown', function(e){
+            if(e.key==='Enter') { e.preventDefault(); sendInput(); }
         });
 
-        function updateProjectListActiveState() {
-            document.querySelectorAll('.problem-item').forEach(item=>{
-                if(item.dataset.type === 'folder') return;
-                const idx=parseInt(item.dataset.index);
-                if(idx===activeProjectIndex) item.classList.add('active');
-                else item.classList.remove('active');
-            });
-        }
+        currentInputDisplay.addEventListener('paste', function(e){
+            e.preventDefault();
+            let text='';
+            if(e.clipboardData||e.originalEvent?.clipboardData) text=(e.clipboardData||e.originalEvent.clipboardData).getData('text/plain');
+            else if(window.clipboardData) text=window.clipboardData.getData('Text');
+            text=text.replace(/\r/g,'');
+            text=text.replace(/[\u200B-\u200D\uFEFF\u200E\u200F]/g,'');
+            text=text.replace(/\u00A0/g,' ');
+            const selection=window.getSelection();
+            if(!selection.rangeCount) return;
+            selection.deleteFromDocument(); selection.getRangeAt(0).insertNode(document.createTextNode(text)); selection.collapseToEnd();
+            currentInputDisplay.dispatchEvent(new Event('input'));
+        });
 
-        function updateEditorTabsActiveState() {
+        function sendInput() {
+            if(!isRunning||!socket) return;
+            let text=currentInputDisplay.innerText;
+            text=text.replace(/\n$/,''); 
+            text=text.replace(/[\u200B-\u200D\uFEFF\u200E\u200F]/g,'');
+            text=text.replace(/\u00A0/g,' ');
             const project=projects[activeProjectIndex];
-            document.querySelectorAll('.editor-tab').forEach(tab=>{
-                const tabIdx=parseInt(tab.dataset.index);
-                if(tabIdx===project.activeFileIndex) tab.classList.add('active');
-                else tab.classList.remove('active');
-            });
+            project.lastInput=text; saveProjectsToStorage();
+            const echo=document.createElement('span'); echo.className='terminal-input-echo animate-fade-in-up block whitespace-pre-wrap'; echo.innerText=text+'\n'; 
+            outputPre.appendChild(echo); 
+            socket.emit('send_input', {input:text}); 
+            currentInputDisplay.innerText=""; terminalContainer.scrollTo({top:terminalContainer.scrollHeight, behavior:'smooth'}); 
         }
 
-        let draggedTabIndex=-1;
-
-        function handleTabDragStart(e) {
-            if(isRunning||!isReorderMode) { e.preventDefault(); return; }
-            draggedTabIndex=parseInt(this.dataset.index);
-            e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('application/x-galaxy-tab',draggedTabIndex); e.dataTransfer.setData('text/plain','');
-            const emptyCanvas=document.createElement('canvas'); emptyCanvas.width=1; emptyCanvas.height=1; e.dataTransfer.setDragImage(emptyCanvas,0,0);
-            if(enableAnimations) requestAnimationFrame(()=>{ this.classList.add('drag-hidden'); });
-            else this.classList.add('drag-hidden');
-        }
-
-        function handleTabDragEnter(e) { e.preventDefault(); e.stopPropagation(); }
-
-        function handleTabDragOver(e) {
-            e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect='move';
-            const targetIndex=parseInt(this.dataset.index);
-            if(draggedTabIndex===targetIndex||draggedTabIndex===-1) return;
-            const rect=this.getBoundingClientRect(); const midX=rect.left+rect.width/2;
-            this.classList.remove('drag-over-left','drag-over-right');
-            if(e.clientX<midX) this.classList.add('drag-over-left');
-            else this.classList.add('drag-over-right');
-        }
-
-        function handleTabDragLeave(e) { this.classList.remove('drag-over-left','drag-over-right'); }
-
-        function handleTabDrop(e) {
-            e.preventDefault(); e.stopPropagation();
-            let isRight=this.classList.contains('drag-over-right'); this.classList.remove('drag-over-left','drag-over-right');
-            let draggedIdxStr=e.dataTransfer.getData('application/x-galaxy-tab');
-            let draggedIdx=draggedIdxStr?parseInt(draggedIdxStr):draggedTabIndex;
-            if(isNaN(draggedIdx)||draggedIdx===-1) return;
-            const targetIndex=parseInt(this.dataset.index);
-            if(draggedIdx===targetIndex) return;
-
-            let newIndex=targetIndex;
-            if(isRight) newIndex=targetIndex+1;
-            if(draggedIdx<newIndex) newIndex--;
-
-            if(newIndex!==draggedIdx&&newIndex>=0) {
-                const project=projects[activeProjectIndex];
-                const activeFileName=project.files[project.activeFileIndex].name;
-                const [movedFile]=project.files.splice(draggedIdx,1);
-                project.files.splice(newIndex,0,movedFile);
-                project.activeFileIndex=project.files.findIndex(f=>f.name===activeFileName);
-                saveProjectsToStorage(); renderEditorTabs();
-            }
-            draggedTabIndex=-1;
-        }
-
-        function handleTabDragEnd(e) {
-            this.classList.remove('drag-hidden'); draggedTabIndex=-1;
-            document.querySelectorAll('.editor-tab').forEach(tab=>{ tab.classList.remove('drag-over-left','drag-over-right'); });
-        }
-
-        function requestNewFile() {
-            if(isRunning||isReorderMode) return;
+        function fillLastInput() {
             const project=projects[activeProjectIndex];
-            if(project.files.length>=9) return;
-            let count=project.files.length; let position=count+1;
-            let ext=currentLang==='cpp'?((position%2===0)?'.cpp':'.h'):'.py'; let defaultName='file'+count+ext;
-            showInputModal("New File", "Enter file name:", defaultName, defaultName, (name)=>{
-                if(project.files.some(f=>f.name===name)) { showModal("Error", "File name already exists."); return; }
-                project.files.push({name:name, code:""}); renderEditorTabs(); switchFile(project.files.length-1);
+            if(project&&project.lastInput!==null&&project.lastInput!==undefined&&project.lastInput!=="") {
+                currentInputDisplay.innerText=project.lastInput; focusInput();
+            }
+        }
+
+        if(socket) {
+            socket.on('connect', ()=>{ 
+                if(statusDot) statusDot.className="status-dot status-connected"; 
+                if(statusText) { statusText.innerText="Connected"; statusText.className="text-green-500 text-xs transition-colors duration-300"; }
+            });
+            socket.on('disconnect', ()=>{ 
+                if(statusDot) statusDot.className="status-dot status-disconnected"; 
+                if(statusText) { statusText.innerText="Disconnected"; statusText.className="text-red-500 text-xs transition-colors duration-300"; }
+            });
+            socket.on('program_output', (msg)=>{
+                const loader=document.getElementById('compile-loader'); 
+                if(loader) {
+                    loader.remove();
+                    if(isRunning) { currentInputDisplay.setAttribute("contenteditable","true"); if(terminalCursor) terminalCursor.style.display='inline-block'; focusInput(); }
+                }
+                const span=document.createElement('span'); span.className='terminal-output'; span.innerHTML=formatCompilerOutput(msg.data); outputPre.appendChild(span); 
+                requestAnimationFrame(()=>{ terminalContainer.scrollTo({top:terminalContainer.scrollHeight, behavior:'auto'}); });
+            });
+            socket.on('program_status', (msg)=>{
+                if(msg.status==='finished') {
+                    const endTag=document.createElement('span'); endTag.className='text-gray-500 animate-fade-in-up block mt-1'; endTag.innerText="\n[code end]";
+                    outputPre.appendChild(endTag); terminalContainer.scrollTo({top:terminalContainer.scrollHeight, behavior:'smooth'}); setRunningState(false);
+                } else if(msg.status==='error') {
+                    const loader=document.getElementById('compile-loader'); if(loader) loader.remove(); setRunningState(false);
+                }
             });
         }
         
-        function renameFile(index, event) {
-            if(isRunning||isReorderMode) return;
-            if(event) event.stopPropagation();
-            const project=projects[activeProjectIndex]; const file=project.files[index];
-            if(!file||file.name==='main.cpp'||file.name==='main.py') return; 
-            
-            showInputModal("Rename File", "Enter new file name:", "", file.name, (newName)=>{
-                if(newName===file.name) return;
-                if(project.files.some(f=>f.name===newName)) { showModal("Error", "File name already exists."); return; }
-                file.name=newName; renderEditorTabs(); saveProjectsToStorage();
-            }, ()=>{ deleteFile(index,false); });
-        }
-        
-        function deleteFile(index, skipConfirm=false) {
-            if(isRunning||isReorderMode) return;
-            const project=projects[activeProjectIndex]; const file=project.files[index];
-            if(!file||file.name==='main.cpp'||file.name==='main.py') return;
-            
-            const performDelete=()=>{
-                project.files.splice(index,1);
-                if(project.activeFileIndex>=index) project.activeFileIndex=Math.max(0,project.activeFileIndex-1);
-                switchFile(project.activeFileIndex); renderEditorTabs(); saveProjectsToStorage();
-            };
-
-            if(skipConfirm) {
-                const tabsContainer=document.getElementById('editor-tabs'); const itemEl=tabsContainer.children[index];
-                if(itemEl&&enableAnimations) { itemEl.classList.add('is-deleting'); setTimeout(performDelete,300); } 
-                else performDelete(); return;
-            }
-            showConfirm("Delete File", `Are you sure you want to delete ${file.name}?`, ()=>{
-                const tabsContainer=document.getElementById('editor-tabs'); const itemEl=tabsContainer.children[index];
-                if(itemEl&&enableAnimations) { itemEl.classList.add('is-deleting'); setTimeout(performDelete,300); } 
-                else performDelete();
-            });
+        function formatCompilerOutput(text) {
+            let safeText=text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+            safeText=safeText.replace(/(\w+\.\w+:\d+:\d+:)(\s*error:)/g,'<span class="terminal-path">$1</span><span class="terminal-error">$2</span>');
+            safeText=safeText.replace(/(\w+\.\w+:\d+:\d+:)(\s*warning:)/g,'<span class="terminal-path">$1</span><span class="terminal-warning">$2</span>');
+            safeText=safeText.replace(/(\w+\.\w+:\d+:\d+:)(\s*note:)/g,'<span class="terminal-path">$1</span><span class="terminal-note">$2</span>');
+            safeText=safeText.replace(/(fatal error:)/g,'<span class="terminal-error">$1</span>');
+            safeText=safeText.replace(/(Traceback \(most recent call last\):)/g,'<span class="terminal-error">$1</span>');
+            safeText=safeText.replace(/(File ".*", line \d+.*)/g,'<span class="terminal-path">$1</span>');
+            safeText=safeText.replace(/^(\w+Error:)/gm,'<span class="terminal-error">$1</span>');
+            return safeText;
         }
 
-        function handleAddClick(e) {
-            if(isRunning||isReorderMode) return;
-            if(e) e.stopPropagation();
-            if(currentFolderId!==null) {
-                requestNewProjectName();
+        function setRunningState(running) {
+            isRunning=running;
+            if(running) {
+                runBtn.classList.add('hidden'); stopBtn.classList.remove('hidden'); 
+                currentInputDisplay.setAttribute("contenteditable","false");
+                if(terminalCursor) terminalCursor.style.display='none';
+                editor.setOption("readOnly",true);
+                outputPre.innerHTML='<div id="compile-loader" class="mb-2 text-left animate-fade-in-up"><span class="text-yellow-500 font-bold text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>[Compiling & Running...]</span><div class="w-40 h-1 bg-gray-700 mt-2 rounded overflow-hidden relative loading-container shadow-lg"><div class="absolute top-0 left-0 h-full bg-yellow-500 animate-loading-bar"></div></div></div>';
             } else {
-                closeAllDropdowns();
-                const container = document.getElementById('add-dropdown-container');
-                if (container) container.classList.toggle('open');
+                runBtn.classList.remove('hidden'); stopBtn.classList.add('hidden'); 
+                currentInputDisplay.setAttribute("contenteditable","false"); currentInputDisplay.innerText="";
+                if(terminalCursor) terminalCursor.style.display='none';
+                editor.setOption("readOnly",false);
             }
         }
 
-        function requestNewProjectName() {
-            if(isRunning||isReorderMode) return;
+        function runCode() { 
+            const btn=document.getElementById('output-toggle-btn');
+            const isOpen=btn.classList.contains('active');
+            if(currentOutputMode==='popup') { if(typeof toggleOutputPanel==='function') toggleOutputPanel(true); } 
+            else if(!isOpen) { if(typeof toggleOutputPanel==='function') toggleOutputPanel(true); }
             
-            if(currentFolderId !== null) {
-                if(getFolderProjectCount(currentFolderId) >= 20) { showModal("Notice", "Folder limit reached (20 projects max)"); return; }
-            } else {
-                if(getUncategorizedCount() >= 40) { showModal("Notice", "Uncategorized limit reached (40 projects max)"); return; }
-            }
-
-            let counter=1;
-            while(projects.some(p=>p.title.toLowerCase()===`program ${counter}`)) { counter++; }
-            const defaultName=`program ${counter}`;
-
-            showInputModal("New Project", "Enter project name:", "e.g. program 1", defaultName, (name)=>{
-                addProject(name||defaultName);
-            });
-        }
-
-        function showFolderModal(title, defaultName, defaultColor, onConfirm) {
-            modalTitle.innerText=title;
-            modalMessage.innerHTML='';
-            const colors=['#facc15','#60a5fa','#f87171','#4ade80','#a78bfa','#fb923c','#9ca3af'];
-            let selectedColor=defaultColor||colors[0];
-
-            const input=document.createElement('input');
-            input.className='modal-input mt-2';
-            input.value=defaultName||'';
-            input.placeholder='Enter folder name';
-            
-            const colorContainer=document.createElement('div');
-            colorContainer.className='flex gap-2 mt-4 justify-center';
-            colors.forEach(c=>{
-                const circle=document.createElement('div');
-                circle.className=`w-6 h-6 rounded-full cursor-pointer border-2 transition-all ${c===selectedColor?'border-white scale-110':'border-transparent'}`;
-                circle.style.backgroundColor=c;
-                circle.onclick=()=>{
-                    selectedColor=c;
-                    Array.from(colorContainer.children).forEach(child=>{ child.classList.remove('border-white','scale-110'); child.classList.add('border-transparent'); });
-                    circle.classList.remove('border-transparent'); circle.classList.add('border-white','scale-110');
-                };
-                colorContainer.appendChild(circle);
-            });
-
-            modalMessage.appendChild(input);
-            modalMessage.appendChild(colorContainer);
-            modalInput.classList.add('hidden');
-            
-            modalFooter.innerHTML='';
-            const cancelBtn=document.createElement('button');
-            cancelBtn.className='modal-btn modal-btn-secondary';
-            cancelBtn.innerText='Cancel';
-            cancelBtn.onclick=closeModal;
-            
-            const confirmBtn=document.createElement('button');
-            confirmBtn.className='modal-btn modal-btn-primary';
-            confirmBtn.innerText='Confirm';
-            confirmBtn.onclick=()=>{
-                const val=input.value.trim();
-                if(val) { closeModal(); onConfirm(val,selectedColor); } else { input.focus(); }
-            };
-            
-            modalFooter.appendChild(cancelBtn);
-            modalFooter.appendChild(confirmBtn);
-            modalOverlay.classList.add('open');
-            setTimeout(()=>input.focus(),100);
-        }
-
-        function requestNewFolder() {
-            if(folders.length >= 10) { showModal("Notice", "Folder limit reached (10 folders max)"); return; }
-            let counter=1;
-            while(folders.some(f=>f.title===`Folder ${counter}`)) { counter++; }
-            showFolderModal("New Folder", `Folder ${counter}`, null, (name, color)=>{
-                folders.push({ id:'folder_'+Date.now(), title:name, color:color });
-                saveFoldersToStorage(); renderProjectList();
-            });
-        }
-
-        function editFolder(fIdx) {
-            const folder=folders[fIdx];
-            showFolderModal("Edit Folder", folder.title, folder.color, (name, color)=>{
-                folder.title=name; folder.color=color;
-                saveFoldersToStorage(); renderProjectList();
-            });
-        }
-
-        function deleteFolder(fIdx) {
-            const folder = folders[fIdx];
-            const folderProjects = projects.filter(p => p.folderId === folder.id);
-
-            if (folderProjects.length === 0) {
-                showConfirm("Delete Folder", `Are you sure you want to delete folder '${folder.title}'?`, () => {
-                    folders.splice(fIdx, 1);
-                    if (currentFolderId === folder.id) currentFolderId = null;
-                    saveFoldersToStorage(); saveProjectsToStorage(); renderProjectList();
-                });
-                return;
-            }
-
-            modalTitle.innerText = "Delete Folder";
-            modalMessage.innerHTML = `Folder '${folder.title}' contains ${folderProjects.length} projects.<br>Do you want to keep the projects or delete them all?`;
-            modalInput.classList.add('hidden');
-            modalFooter.innerHTML = '';
-
-            const cancelBtn = document.createElement('button');
-            cancelBtn.className = 'modal-btn modal-btn-secondary';
-            cancelBtn.innerText = 'Cancel';
-            cancelBtn.onclick = closeModal;
-
-            const keepProjectsBtn = document.createElement('button');
-            keepProjectsBtn.className = 'modal-btn modal-btn-primary';
-            keepProjectsBtn.innerText = 'Keep Projects';
-            keepProjectsBtn.onclick = function() {
-                if (getUncategorizedCount() + folderProjects.length > 40) {
-                    showModal("Error", "Not enough space in uncategorized area (Max 40).\nPlease delete some uncategorized projects first.");
-                    return;
-                }
-                closeModal();
-                projects.forEach(p => { if (p.folderId === folder.id) p.folderId = null; });
-                folders.splice(fIdx, 1);
-                if (currentFolderId === folder.id) currentFolderId = null;
-                saveFoldersToStorage(); saveProjectsToStorage(); renderProjectList();
-            };
-
-            const deleteAllBtn = document.createElement('button');
-            deleteAllBtn.className = 'modal-btn modal-btn-danger';
-            deleteAllBtn.innerText = 'Delete All';
-            deleteAllBtn.onclick = function() {
-                closeModal();
-                let isActiveDeleted = folderProjects.some(p => p.id === projects[activeProjectIndex].id);
-                projects = projects.filter(p => p.folderId !== folder.id);
-                folders.splice(fIdx, 1);
-                if (currentFolderId === folder.id) currentFolderId = null;
-                
-                if (isActiveDeleted) {
-                    activeProjectIndex = projects.findIndex(p => p.id === 'main');
-                    if (activeProjectIndex === -1) activeProjectIndex = 0;
-                } else {
-                    const activeId = projects[activeProjectIndex]?.id;
-                    if (activeId) {
-                        const newIdx = projects.findIndex(p => p.id === activeId);
-                        activeProjectIndex = newIdx !== -1 ? newIdx : 0;
-                    }
-                }
-                
-                saveFoldersToStorage(); saveProjectsToStorage(); renderProjectList(); loadProject(activeProjectIndex);
-            };
-
-            modalFooter.appendChild(cancelBtn);
-            modalFooter.appendChild(keepProjectsBtn);
-            modalFooter.appendChild(deleteAllBtn);
-            modalOverlay.classList.add('open');
-        }
-
-        function addProject(title) {
-            let ext=currentLang==='cpp'?'.cpp':'.py';
-            const newProject={
-                id: Date.now().toString(),
-                title: title,
-                files: [{name:'main'+ext, code:(typeof getHelloWorld==='function')?getHelloWorld(currentLang):''}],
-                activeFileIndex: 0, desc: "", testMode: false,
-                folderId: currentFolderId
-            };
-            projects.push(newProject); saveProjectsToStorage();
-            selectProject(projects.length-1, true); renderProjectList(projects.length-1);
-        }
-        
-        function duplicateProject(index, event) {
-            if(isRunning||isReorderMode) return;
-            if(event) event.stopPropagation();
-            
-            const original=projects[index]; 
-            if(original.folderId !== null && original.folderId !== undefined) {
-                if(getFolderProjectCount(original.folderId) >= 20) { showModal("Notice", "Folder limit reached (20 projects max)"); return; }
-            } else {
-                if(getUncategorizedCount() >= 40) { showModal("Notice", "Uncategorized limit reached (40 projects max)"); return; }
-            }
-
-            const newProject=JSON.parse(JSON.stringify(original));
-            newProject.id=Date.now().toString(); newProject.title=original.title+" - Copy";
-            projects.splice(index+1, 0, newProject);
-            if(activeProjectIndex>index) activeProjectIndex++;
-            saveProjectsToStorage(); renderProjectList(index+1);
-        }
-
-        function renameProject(index, event) {
-            if(event) event.stopPropagation();
-            if(isReorderMode) return;
-            if(projects[index].id==='main') { showModal("Notice", "The 'main' project cannot be renamed."); return; }
-            showInputModal("Rename", `Enter new name:`, "", projects[index].title, (newName)=>{
-                projects[index].title=newName; saveProjectsToStorage(); renderProjectList();
-                if(index===activeProjectIndex) document.getElementById('current-project-title').innerText=newName;
-            });
-        }
-
-        function deleteProject(index, event) {
-            if(isRunning||isReorderMode) return;
-            if(event) event.stopPropagation();
-            if(projects[index].id==='main') { showModal("Notice", "The 'main' project cannot be deleted."); return; }
-            showConfirm("Delete Project", `Are you sure you want to delete '${projects[index].title}'? This action cannot be undone.`, ()=>{
-                const performDelete=()=>{
-                    projects.splice(index,1);
-                    if(index===activeProjectIndex) activeProjectIndex=Math.max(0,index-1);
-                    else if(index<activeProjectIndex) activeProjectIndex--;
-                    saveProjectsToStorage(); renderProjectList(); loadProject(activeProjectIndex);
-                };
-                const itemEl=problemListEl.querySelector(`.problem-item[data-index="${index}"]`);
-                if(itemEl&&enableAnimations) { itemEl.classList.add('is-deleting'); setTimeout(performDelete,350); } 
-                else performDelete();
-            });
-        }
-
-        function selectProject(index, skipRender=false) {
-            if(isRunning||isReorderMode) return;
-            if(index===activeProjectIndex) { toggleSideView('desc'); return; }
-            
-            saveCurrentProject();
-            activeProjectIndex=index; localStorage.setItem(`galaxy_active_project_${currentLang}`, activeProjectIndex);
-            triggerProjectSwitchAnimation(); loadProject(index);
-            if(!skipRender) updateProjectListActiveState();
-        }
-        
-        function triggerProjectSwitchAnimation() {
-            if(!enableAnimations) return;
-            const codeWrapper=document.getElementById('code-wrapper'); const problemContent=document.getElementById('problem-content');
-            codeWrapper.classList.remove('animate-tab-switch'); problemContent.classList.remove('animate-quick-fade');
-            void codeWrapper.offsetWidth;
-            codeWrapper.classList.add('animate-tab-switch'); problemContent.classList.add('animate-quick-fade');
-        }
-
-        function loadProject(index) {
-            const project=projects[index];
-            if(!project) return;
-            isChangingProject=true;
-            
-            if(!project.files) {
-                let ext=currentLang==='cpp'?'.cpp':'.py';
-                project.files=[{name:'main'+ext, code:project.code||''}]; project.activeFileIndex=0;
-                if(project.defaultCode) project.defaultFiles=[{name:'main'+ext, code:project.defaultCode}];
-            }
-            
-            let activeFile=project.files[project.activeFileIndex];
-            if(!activeFile) { project.activeFileIndex=0; activeFile=project.files[0]; }
-            
-            editor.setValue(activeFile.code||"");
-            if(activeFile.history) editor.setHistory(activeFile.history); else editor.clearHistory();
-            
-            problemContentEl.innerHTML=project.desc||""; document.getElementById('current-project-title').innerText=project.title;
-            
-            if(activeFile.cursorPos) { 
-                editor.setCursor(activeFile.cursorPos); 
-            } else { 
-                editor.setCursor({line:0,ch:0}); 
-            }
-            editor.focus();
-            
-            if(activeFile.scrollPos) { 
-                setTimeout(() => editor.scrollTo(activeFile.scrollPos.left, activeFile.scrollPos.top), 10);
-            } else { 
-                setTimeout(() => editor.scrollTo(0, 0), 10);
-            }
-            
-            if(typeof updateProblemSettingsUI==='function') updateProblemSettingsUI(); 
-            if(typeof updateProblemContentPlaceholder==='function') updateProblemContentPlaceholder(); 
-            renderEditorTabs();
-            isChangingProject=false;
-        }
-
-        function moveToFolderPrompt(pIdx) {
-            let optionsHtml='';
-            folders.forEach(f=>{
-                optionsHtml+=`<button class="w-full text-left px-3 py-2 hover:bg-[#3c3c3c] rounded flex items-center gap-2 mb-1 transition-colors" onclick="executeMoveToFolder(${pIdx}, '${f.id}')">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="${f.color||'#facc15'}" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
-                    <span class="truncate text-white text-sm">${f.title}</span>
-                </button>`;
-            });
-            
-            modalTitle.innerText="Select Target Folder";
-            modalMessage.innerHTML=`<div class="max-h-48 overflow-y-auto pr-1">${optionsHtml}</div>`;
-            modalInput.classList.add('hidden');
-            modalFooter.innerHTML='';
-            
-            const cancelBtn=document.createElement('button');
-            cancelBtn.className='modal-btn modal-btn-secondary';
-            cancelBtn.innerText='Cancel';
-            cancelBtn.onclick=closeModal;
-            modalFooter.appendChild(cancelBtn);
-            modalOverlay.classList.add('open');
-        }
-
-        window.executeMoveToFolder = function(pIdx, folderId) {
-            if(getFolderProjectCount(folderId) >= 20) { showModal("Notice", "Target folder is full (20 projects max)"); return; }
-            closeModal(); projects[pIdx].folderId=folderId;
-            saveProjectsToStorage(); renderProjectList();
-        };
-
-        function removeFromFolder(pIdx) {
-            if(getUncategorizedCount() >= 40) { showModal("Notice", "Uncategorized area is full (40 projects max)"); return; }
-            projects[pIdx].folderId=null;
-            saveProjectsToStorage(); renderProjectList();
-        }
-
-        function getUncategorizedCount() {
-            return projects.filter(p => p.id !== 'main' && !p.folderId).length;
-        }
-
-        function getFolderProjectCount(folderId) {
-            return projects.filter(p => p.folderId === folderId).length;
-        }
-    </script>
-    <script>
-        function toggleAuthDropdown() {
-            if(isLoggedIn) {
-                toggleDropdown('auth-dropdown');
-            } else {
-                openAuthModal();
-            }
-        }
-
-        function updateUserUI() {
-            const authTriggerText = document.getElementById('auth-btn-text');
-            const authMenu = document.getElementById('auth-menu-content');
-            
-            if(isLoggedIn) {
-                authTriggerText.innerText = currentUser + ' (雲端)';
-                authTriggerText.classList.add('text-green-400', 'font-bold');
-                authTriggerText.previousElementSibling.classList.replace('text-blue-400', 'text-green-400');
-                
-                authMenu.innerHTML = `
-                    <div class="dropdown-label">Account</div>
-                    <div class="dropdown-item !py-1.5 flex items-center justify-start gap-3 text-red-400 hover:!bg-red-600 hover:!text-white group" onclick="handleLogout()">
-                        <svg class="w-4 h-4 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                        <span class="text-xs">登出</span>
-                    </div>
-                `;
-            } else {
-                authTriggerText.innerText = 'Login';
-                authTriggerText.classList.remove('text-green-400', 'font-bold');
-                authTriggerText.previousElementSibling.classList.replace('text-green-400', 'text-blue-400');
-                authMenu.innerHTML = '';
-            }
-        }
-
-        function openAuthModal() {
-            document.getElementById('auth-error-msg').classList.add('hidden');
-            switchAuthTab('login');
-            document.getElementById('auth-modal-overlay').classList.add('open');
-        }
-
-        function closeAuthModal() {
-            document.getElementById('auth-modal-overlay').classList.remove('open');
-        }
-
-        function switchAuthTab(tab) {
-            const authErrorMsg = document.getElementById('auth-error-msg');
-            const authContentLogin = document.getElementById('auth-content-login');
-            const authContentRegister = document.getElementById('auth-content-register');
-            const authContentForgot = document.getElementById('auth-content-forgot');
-            const authFooter = document.getElementById('auth-footer');
-
-            authErrorMsg.classList.add('hidden');
-            document.getElementById('tab-login').classList.remove('active');
-            document.getElementById('tab-register').classList.remove('active');
-            authContentLogin.classList.add('hidden');
-            authContentRegister.classList.add('hidden');
-            authContentForgot.classList.add('hidden');
-
-            if(tab === 'login') {
-                document.getElementById('tab-login').classList.add('active');
-                document.getElementById('auth-modal-title').innerText = '系統登入';
-                authContentLogin.classList.remove('hidden');
-                authFooter.innerHTML = `<button class="modal-btn modal-btn-primary w-full" onclick="handleLogin()">登入</button>`;
-            } else if(tab === 'register') {
-                document.getElementById('tab-register').classList.add('active');
-                document.getElementById('auth-modal-title').innerText = '註冊帳號';
-                authContentRegister.classList.remove('hidden');
-                document.getElementById('reg-otp-section').classList.add('hidden');
-                authFooter.innerHTML = `<button class="modal-btn modal-btn-primary w-full" onclick="handleSendOTP('register')">下一步 (發送驗證碼)</button>`;
-            } else if(tab === 'forgot') {
-                document.getElementById('auth-modal-title').innerText = '重設密碼';
-                authContentForgot.classList.remove('hidden');
-                document.getElementById('forgot-otp-section').classList.add('hidden');
-                authFooter.innerHTML = `<button class="modal-btn modal-btn-secondary" onclick="switchAuthTab('login')">返回</button>
-                                        <button class="modal-btn modal-btn-primary" onclick="handleSendOTP('forgot')">發送驗證碼</button>`;
-            }
-        }
-
-        function showAuthError(msg) {
-            const authErrorMsg = document.getElementById('auth-error-msg');
-            authErrorMsg.innerText = msg;
-            authErrorMsg.classList.remove('hidden');
-        }
-
-        async function handleLogin() {
-            const user = document.getElementById('login-username').value.trim();
-            const pwd = document.getElementById('login-password').value.trim();
-            if(!user || !pwd) return showAuthError('請輸入帳號和密碼');
-
-            try {
-                const res = await fetch(getApiUrl('/api/login'), {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({username: user, password: pwd})
-                });
-                const data = await res.json();
-                if(data.success) {
-                    closeAuthModal();
-                    await fetchCloudData(); 
-                } else {
-                    showAuthError(data.message);
-                }
-            } catch(e) { showAuthError('網路連線失敗'); }
-        }
-
-        async function handleSendOTP(action) {
-            let user, email;
-            if(action === 'register') {
-                user = document.getElementById('reg-username').value.trim();
-                const pwd = document.getElementById('reg-password').value.trim();
-                const pwdConfirm = document.getElementById('reg-password-confirm').value.trim();
-                email = document.getElementById('reg-email').value.trim();
-
-                if(!user || !pwd || !email) return showAuthError('請填寫完整資訊');
-                if(!/^[a-zA-Z0-9]+$/.test(user)) return showAuthError('帳號僅限使用英文與數字');
-                if(pwd !== pwdConfirm) return showAuthError('兩次密碼輸入不一致');
-                if(!email.includes('@')) return showAuthError('信箱格式不正確');
-            } else {
-                user = document.getElementById('forgot-username').value.trim();
-                email = document.getElementById('forgot-email').value.trim();
-                if(!user || !email) return showAuthError('請填寫帳號與信箱');
-            }
-
-            const authFooter = document.getElementById('auth-footer');
-            try {
-                authFooter.innerHTML = `<button class="modal-btn modal-btn-secondary w-full cursor-not-allowed">驗證碼寄送中...</button>`;
-                const res = await fetch(getApiUrl('/api/send_otp'), {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({action, username: user, email})
-                });
-                const data = await res.json();
-                if(data.success) {
-                    showAuthError('✅ ' + data.message);
-                    document.getElementById('auth-error-msg').classList.replace('text-red-400', 'text-green-400');
-                    if(action === 'register') {
-                        document.getElementById('reg-otp-section').classList.remove('hidden');
-                        authFooter.innerHTML = `<button class="modal-btn modal-btn-primary w-full" onclick="handleRegister()">完成註冊</button>`;
-                    } else {
-                        document.getElementById('forgot-otp-section').classList.remove('hidden');
-                        authFooter.innerHTML = `<button class="modal-btn modal-btn-primary w-full" onclick="handleResetPassword()">重設密碼</button>`;
-                    }
-                } else {
-                    showAuthError(data.message);
-                    if(action === 'register') authFooter.innerHTML = `<button class="modal-btn modal-btn-primary w-full" onclick="handleSendOTP('register')">下一步 (發送驗證碼)</button>`;
-                    else authFooter.innerHTML = `<button class="modal-btn modal-btn-secondary" onclick="switchAuthTab('login')">返回</button><button class="modal-btn modal-btn-primary" onclick="handleSendOTP('forgot')">發送驗證碼</button>`;
-                }
-            } catch(e) { 
-                showAuthError('網路連線失敗'); 
-            }
-        }
-
-        async function handleRegister() {
-            const user = document.getElementById('reg-username').value.trim();
-            const pwd = document.getElementById('reg-password').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const otp = document.getElementById('reg-otp').value.trim();
-
-            if(!otp) return showAuthError('請輸入驗證碼');
-
-            try {
-                const res = await fetch(getApiUrl('/api/register'), {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({username: user, password: pwd, email, otp})
-                });
-                const data = await res.json();
-                if(data.success) {
-                    alert('🎉 註冊成功，請登入！');
-                    switchAuthTab('login');
-                    document.getElementById('login-username').value = user;
-                } else {
-                    showAuthError(data.message);
-                }
-            } catch(e) { showAuthError('網路連線失敗'); }
-        }
-
-        async function handleResetPassword() {
-            const user = document.getElementById('forgot-username').value.trim();
-            const email = document.getElementById('forgot-email').value.trim();
-            const otp = document.getElementById('forgot-otp').value.trim();
-            const newPwd = document.getElementById('forgot-new-pwd').value.trim();
-
-            if(!otp || !newPwd) return showAuthError('請填寫驗證碼與新密碼');
-
-            try {
-                const res = await fetch(getApiUrl('/api/forgot_password'), {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({username: user, email, otp, new_password: newPwd})
-                });
-                const data = await res.json();
-                if(data.success) {
-                    alert('✅ 密碼重設成功，請使用新密碼登入！');
-                    switchAuthTab('login');
-                } else {
-                    showAuthError(data.message);
-                }
-            } catch(e) { showAuthError('網路連線失敗'); }
-        }
-
-        async function handleLogout() {
-            await fetch(getApiUrl('/api/logout'), {method: 'POST'});
-            isLoggedIn = false; currentUser = '';
-            updateUserUI();
-            closeAllDropdowns();
-        }
-
-        async function fetchCloudData() {
-            try {
-                const res = await fetch(getApiUrl('/api/sync_down'));
-                const result = await res.json();
-                if(result.success) {
-                    isLoggedIn = true;
-                    currentUser = result.username;
-                    updateUserUI();
-
-                    const c_proj = currentLang === 'cpp' ? result.data.projects_cpp : result.data.projects_python;
-                    const c_fold = currentLang === 'cpp' ? result.data.folders_cpp : result.data.folders_python;
-
-                    if(c_proj && c_proj.length > 0) projects = c_proj;
-                    if(c_fold) folders = c_fold;
-
-                    renderProjectList();
-                    loadProject(0);
-                } else {
-                    isLoggedIn = false;
-                    updateUserUI();
-                }
-            } catch(e) { console.error("Cloud fetch fail", e); }
-        }
-
-        function promptDeveloperMode() {
-            closeAllDropdowns();
-            showInputModal('開發者存取 (Developer Access)', '請輸入開發代號解鎖後台權限：', '供開發用，可不輸入', '', (val) => {
-                if(val === '108368') {
-                    openAdminModal();
-                } else {
-                    showModal('存取遭拒', '代號錯誤，無法解鎖開發者權限。');
-                }
-            });
-        }
-
-        async function openAdminModal() {
-            document.getElementById('admin-modal-overlay').classList.add('open');
-            await loadAdminUsers();
-        }
-
-        function closeAdminModal() {
-            document.getElementById('admin-modal-overlay').classList.remove('open');
-        }
-
-        async function loadAdminUsers() {
-            const tbody = document.getElementById('admin-users-table');
-            tbody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-gray-500">載入中...</td></tr>';
-            try {
-                const res = await fetch(getApiUrl('/api/admin/users'), {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({dev_code: '108368'})
-                });
-                const data = await res.json();
-                if(data.success) {
-                    tbody.innerHTML = '';
-                    data.users.forEach(u => {
-                        const tr = document.createElement('tr');
-                        tr.className = "border-b border-[#333] hover:bg-[#333] transition-colors";
-                        tr.innerHTML = `
-                            <td class="p-3 font-mono">${u.username}</td>
-                            <td class="p-3">${u.email}</td>
-                            <td class="p-3">
-                                <input type="text" value="${u.remark}" onblur="updateRemark('${u.username}', this.value)" class="bg-transparent border border-[#555] rounded px-2 py-1 w-full text-xs text-white focus:border-blue-400 outline-none transition-colors" placeholder="點擊新增備註...">
-                            </td>
-                            <td class="p-3 text-center">
-                                <button onclick="deleteUser('${u.username}')" class="bg-red-500/20 text-red-400 hover:bg-red-600 hover:text-white px-2 py-1 rounded transition-colors text-xs font-bold">刪除</button>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                }
-            } catch(e) { tbody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-red-400">載入失敗</td></tr>'; }
-        }
-
-        async function updateRemark(username, remark) {
-            await fetch(getApiUrl('/api/admin/update_remark'), {
-                method: 'POST', headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({dev_code: '108368', username, remark})
-            });
-        }
-
-        async function deleteUser(username) {
-            if(confirm(`⚠️ 確定要刪除帳號「${username}」嗎？此操作不可逆！`)) {
-                await fetch(getApiUrl('/api/admin/delete_user'), {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({dev_code: '108368', username})
-                });
-                loadAdminUsers();
-            }
-        }
-    </script>
-    
-    <script>
-        let cloudSyncTimer = null;
-
-        function saveProjectsToStorage() {
-            if(isReorderMode) return;
-            localStorage.setItem(`galaxy_projects_${currentLang}`, JSON.stringify(projects));
-            localStorage.setItem(`galaxy_folders_${currentLang}`, JSON.stringify(folders));
-            
-            if(isLoggedIn) {
-                scheduleCloudSync();
-            } else {
-                showSaveStatus('Saved');
-            }
-        }
-
-        function saveFoldersToStorage() {
-            saveProjectsToStorage();
-        }
-
-        function saveCurrentProject() {
-            if(projects[activeProjectIndex]&&!isReorderMode) {
+            if(socket) { 
+                setRunningState(true); 
                 const project=projects[activeProjectIndex];
-                if(project.files&&project.files[project.activeFileIndex]) {
-                    project.files[project.activeFileIndex].code=editor.getValue();
-                }
-                saveProjectsToStorage();
-            }
+                if(project&&project.files&&project.files[project.activeFileIndex]) { project.files[project.activeFileIndex].code=editor.getValue(); saveProjectsToStorage(); }
+                const activeFiles=project?project.files:[];
+                socket.emit('run_code_v2', {files:activeFiles, lang:currentLang, code:editor.getValue()}); 
+            } else { showModal("Error", "Cannot connect to server."); } 
+        }
+        
+        function stopCode() { if(socket) socket.emit('stop_code'); const loader=document.getElementById('compile-loader'); if(loader) loader.remove(); setRunningState(false); }
+        function clearOutput() { outputPre.innerHTML=""; currentInputDisplay.innerText=""; }
+        
+        function copyCode() { 
+            editor.execCommand('selectAll'); editor.focus(); 
+            navigator.clipboard.writeText(editor.getValue()).then(()=>{ 
+                const btn=document.getElementById('copy-btn'); const originalContent=btn.innerHTML; 
+                btn.innerHTML=`<svg class="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M20 6L9 17l-5-5"/></svg> <span class="text-xs text-green-400">Copied!</span>`; 
+                setTimeout(()=>{ btn.innerHTML=originalContent; },2000); 
+            }); 
         }
 
-        function scheduleCloudSync() {
-            const savingIcon=document.getElementById('save-icon-saving');
-            const savedIcon=document.getElementById('save-icon-saved');
-            const saveText=document.getElementById('save-text');
-            
-            savedIcon.classList.add('hidden'); savingIcon.classList.remove('hidden');
-            saveText.innerText='Saving to Cloud...'; 
-            saveText.classList.remove('text-gray-400'); saveText.classList.add('text-yellow-500');
-
-            clearTimeout(cloudSyncTimer);
-            cloudSyncTimer = setTimeout(async () => {
-                try {
-                    const payload = {
-                        lang: currentLang,
-                        projects: projects,
-                        folders: folders
-                    };
-                    const res = await fetch(getApiUrl('/api/sync_up'), {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify(payload)
-                    });
-                    if(res.ok) {
-                        savingIcon.classList.add('hidden'); savedIcon.classList.remove('hidden');
-                        saveText.innerText='Cloud Saved'; 
-                        saveText.classList.remove('text-yellow-500'); saveText.classList.add('text-green-400');
-                        setTimeout(() => {
-                            saveText.classList.remove('text-green-400'); saveText.classList.add('text-gray-400');
-                        }, 2000);
-                    }
-                } catch(e) {
-                    savingIcon.classList.add('hidden'); savedIcon.classList.remove('hidden');
-                    saveText.innerText='Sync Failed'; 
-                    saveText.classList.remove('text-yellow-500'); saveText.classList.add('text-red-500');
-                }
-            }, 2000);
+        function clearAllCode() { 
+            if(isRunning||isReorderMode) return;
+            showConfirm("Clear All", "Are you sure you want to clear all code in this file? This action cannot be undone.", ()=>{ 
+                editor.setValue(""); clearOutput(); 
+                const dropdown=document.getElementById('tools-dropdown');
+                if(dropdown) { dropdown.classList.remove('open'); dropdown.querySelector('.dropdown-trigger')?.classList.remove('active'); }
+            }); 
         }
 
-        function initProjects() {
-            try {
-                const savedFolders=localStorage.getItem(`galaxy_folders_${currentLang}`);
-                if(savedFolders) folders=JSON.parse(savedFolders); else folders=[];
-                
-                const savedProjects=localStorage.getItem(`galaxy_projects_${currentLang}`);
-                let ext=currentLang==='cpp'?'.cpp':'.py';
-                
-                if(savedProjects) {
-                    projects=JSON.parse(savedProjects);
-                } else {
-                    projects=[{id:'main', title:'main', files:[{name:'main'+ext, code:getHelloWorld(currentLang)}], activeFileIndex:0, folderId:null}];
-                }
-                const savedIndex=parseInt(localStorage.getItem(`galaxy_active_project_${currentLang}`)||"0");
-                activeProjectIndex=(savedIndex>=0&&savedIndex<projects.length)?savedIndex:0;
-            } catch(e) {
-                let ext=currentLang==='cpp'?'.cpp':'.py';
-                projects=[{id:'main', title:'main', files:[{name:'main'+ext, code:getHelloWorld(currentLang)}], activeFileIndex:0, folderId:null}];
-                activeProjectIndex=0;
-            }
-            renderProjectList(); loadProject(activeProjectIndex);
+        function insertHelloWorld(auto=false) { 
+            if(isRunning||isReorderMode) return;
+            const dropdown=document.getElementById('tools-dropdown');
+            if(dropdown) { dropdown.classList.remove('open'); dropdown.querySelector('.dropdown-trigger')?.classList.remove('active'); }
+            if(!auto) { showConfirm("Insert Template", "Clear current code and insert Hello World template?", ()=>{ editor.setValue(getHelloWorld(currentLang)); }); return; }
+            editor.setValue(getHelloWorld(currentLang));
         }
 
-        function exitReorderMode(save) {
-            if(save) {
-                saveProjectsToStorage(); saveFoldersToStorage();
-            } else {
-                const activeId=projects[activeProjectIndex].id;
-                projects=JSON.parse(JSON.stringify(reorderBackup));
-                folders=JSON.parse(JSON.stringify(reorderFolderBackup));
-                activeProjectIndex=Math.max(0,projects.findIndex(p=>p.id===activeId));
-            }
-            isReorderMode=false;
-            document.getElementById('side-panel-toggle-container').style.pointerEvents=''; document.getElementById('side-panel-toggle-container').style.opacity='';
-            editor.setOption('readOnly',false);
-            
-            const btn=document.querySelector('.settings-btn'); const menu=document.querySelector('#settings-dropdown .dropdown-menu');
-            btn.innerHTML=originalSettingsHTML.btn; btn.classList.remove('!border-purple-500','!bg-purple-900/30'); menu.innerHTML=originalSettingsHTML.menu;
-            
-            if(typeof updateSettingsDropdownState==='function') updateSettingsDropdownState(); 
-            closeAllDropdowns(); renderProjectList(); renderEditorTabs();
+        async function clearAndPaste() { 
+            if(isRunning||isReorderMode) return;
+            const dropdown=document.getElementById('tools-dropdown');
+            if(dropdown) { dropdown.classList.remove('open'); dropdown.querySelector('.dropdown-trigger')?.classList.remove('active'); }
+            showConfirm("Paste Code", "Clear all code in this file and paste from clipboard?", async()=>{ 
+                try { 
+                    const text=await navigator.clipboard.readText(); 
+                    if(text) { editor.setValue(text); clearOutput(); } else { showModal("Notice", "Clipboard is empty."); }
+                } catch(err) { showModal("Paste Error", "Could not access clipboard. Please ensure you have granted permission or paste manually (Ctrl+V)."); }
+            });
         }
-
-        function saveReorder() { exitReorderMode(true); }
-        function cancelReorder() { exitReorderMode(false); }
     </script>
     <script>
         function loadSettings() {
@@ -2039,11 +2707,8 @@
             window.visualViewport.addEventListener('scroll',handleViewportResize);
             handleViewportResize();
         }
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            fetchCloudData(); 
-            loadSettings();
-        });
+
+        loadSettings();
     </script>
 </body>
 </html>

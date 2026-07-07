@@ -1950,6 +1950,13 @@
         const terminalResizer=document.getElementById('terminal-resizer');
         const outputBackdrop=document.getElementById('output-backdrop');
 
+        // 已修正：補上缺失的終端機控制按鈕與輸出容器 DOM 變數定義
+        const runBtn=document.getElementById('run-btn');
+        const stopBtn=document.getElementById('stop-btn');
+        const outputPre=document.getElementById('output');
+        const currentInputDisplay=document.getElementById('current-input-display');
+        const terminalContainer=document.getElementById('terminal-container');
+
         var cppKeywords=["#include","iostream","cstdlib","iomanip","using","namespace","std","int","main","return","cout","endl","cin","vector","string","void","char","bool","float","double","if","else","for","while","do","switch","case","break","continue","struct","class","public","private","protected","true","false","const","auto","size_t","push_back","pop_back","length","size","begin","end","algorithm","cmath"];
         var pythonKeywords=["print","import","from","def","return","if","elif","else","for","while","break","continue","pass","class","try","except","finally","with","as","lambda","True","False","None","and","or","not","is","in","global","range","len","input","int","str","list","dict"];
 
@@ -2023,8 +2030,6 @@
                     parentItem.style.zIndex='';
                     parentItem.classList.remove('dropdown-open');
                 }
-                const wrapper = el.closest('.folder-content-wrapper');
-                if (wrapper) wrapper.style.zIndex='';
             });
         }
 
@@ -2406,7 +2411,7 @@
             if(view==='list') {
                 problemListEl.classList.remove('hidden');
                 problemListEl.classList.add('side-view-content');
-                problemContentEl.classList.add('hidden');
+                problemContentEl.add('hidden');
                 listToolbar.style.display='flex';
                 descToolbar.style.display='none';
                 toggleListBtn.classList.add('active');
@@ -3106,6 +3111,7 @@
                 let ext=currentLang==='cpp'?'.cpp':'.py';
                 project.files=[{name:'main'+ext, code:project.code||''}]; project.activeFileIndex=0;
                 if(project.defaultCode) project.defaultFiles=[{name:'main'+ext, code:project.defaultCode}];
+                delete project.code; delete project.defaultCode;
             }
             
             let activeFile=project.files[project.activeFileIndex];
@@ -3591,6 +3597,7 @@
             showSaveStatus();
         }
 
+        // 已修正：補上缺失的專案資料夾保存至 LocalStorage 的功能
         function saveFoldersToStorage() {
             if(isReorderMode) return;
             localStorage.setItem(`galaxy_folders_${currentLang}`, JSON.stringify(folders));

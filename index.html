@@ -53,20 +53,6 @@
             --selection-border: rgba(255, 255, 255, 0.3);
             --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
         }
-        [data-theme="classic"] {
-            --syntax-keyword: #f08d49;
-            --syntax-control: #f08d49;
-            --syntax-operator: #f08d49;
-            --syntax-variable: #d4d4d4;
-            --syntax-function: #f8f8f2;
-            --syntax-type: #8be9fd;
-            --syntax-number: #bd93f9;
-            --syntax-string: #f1fa8c;
-            --syntax-comment: #6272a4;
-            --syntax-meta: #f08d49;
-            --selection-bg: rgba(62, 68, 81, 0.5);
-            --selection-border: rgba(255, 255, 255, 0.2);
-        }
         html {
             height: 100%;
             width: 100%;
@@ -129,9 +115,6 @@
         .cm-matchhighlight.cm-number,
         .cm-matchhighlight.cm-control {
             background-color: transparent !important;
-        }
-        [data-theme="classic"] .cm-matchhighlight {
-            background-color: rgba(255, 255, 255, 0.12);
         }
         .cm-s-cloudjudge.CodeMirror {
             background-color: var(--bg-color);
@@ -230,9 +213,6 @@
             background-repeat: no-repeat;
             background-size: 100% 100%;
             transition: background-image 0.4s var(--ease-spring);
-        }
-        [data-theme="classic"] .cm-s-cloudjudge .cm-indent-guides {
-            background-image: linear-gradient(to right, var(--bg-color) 4ch, transparent 4ch), repeating-linear-gradient(to right, rgba(255,255,255,0.1) 0, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 4ch);
         }
         .CodeMirror-hints {
             background: rgba(30, 30, 30, 0.85);
@@ -1582,7 +1562,7 @@
         }
     </style>
 </head>
-<body class="flex flex-col select-none overflow-hidden fixed inset-0 w-full h-full" data-theme="modern" data-layout="right">
+<body class="flex flex-col select-none overflow-hidden fixed inset-0 w-full h-full" data-layout="right">
 
     <div class="absolute w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-blue-500/10 to-indigo-500/10 blur-[120px] pointer-events-none -top-40 -left-40 z-0"></div>
     <div class="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-[150px] pointer-events-none -bottom-40 -right-40 z-0"></div>
@@ -1682,18 +1662,6 @@
                     <div class="dropdown-item mt-0.5" onclick="resetLayout()">
                         <span>Reset Layout</span>
                         <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                    </div>
-                    <div class="my-0.5 border-t border-[#3c3c3c]"></div>
-                    <div class="dropdown-label">Theme</div>
-                    <div class="segment-group">
-                        <div class="segment-btn" id="theme-opt-modern" onclick="setTheme('modern')">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                            <span>Modern</span>
-                        </div>
-                        <div class="segment-btn" id="theme-opt-classic" onclick="setTheme('classic')">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                            <span>Classic</span>
-                        </div>
                     </div>
                     <div class="my-0.5 border-t border-[#3c3c3c]"></div>
                     <div class="dropdown-label">File</div>
@@ -2030,6 +1998,8 @@
                     parentItem.style.zIndex='';
                     parentItem.classList.remove('dropdown-open');
                 }
+                const wrapper = el.closest('.folder-content-wrapper');
+                if (wrapper) wrapper.style.zIndex='';
             });
         }
 
@@ -2050,6 +2020,7 @@
         editor.addOverlay({ token:function(stream){if(stream.sol()){if(stream.eatSpace())return "indent-guides";} stream.skipToEnd();return null;} });
         CodeMirror.registerHelper("hint","clike",codeHint); CodeMirror.registerHelper("hint","python",codeHint);
     </script>
+    
     <script>
         // ==========================
         // scripts_ui.html 控制介面與視窗操作
@@ -2411,7 +2382,7 @@
             if(view==='list') {
                 problemListEl.classList.remove('hidden');
                 problemListEl.classList.add('side-view-content');
-                problemContentEl.add('hidden');
+                problemContentEl.classList.add('hidden');
                 listToolbar.style.display='flex';
                 descToolbar.style.display='none';
                 toggleListBtn.classList.add('active');
@@ -2448,10 +2419,11 @@
             localStorage.setItem("galaxy_problem_font_size",problemFontSize);
         }
 
+        // 已修正：Theme 設定已鎖定為 Modern，此處固定為現代化亮色，不再支援 classic
         function setTheme(mode, refresh=true) {
-            currentTheme=mode;
-            if(mode==='classic') document.body.setAttribute('data-theme','classic'); else document.body.removeAttribute('data-theme');
-            localStorage.setItem("galaxy_theme",mode);
+            currentTheme='modern';
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem("galaxy_theme",'modern');
             if(typeof updateSettingsDropdownState==='function') updateSettingsDropdownState(); 
             if(refresh && typeof editor !== 'undefined') editor.refresh();
         }
@@ -2526,8 +2498,6 @@
         function updateSettingsDropdownState() {
             document.getElementById('layout-opt-right')?.classList.remove('selected'); document.getElementById('layout-opt-bottom')?.classList.remove('selected');
             if(currentLayout==='right') document.getElementById('layout-opt-right')?.classList.add('selected'); else document.getElementById('layout-opt-bottom')?.classList.add('selected');
-            document.getElementById('theme-opt-modern')?.classList.remove('selected'); document.getElementById('theme-opt-classic')?.classList.remove('selected');
-            if(currentTheme==='classic') document.getElementById('theme-opt-classic')?.classList.add('selected'); else document.getElementById('theme-opt-modern')?.classList.add('selected');
             document.getElementById('output-mode-default')?.classList.remove('selected'); document.getElementById('output-mode-popup')?.classList.remove('selected');
             if(currentOutputMode==='popup') document.getElementById('output-mode-popup')?.classList.add('selected'); else document.getElementById('output-mode-default')?.classList.add('selected');
         }
@@ -2614,6 +2584,7 @@
             },1600);
         }
     </script>
+    
     <script>
         // ==========================
         // scripts_projects.html 專案與檔案核心邏輯
@@ -3071,7 +3042,7 @@
             if(isRunning||isReorderMode) return;
             if(event) event.stopPropagation();
             if(projects[index].id==='main') { showModal("Notice", "The 'main' project cannot be deleted."); return; }
-            showConfirm("Delete Project", `Are you sure you want to delete '${projects[index].title}'? This action cannot be undone.`, ()=>{
+            showConfirm("Delete Project", `Are you sure you want to delete '${projects[index].title}'? This action cannot be undone.`, () => {
                 const performDelete=()=>{
                     projects.splice(index,1);
                     if(index===activeProjectIndex) activeProjectIndex=Math.max(0,index-1);
@@ -3597,7 +3568,6 @@
             showSaveStatus();
         }
 
-        // 已修正：補上缺失的專案資料夾保存至 LocalStorage 的功能
         function saveFoldersToStorage() {
             if(isReorderMode) return;
             localStorage.setItem(`galaxy_folders_${currentLang}`, JSON.stringify(folders));
@@ -3633,6 +3603,7 @@
             },500);
         }
     </script>
+    
     <script>
         // ==========================
         // scripts_terminal.html 終端機與編譯控制腳本
@@ -3881,7 +3852,22 @@
                 btn.title="Hide Comments";
             }
         }
+
+        function toggleProblemBold() {
+            document.execCommand('bold', false, null);
+            problemContentEl.focus();
+            problemContentEl.dispatchEvent(new Event('input'));
+        }
+
+        function updateProblemContentPlaceholder() {
+            if (problemContentEl.innerText.trim() === "") {
+                problemContentEl.classList.add('empty');
+            } else {
+                problemContentEl.classList.remove('empty');
+            }
+        }
     </script>
+    
     <script>
         // ==========================
         // scripts_init.html 偏好設定與事件初始化
@@ -3894,7 +3880,6 @@
             if(typeof updateLangUI==='function') updateLangUI(savedLang);
 
             const savedLayout=localStorage.getItem("galaxy_layout")||'right';
-            const savedTheme=localStorage.getItem("galaxy_theme")||'modern';
             const savedFontSize=parseInt(localStorage.getItem("galaxy_font_size"))||14;
             const savedProblemFontSize=parseInt(localStorage.getItem("galaxy_problem_font_size"))||14;
             const savedOutputMode=localStorage.getItem("galaxy_output_mode")||'default';
@@ -3909,7 +3894,8 @@
             problemFontSize=savedProblemFontSize;
             if(typeof applyProblemFontSize==='function') applyProblemFontSize();
 
-            if(typeof setTheme==='function') setTheme(savedTheme,false);
+            // 預設永遠載入 modern 樣式
+            if(typeof setTheme==='function') setTheme('modern',false);
             if(typeof selectOutputMode==='function') selectOutputMode(savedOutputMode);
             if(typeof changeLayout==='function') changeLayout(savedLayout);
 
@@ -3978,6 +3964,105 @@
             }
             
             renderProjectList(); loadProject(activeProjectIndex);
+        }
+
+        problemContentEl.addEventListener('input', function() {
+            updateProblemContentPlaceholder();
+            if (!isChangingProject) {
+                if(this.innerText.trim() === "") {
+                    projects[activeProjectIndex].desc = "";
+                } else {
+                    projects[activeProjectIndex].desc = this.innerHTML;
+                }
+                saveProjectsToStorage();
+            }
+        });
+
+        problemContentEl.addEventListener('paste', function(e) {
+            e.preventDefault();
+            let html = '';
+            let text = '';
+            if (e.clipboardData || e.originalEvent?.clipboardData) {
+                html = (e.clipboardData || e.originalEvent.clipboardData).getData('text/html');
+                text = (e.clipboardData || e.originalEvent.clipboardData).getData('text/plain');
+            } else if (window.clipboardData) {
+                text = window.clipboardData.getData('Text');
+            }
+            if (html) {
+                document.execCommand('insertHTML', false, cleanHTML(html));
+            } else if (text) {
+                document.execCommand('insertText', false, text);
+            }
+            problemContentEl.dispatchEvent(new Event('input'));
+        });
+
+        function cleanHTML(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            div.querySelectorAll('*').forEach(el => {
+                const s = el.style;
+                const fw = s.fontWeight;
+                const isBold = (fw === 'bold' || fw === 'bolder' || parseInt(fw) >= 600) || ['B', 'STRONG'].includes(el.tagName);
+                const isItalic = (s.fontStyle === 'italic') || ['I', 'EM'].includes(el.tagName);
+                const isUnderline = (s.textDecoration.includes('underline')) || el.tagName === 'U';
+                el.removeAttribute('style');
+                el.removeAttribute('class');
+                if (el.tagName === 'FONT') {
+                    el.removeAttribute('color'); el.removeAttribute('face'); el.removeAttribute('size');
+                }
+                if (isBold && !['B', 'STRONG'].includes(el.tagName)) {
+                    const wrap = document.createElement('b');
+                    while (el.firstChild) wrap.appendChild(el.firstChild);
+                    el.appendChild(wrap);
+                }
+                if (isItalic && !['I', 'EM'].includes(el.tagName)) {
+                    const wrap = document.createElement('i');
+                    while (el.firstChild) wrap.appendChild(el.firstChild);
+                    el.appendChild(wrap);
+                }
+                if (isUnderline && el.tagName !== 'U') {
+                    const wrap = document.createElement('u');
+                    while (el.firstChild) wrap.appendChild(el.firstChild);
+                    el.appendChild(wrap);
+                }
+            });
+            return div.innerHTML;
+        }
+
+        async function pasteToProblem() {
+            try {
+                problemContentEl.focus();
+                const clipboardItems = await navigator.clipboard.read();
+                let pasted = false;
+                for (const item of clipboardItems) {
+                    if (item.types.includes('text/html')) {
+                        const blob = await item.getType('text/html');
+                        const htmlText = await blob.text();
+                        document.execCommand('selectAll', false, null);
+                        document.execCommand('insertHTML', false, cleanHTML(htmlText));
+                        pasted = true;
+                        break;
+                    }
+                }
+                if (!pasted) {
+                    const text = await navigator.clipboard.readText();
+                    if (text) {
+                        document.execCommand('selectAll', false, null);
+                        document.execCommand('insertText', false, text);
+                    }
+                }
+                problemContentEl.dispatchEvent(new Event('input'));
+            } catch (err) { 
+                try {
+                    const text = await navigator.clipboard.readText();
+                    problemContentEl.focus();
+                    document.execCommand('selectAll', false, null);
+                    document.execCommand('insertText', false, text);
+                    problemContentEl.dispatchEvent(new Event('input'));
+                } catch(e) {
+                    showModal("Paste Error", "Could not read clipboard. Please paste manually (Ctrl+V)"); 
+                }
+            }
         }
 
         loadSettings();
